@@ -1,0 +1,174 @@
+---
+title: "Idempotency Keys for Safe API Retries"
+sidebarTitle: "Idempotency"
+description: "Use the Idempotency-Key header to safely retry failed Rail API requests without risk of duplicate transactions or double-charges."
+---
+
+Network timeouts, transient errors, and client crashes are unavoidable realities of distributed systems. When a request that creates or modifies a financial record times out, you face a dilemma: did the operation succeed before the connection dropped, or did it fail? Retrying without protection risks executing the same operation twice — a double withdrawal, a duplicate payment, a second account opened in error. Rail's idempotency system solves this by letting you attach a unique key to any mutating request. If you retry with the same key, Rail returns the original response without re-executing the operation.
+
+## How Idempotency Works
+
+When Rail receives a request with an `Idempotency-Key` header, it records the key alongside the response before returning it to you. If an identical key arrives again within 24 hours, Rail returns the cached response immediately — the underlying operation does **not** run a second time. This means you can retry freely after a timeout or network error, confident that the operation will execute exactly once.
+
+<Note>
+  Idempotency keys are scoped to your `clientId`. A key used by one set of credentials does not conflict with the same key used by a different client.
+</Note>
+
+## Using the Idempotency-Key Header
+
+Add the `Idempotency-Key` header to any mutating request (POST, PATCH, DELETE). The value should be a randomly generated UUID v4:
+
+<ParamField header="Idempotency-Key" type="string">
+  A unique identifier for this request attempt. UUID v4 format recommended. Keys expire after 24 hours.
+</ParamField>
+
+```bash
+curl --request POST \
+  'https://sandbox.layer2financial.com/api/v1/applications' \
+  --header 'Authorization: Bearer {AUTH_TOKEN}' \
+  --header 'Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "type": "INDIVIDUAL",
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "email": "jane.smith@example.com"
+  }'
+```
+
+If this request times out and you retry it with the **same** `Idempotency-Key`, Rail returns the same response as the first successful execution — no second application is created.
+
+## Key Format
+
+While Rail accepts any string up to 255 characters as an idempotency key, **UUID v4 is strongly recommended** because it is:
+
+- Globally unique without coordination
+- Universally supported across languages and platforms
+- Recognizable at a glance in logs and dashboards
+
+<CodeGroup>
+
+```javascript Node.js
+const { randomUUID } = require('crypto');
+const idempotencyKey = randomUUID();
+// e.g. "550e8400-e29b-41d4-a716-446655440000"
+```
+
+```python Python
+import uuid
+idempotency_key = str(uuid.uuid4())
+# e.g. "550e8400-e29b-41d4-a716-446655440000"
+```
+
+```bash Shell
+uuidgen
+# e.g. 550e8400-E29B-41D4-A716-446655440000
+```
+
+</CodeGroup>
+
+<Warning>
+  Do not reuse an idempotency key across logically distinct operations. Each unique operation — creating a new application, initiating a new withdrawal — must get its own freshly generated key.
+</Warning>
+
+## Key Expiry
+
+Idempotency keys expire **24 hours** after first use. After a key expires, Rail treats it as a new key — a request using an expired key will execute the operation again and cache the response under the same key for another 24-hour window. Structure your retry logic to operate within the 24-hour expiry window.
+
+## Same Key, Same Payload
+
+If you retry a request with the same `Idempotency-Key` and the **same request body**, Rail returns the cached response with HTTP `200` (or whichever status was returned originally). The response includes a header indicating the result came from the idempotency cache:
+
+```
+Idempotency-Replayed: true
+```
+
+## Same Key, Different Payload
+
+If you send a request with an `Idempotency-Key` that was previously used, but with a **different request body**, Rail returns a `409 Conflict` error:
+
+```json
+{
+  "error": {
+    "code": "DUPLICATE_IDEMPOTENCY_KEY",
+    "message": "This idempotency key was already used with a different request body.",
+    "details": {
+      "idempotency_key": "550e8400-e29b-41d4-a716-446655440000"
+    }
+  }
+}
+```
+
+This protects you from accidentally sending different operations under the same key. If you receive this error, generate a new UUID and retry with the corrected payload.
+
+## Supported Endpoints
+
+All mutating endpoints support idempotency keys. The header is accepted but optional on the following HTTP methods:
+
+| Method | Idempotency Support |
+|--------|---------------------|
+| `GET` | Not applicable — reads are naturally idempotent |
+| `POST` | ✅ Supported |
+| `PATCH` | ✅ Supported |
+| `DELETE` | ✅ Supported |
+
+Endpoints where idempotency is especially important:
+
+- `POST /v1/applications` — prevents duplicate customer applications
+- `POST /v1/deposits` — prevents duplicate deposit initiations
+- `POST /v1/withdrawals` — prevents duplicate fund transfers out
+- `POST /v1/transfers` — prevents duplicate internal transfers
+- `POST /v1/exchanges` — prevents duplicate asset conversions
+- `POST /v1/payments` — prevents duplicate payments and collections
+
+## Retry Strategy
+
+Pair idempotency keys with an **exponential backoff** retry strategy to handle transient failures gracefully:
+
+```javascript
+async function postWithRetry(url, body, headers, maxRetries = 3) {
+  const idempotencyKey = crypto.randomUUID();
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Idempotency-Key': idempotencyKey, // Same key on every retry attempt
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      // Don't retry client errors (4xx) except 429
+      if (response.ok || (response.status >= 400 && response.status !== 429 && response.status < 500)) {
+        return response;
+      }
+
+      // Retryable: 429, 500, 502, 503, 504
+      if (attempt < maxRetries) {
+        const delay = Math.min(1000 * 2 ** attempt, 16000); // Cap at 16 seconds
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    } catch (networkError) {
+      // Timeout or connection error — safe to retry with the same key
+      if (attempt === maxRetries) throw networkError;
+      const delay = Math.min(1000 * 2 ** attempt, 16000);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+}
+```
+
+<Tip>
+  Generate the `idempotencyKey` **before** the first attempt and reuse it on every retry within the same logical operation. Generating a new key on each retry defeats the purpose of idempotency.
+</Tip>
+
+## Idempotency Error Reference
+
+| HTTP Status | Error Code | Cause | Resolution |
+|-------------|------------|-------|------------|
+| `409 Conflict` | `DUPLICATE_IDEMPOTENCY_KEY` | Same key used with a different request body | Generate a fresh UUID for the new operation |
+
+For general error handling, see the [Errors](api-reference/errors) reference.

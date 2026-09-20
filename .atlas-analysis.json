@@ -1,30 +1,11 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
+  "projectType": "api-service",
+  "projectName": "Rail",
+  "projectDescription": "Rail is a next-generation payments infrastructure platform that provides a unified API for building compliant fiat and digital asset financial products — including customer onboarding, multi-currency accounts, deposits, withdrawals, transfers, and crypto exchanges.",
   "theme": "luma",
-  "name": "Rail",
-  "colors": {
-    "primary": "#ef7025",
-    "light": "#eec9bc",
-    "dark": "#4fa1ab"
-  },
-  "favicon": "/favicon.svg",
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:support@layer2financial.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Get Sandbox Access",
-      "href": "https://rail.io/contact-us"
-    }
-  },
+  "primaryColor": "#ef7025",
+  "lightColor": "#eec9bc",
+  "darkColor": "#4fa1ab",
   "navigation": {
     "tabs": [
       {
@@ -111,9 +92,39 @@
       }
     ]
   },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/tryrail"
-    }
-  }
+  "keyFeatures": [
+    "OAuth2-secured REST API with client credentials grant",
+    "Customer onboarding (KYC/KYB) via Applications API",
+    "Multi-currency deposit accounts (fiat and digital assets)",
+    "Fiat and crypto withdrawals with compliance checks",
+    "Internal fund transfers and asset exchanges",
+    "Payment collections (inbound payments from counterparties)",
+    "Webhook subscriptions for real-time event notifications",
+    "Request signing for additional security layer",
+    "Sandbox environment for development and testing",
+    "Customer Onboarding SDK with access code flow",
+    "Wallet-as-a-Service use case support",
+    "Crypto on-ramp and off-ramp support"
+  ],
+  "publicApiSurface": [
+    "POST /v1/applications — Create application",
+    "GET /v1/applications/{application_id} — Retrieve application",
+    "PATCH /v1/applications/{application_id} — Update application",
+    "POST /v1/applications/{application_id}/submit — Submit application",
+    "POST /v1/applications/{application_id}/accesscode — Request SDK access code",
+    "GET /v1/customers/{customer_id} — Retrieve customer",
+    "PATCH /v1/customers/{customer_id} — Update customer",
+    "POST /v1/accounts/deposits — Open account",
+    "GET /v1/accounts/deposits/{id} — Retrieve account",
+    "GET /v1/accounts/deposits/{id}/transactions — List transactions",
+    "POST /v1/counterparties — Create counterparty",
+    "GET /v1/counterparties/{counterparty_id} — Retrieve counterparty",
+    "POST /v1/counterparties/{counterparty_id}/link/connect — Connect linked account",
+    "POST /v1/payments — Create payment",
+    "GET /v1/payments/{payment_id}/status — Get payment status",
+    "POST /v1/withdrawals — Create withdrawal",
+    "POST /v1/transfers — Create transfer",
+    "POST /v1/exchanges — Create exchange",
+    "POST /v1/subscriptions — Register webhook subscription"
+  ]
 }

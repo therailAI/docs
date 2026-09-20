@@ -1,0 +1,342 @@
+---
+title: "Webhook Event Reference for Rail Platform"
+sidebarTitle: "Events Reference"
+description: "Complete reference for all Rail webhook events. Browse every event by category with descriptions, status values, and example payloads."
+---
+
+Rail emits webhook events whenever the state of a resource changes on the platform. This reference lists every available event, grouped by the resource it relates to, along with a description of when the event fires and an example payload. To set up event delivery, see [Webhooks Overview](/webhooks/overview).
+
+<Note>
+  All webhook payloads share a common envelope with `id`, `type`, `created_at`, and `data` fields. The `data` object schema is specific to each event type. Use the `id` field to [deduplicate events](/webhooks/overview#idempotency) on your server.
+</Note>
+
+---
+
+## Events by category
+
+<Accordion title="Application Events">
+
+  Application events are emitted when a customer's onboarding application changes status. Use these events to drive your onboarding UI — for example, prompting customers to submit missing information or notifying them when they have been approved.
+
+  | Event | Description |
+  |---|---|
+  | `application.status.changed` | The application's status has changed. See status values below. |
+
+  **Application status values:**
+
+  | Status | Meaning |
+  |---|---|
+  | `INCOMPLETE` | Application created but required fields are missing. |
+  | `READY_FOR_SUBMISSION` | All required fields are present — ready to submit for review. |
+  | `SUBMITTED` | Application submitted and under review by Rail compliance. |
+  | `APPROVED` | Application approved. Customer is now `ACTIVE`. |
+  | `CHANGES_REQUESTED` | Rail has requested corrections or additional information. |
+
+  **Example payload:**
+  ```json
+  {
+    "id": "evt_app_001",
+    "type": "application.status.changed",
+    "created_at": "2024-01-15T09:00:00Z",
+    "data": {
+      "application_id": "APP001",
+      "customer_id": "CUST001",
+      "previous_status": "SUBMITTED",
+      "current_status": "APPROVED"
+    }
+  }
+  ```
+
+</Accordion>
+
+<Accordion title="Account Events">
+
+  Account events fire when an account's status changes or when funds are received. Use `account.status.changed` to know when a newly opened account is ready to use, and `account.deposit.completed` to trigger downstream actions (such as executing an exchange) as soon as a deposit arrives.
+
+  | Event | Description |
+  |---|---|
+  | `account.status.changed` | The account's status has changed. See status values below. |
+  | `account.deposit.completed` | A deposit has been received and credited to the account. |
+
+  **Account status values:**
+
+  | Status | Meaning |
+  |---|---|
+  | `PENDING_APPROVAL` | Account has been requested and is awaiting approval. |
+  | `OPEN` | Account is active and ready for transactions. |
+  | `SUSPENDED` | Account has been temporarily suspended. Transactions are blocked. |
+  | `CLOSED` | Account has been permanently closed. |
+
+  **Example payload — `account.status.changed`:**
+  ```json
+  {
+    "id": "evt_acct_002",
+    "type": "account.status.changed",
+    "created_at": "2024-01-15T09:15:00Z",
+    "data": {
+      "account_id": "CUST001.ETH.001",
+      "customer_id": "CUST001",
+      "previous_status": "PENDING_APPROVAL",
+      "current_status": "OPEN"
+    }
+  }
+  ```
+
+  **Example payload — `account.deposit.completed`:**
+  ```json
+  {
+    "id": "evt_acct_003",
+    "type": "account.deposit.completed",
+    "created_at": "2024-01-15T10:30:00Z",
+    "data": {
+      "account_id": "CUST001.ETH.001",
+      "customer_id": "CUST001",
+      "amount": 1.5,
+      "asset_type": "ETHEREUM_MAINNET_ETH",
+      "transaction_id": "txn_on_chain_abc"
+    }
+  }
+  ```
+
+</Accordion>
+
+<Accordion title="Withdrawal Events">
+
+  Withdrawal events track the lifecycle of an outgoing funds transfer, from the moment it is initiated through to final settlement or failure. Rail also fires a special event when automated compliance review (Auto-RFI) requires the customer to upload additional documentation.
+
+  | Event | Description |
+  |---|---|
+  | `withdrawal.status.changed` | The withdrawal's status has changed at any point in its lifecycle. |
+  | `withdrawal.completed` | The withdrawal has been successfully completed and funds have left the platform. |
+  | `withdrawal.failed` | The withdrawal has failed. Check `data.failure_reason` for details. |
+  | `withdrawal.rfi.requested` | Auto-RFI has been triggered. The customer must upload the requested document before the withdrawal can proceed. |
+
+  **Example payload — `withdrawal.completed`:**
+  ```json
+  {
+    "id": "evt_wdl_004",
+    "type": "withdrawal.completed",
+    "created_at": "2024-01-15T14:00:00Z",
+    "data": {
+      "withdrawal_id": "WDL001",
+      "account_id": "CUST001.USD.001",
+      "customer_id": "CUST001",
+      "amount": 3800.00,
+      "asset_type": "FIAT_USD",
+      "counterparty_id": "CP001"
+    }
+  }
+  ```
+
+  **Example payload — `withdrawal.rfi.requested`:**
+  ```json
+  {
+    "id": "evt_wdl_005",
+    "type": "withdrawal.rfi.requested",
+    "created_at": "2024-01-15T14:05:00Z",
+    "data": {
+      "withdrawal_id": "WDL002",
+      "account_id": "CUST001.USD.001",
+      "customer_id": "CUST001",
+      "rfi_type": "SOURCE_OF_FUNDS",
+      "description": "Please provide documentation confirming the source of funds for this withdrawal."
+    }
+  }
+  ```
+
+  <Warning>
+    When you receive a `withdrawal.rfi.requested` event, prompt your customer to upload the required document as soon as possible. The withdrawal remains on hold until the RFI is resolved.
+  </Warning>
+
+</Accordion>
+
+<Accordion title="Transfer Events">
+
+  Transfer events reflect the outcome of internal account-to-account transfers within the Rail platform. There is no intermediate status — transfers either complete or fail.
+
+  | Event | Description |
+  |---|---|
+  | `transfer.completed` | The internal transfer completed successfully. Funds are available in the destination account. |
+  | `transfer.failed` | The transfer failed. Check `data.failure_reason` for details. |
+
+  **Example payload — `transfer.completed`:**
+  ```json
+  {
+    "id": "evt_txr_006",
+    "type": "transfer.completed",
+    "created_at": "2024-01-15T11:00:00Z",
+    "data": {
+      "transfer_id": "TRF001",
+      "source_account_id": "CUST001.ETH.001",
+      "destination_account_id": "CUST001.USD.001",
+      "amount": 0.5,
+      "asset_type": "ETHEREUM_MAINNET_ETH"
+    }
+  }
+  ```
+
+  **Example payload — `transfer.failed`:**
+  ```json
+  {
+    "id": "evt_txr_007",
+    "type": "transfer.failed",
+    "created_at": "2024-01-15T11:01:00Z",
+    "data": {
+      "transfer_id": "TRF002",
+      "source_account_id": "CUST001.ETH.001",
+      "destination_account_id": "CUST001.USD.001",
+      "amount": 10.0,
+      "asset_type": "ETHEREUM_MAINNET_ETH",
+      "failure_reason": "INSUFFICIENT_FUNDS"
+    }
+  }
+  ```
+
+</Accordion>
+
+<Accordion title="Exchange Events">
+
+  Exchange events fire when a currency conversion — either crypto-to-fiat, fiat-to-crypto, or crypto-to-crypto — completes or fails. Subscribe to these events in on-ramp and off-ramp flows to know exactly when funds are available in the destination account.
+
+  | Event | Description |
+  |---|---|
+  | `exchange.completed` | The exchange completed successfully. Converted funds are available in the destination account. |
+  | `exchange.failed` | The exchange failed. Check `data.failure_reason` for details. |
+
+  **Example payload — `exchange.completed`:**
+  ```json
+  {
+    "id": "evt_exch_008",
+    "type": "exchange.completed",
+    "created_at": "2024-01-15T12:00:00Z",
+    "data": {
+      "exchange_id": "EXC001",
+      "source_account_id": "CUST001.ETH.001",
+      "destination_account_id": "CUST001.USD.001",
+      "source_amount": 1.0,
+      "source_asset_type": "ETHEREUM_MAINNET_ETH",
+      "destination_amount": 3812.50,
+      "destination_asset_type": "FIAT_USD",
+      "exchange_rate": 3812.50
+    }
+  }
+  ```
+
+  **Example payload — `exchange.failed`:**
+  ```json
+  {
+    "id": "evt_exch_009",
+    "type": "exchange.failed",
+    "created_at": "2024-01-15T12:01:00Z",
+    "data": {
+      "exchange_id": "EXC002",
+      "source_account_id": "CUST001.ETH.001",
+      "destination_account_id": "CUST001.USD.001",
+      "source_amount": 100.0,
+      "source_asset_type": "ETHEREUM_MAINNET_ETH",
+      "failure_reason": "INSUFFICIENT_FUNDS"
+    }
+  }
+  ```
+
+</Accordion>
+
+<Accordion title="Payment Events">
+
+  Payment events track the lifecycle of payment collection operations on the Rail platform. Use these events to update your records when a payment is collected or when its status changes.
+
+  | Event | Description |
+  |---|---|
+  | `payment.status.changed` | The payment's status has changed at any point in its lifecycle. |
+  | `payment.completed` | The payment collection has been successfully completed. |
+
+  **Example payload — `payment.completed`:**
+  ```json
+  {
+    "id": "evt_pay_010",
+    "type": "payment.completed",
+    "created_at": "2024-01-15T13:00:00Z",
+    "data": {
+      "payment_id": "PAY001",
+      "account_id": "CUST001.USD.001",
+      "customer_id": "CUST001",
+      "amount": 250.00,
+      "asset_type": "FIAT_USD",
+      "reference": "INV-2024-001"
+    }
+  }
+  ```
+
+  See [Payments & Collections](/guides/payments-collections) for more on how to create and manage payment collections.
+
+</Accordion>
+
+<Accordion title="Counterparty Events">
+
+  Counterparty events fire when the verification status of an external account (such as a bank account for withdrawals) changes. Subscribe to these events to know when a newly added counterparty has been approved and is safe to use in withdrawal requests.
+
+  | Event | Description |
+  |---|---|
+  | `counterparty.status.changed` | The counterparty's verification status has changed. |
+  | `counterparty.approved` | The counterparty has been fully verified and approved for use in withdrawals. |
+
+  **Example payload — `counterparty.approved`:**
+  ```json
+  {
+    "id": "evt_cp_011",
+    "type": "counterparty.approved",
+    "created_at": "2024-01-15T08:30:00Z",
+    "data": {
+      "counterparty_id": "CP001",
+      "customer_id": "CUST001",
+      "counterparty_type": "BANK_ACCOUNT",
+      "bank_name": "Chase Bank",
+      "account_last_four": "4242"
+    }
+  }
+  ```
+
+  See [Counterparties](/concepts/counterparties) for details on adding and managing external accounts.
+
+</Accordion>
+
+---
+
+## All events at a glance
+
+| Event | Category | Description |
+|---|---|---|
+| `application.status.changed` | Application | Application status changed |
+| `account.status.changed` | Account | Account status changed |
+| `account.deposit.completed` | Account | Deposit received and credited |
+| `withdrawal.status.changed` | Withdrawal | Withdrawal status changed |
+| `withdrawal.completed` | Withdrawal | Withdrawal successfully sent |
+| `withdrawal.failed` | Withdrawal | Withdrawal failed |
+| `withdrawal.rfi.requested` | Withdrawal | Document upload required |
+| `transfer.completed` | Transfer | Internal transfer completed |
+| `transfer.failed` | Transfer | Internal transfer failed |
+| `exchange.completed` | Exchange | Asset exchange completed |
+| `exchange.failed` | Exchange | Asset exchange failed |
+| `payment.status.changed` | Payment | Payment status changed |
+| `payment.completed` | Payment | Payment collection completed |
+| `counterparty.status.changed` | Counterparty | Counterparty verification status changed |
+| `counterparty.approved` | Counterparty | Counterparty approved for withdrawals |
+
+---
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Webhooks Overview" icon="bell" href="/webhooks/overview">
+    Learn how to register subscriptions, verify signatures, and handle retries.
+  </Card>
+  <Card title="Webhooks API Reference" icon="code" href="/api-reference/webhooks">
+    Full API reference for managing webhook subscriptions programmatically.
+  </Card>
+  <Card title="Wallet as a Service" icon="wallet" href="/use-cases/wallet-as-a-service">
+    See which events to subscribe to for an end-to-end WaaS integration.
+  </Card>
+  <Card title="Crypto Off-Ramp" icon="arrow-left-from-bracket" href="/use-cases/crypto-offramp">
+    See how withdrawal and exchange events power the off-ramp flow.
+  </Card>
+</CardGroup>

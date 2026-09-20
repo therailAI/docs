@@ -1,0 +1,227 @@
+---
+title: "Paginate Large Result Sets with Cursor Pagination"
+sidebarTitle: "Pagination"
+description: "Fetch large Rail API result sets page by page using cursor-based pagination. Covers request parameters, response shape, and iteration patterns."
+---
+
+Rail list endpoints return results in pages rather than all at once. This keeps response times fast and memory usage predictable even when your data set grows to tens of thousands of records. Rail uses **cursor-based pagination** — each page response includes an opaque cursor pointing to the next page, which you pass back as a query parameter on the following request. Unlike offset-based pagination, cursor pagination remains stable even when records are inserted or deleted between requests.
+
+## How Cursor Pagination Works
+
+Instead of asking for "records 21 through 40", you ask for "the next page after the last record I saw". Rail encodes that position as a Base64 cursor string. You don't need to decode or interpret cursor values — treat them as opaque tokens and pass them back verbatim.
+
+## Request Parameters
+
+Add these query parameters to any list endpoint:
+
+<ParamField query="limit" type="integer" default="20">
+  Number of records to return per page. Minimum: `1`. Maximum: `100`. Defaults to `20` if omitted.
+</ParamField>
+
+<ParamField query="cursor" type="string">
+  Opaque cursor string from the previous page's `pagination.next_cursor` field. Omit this parameter to fetch the first page.
+</ParamField>
+
+**First page request** (no cursor):
+
+```bash
+curl 'https://sandbox.layer2financial.com/api/v1/accounts/deposits?limit=20' \
+  --header 'Authorization: Bearer {AUTH_TOKEN}'
+```
+
+**Subsequent page request** (with cursor):
+
+```bash
+curl 'https://sandbox.layer2financial.com/api/v1/accounts/deposits?limit=20&cursor=eyJpZCI6MTAwfQ==' \
+  --header 'Authorization: Bearer {AUTH_TOKEN}'
+```
+
+## Response Structure
+
+Every list endpoint response includes both the result array and a `pagination` object:
+
+```json
+{
+  "data": [
+    {
+      "id": "dep_01HZ4K2X9V3N8FQRTW6YDCBME",
+      "amount": "500.00",
+      "currency": "USD",
+      "status": "COMPLETED",
+      "created_at": "2024-06-01T10:00:00Z"
+    },
+    {
+      "id": "dep_02AB7L3Y0W4P9GQSU7ZECDFNG",
+      "amount": "1200.00",
+      "currency": "USD",
+      "status": "PENDING",
+      "created_at": "2024-06-01T11:30:00Z"
+    }
+  ],
+  "pagination": {
+    "next_cursor": "eyJpZCI6MTAwfQ==",
+    "has_more": true,
+    "total_count": 450
+  }
+}
+```
+
+The `pagination` fields are:
+
+<ResponseField name="pagination.next_cursor" type="string">
+  Opaque cursor to pass as the `cursor` query parameter on the next request. This field is omitted when `has_more` is `false`.
+</ResponseField>
+
+<ResponseField name="pagination.has_more" type="boolean">
+  `true` if additional records exist beyond the current page, `false` if this is the last page.
+</ResponseField>
+
+<ResponseField name="pagination.total_count" type="integer">
+  Total number of records matching the query across all pages. Useful for displaying progress indicators.
+</ResponseField>
+
+## Iterating Through All Pages
+
+The pattern for fetching all records across multiple pages is the same in every language: loop until `has_more` is `false`.
+
+<CodeGroup>
+
+```javascript Node.js
+async function fetchAllDeposits(authToken) {
+  const baseUrl = 'https://sandbox.layer2financial.com/api/v1/accounts/deposits';
+  const allDeposits = [];
+  let cursor = null;
+  let hasMore = true;
+
+  while (hasMore) {
+    const url = new URL(baseUrl);
+    url.searchParams.set('limit', '100'); // Use max page size for efficiency
+    if (cursor) {
+      url.searchParams.set('cursor', cursor);
+    }
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    const { data, pagination } = await response.json();
+    allDeposits.push(...data);
+
+    hasMore = pagination.has_more;
+    cursor = pagination.next_cursor ?? null;
+  }
+
+  return allDeposits;
+}
+```
+
+```python Python
+import requests
+
+def fetch_all_deposits(auth_token: str) -> list:
+    base_url = 'https://sandbox.layer2financial.com/api/v1/accounts/deposits'
+    all_deposits = []
+    cursor = None
+    has_more = True
+
+    while has_more:
+        params = {'limit': 100}  # Use max page size for efficiency
+        if cursor:
+            params['cursor'] = cursor
+
+        response = requests.get(
+            base_url,
+            headers={
+                'Authorization': f'Bearer {auth_token}',
+                'Content-Type': 'application/json',
+            },
+            params=params,
+        )
+        response.raise_for_status()
+
+        body = response.json()
+        all_deposits.extend(body['data'])
+
+        pagination = body['pagination']
+        has_more = pagination['has_more']
+        cursor = pagination.get('next_cursor')
+
+    return all_deposits
+```
+
+```bash cURL (shell loop)
+#!/bin/bash
+AUTH_TOKEN="{AUTH_TOKEN}"
+BASE_URL="https://sandbox.layer2financial.com/api/v1/accounts/deposits"
+CURSOR=""
+PAGE=1
+
+while true; do
+  URL="${BASE_URL}?limit=100"
+  if [ -n "$CURSOR" ]; then
+    URL="${URL}&cursor=${CURSOR}"
+  fi
+
+  RESPONSE=$(curl --silent \
+    --header "Authorization: Bearer ${AUTH_TOKEN}" \
+    "${URL}")
+
+  echo "Page ${PAGE}: $(echo $RESPONSE | python3 -c "import sys,json; print(len(json.load(sys.stdin)['data']))" ) records"
+
+  HAS_MORE=$(echo $RESPONSE | python3 -c "import sys,json; print(json.load(sys.stdin)['pagination']['has_more'])")
+  CURSOR=$(echo $RESPONSE | python3 -c "import sys,json; d=json.load(sys.stdin)['pagination']; print(d.get('next_cursor',''))")
+
+  if [ "$HAS_MORE" = "False" ]; then
+    echo "Done. Fetched all pages."
+    break
+  fi
+
+  PAGE=$((PAGE + 1))
+done
+```
+
+</CodeGroup>
+
+## Pagination Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use the maximum page size" icon="gauge-high">
+    Set `limit=100` when fetching all records in a batch job. Fewer round trips means faster completion and lower rate-limit consumption.
+  </Card>
+  <Card title="Never decode cursors" icon="lock">
+    Cursor values are opaque. Their format may change without notice. Always pass them back verbatim — never construct or modify cursor strings yourself.
+  </Card>
+  <Card title="Store cursors for resumption" icon="floppy-disk">
+    In long-running jobs, persist the last cursor to disk before processing each page. If the job is interrupted, you can resume from where you left off rather than starting over.
+  </Card>
+  <Card title="Use total_count for progress" icon="chart-line">
+    Display `total_count` in user interfaces to show progress (e.g., "Loaded 200 of 450 deposits"). Don't rely on it for loop termination — use `has_more` instead.
+  </Card>
+</CardGroup>
+
+<Warning>
+  Do not attempt to paginate backwards by caching previous cursors and re-requesting earlier pages as the primary navigation mechanism in real-time UIs. Cursors are forward-only. For random access or filtering, use the available query filter parameters on each endpoint.
+</Warning>
+
+## Rate Limiting and Pagination
+
+Iterating through many pages in a tight loop can quickly exhaust your rate limit (100 requests per minute per client). If you receive a `429 Too Many Requests` response, back off and retry after the interval indicated by the `X-RateLimit-Reset` header. See [Errors](api-reference/errors) for full rate limit details.
+
+```javascript
+// Add rate-limit awareness to your pagination loop
+const response = await fetch(url, { headers });
+
+if (response.status === 429) {
+  const resetAt = parseInt(response.headers.get('X-RateLimit-Reset'), 10);
+  const waitMs = (resetAt - Math.floor(Date.now() / 1000)) * 1000 + 100;
+  await new Promise(resolve => setTimeout(resolve, waitMs));
+  continue; // Retry the same cursor
+}
+```

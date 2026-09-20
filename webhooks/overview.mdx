@@ -1,0 +1,257 @@
+---
+title: "Real-Time Event Notifications with Webhooks"
+sidebarTitle: "Overview"
+description: "Subscribe to Rail platform events and receive real-time HTTP notifications. Eliminate polling and build reactive, event-driven financial applications."
+---
+
+Webhooks let your server receive real-time notifications whenever something meaningful happens on the Rail platform — a deposit lands, an exchange completes, a withdrawal fails, or a customer's application status changes. Instead of repeatedly polling the API to check for updates, you register an endpoint and Rail pushes a signed HTTP `POST` request to your server the moment an event occurs.
+
+## Why webhooks instead of polling
+
+<CardGroup cols={2}>
+  <Card title="Real-time" icon="bolt">
+    Your server is notified within seconds of an event — no lag from poll intervals.
+  </Card>
+  <Card title="Efficient" icon="gauge-high">
+    Eliminate unnecessary API calls. Your integration only reacts when something actually changes.
+  </Card>
+  <Card title="Reliable" icon="rotate">
+    Rail retries failed deliveries automatically with exponential backoff, so transient server issues don't cause missed events.
+  </Card>
+  <Card title="Secure" icon="shield-halved">
+    Every payload is signed with HMAC-SHA256. You can cryptographically verify that each request came from Rail.
+  </Card>
+</CardGroup>
+
+---
+
+## Register a webhook subscription
+
+Create a subscription by providing your endpoint URL, the list of events you want to receive, and a secret used to verify incoming payloads. You can subscribe to as many event types as you need in a single registration.
+
+```bash
+curl --request POST 'https://sandbox.layer2financial.com/api/v1/subscriptions' \
+  --header 'Authorization: Bearer {AUTH_TOKEN}' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "endpoint_url": "https://your-server.com/webhooks/rail",
+    "events": [
+      "application.status.changed",
+      "account.status.changed",
+      "account.deposit.completed",
+      "withdrawal.status.changed",
+      "transfer.completed",
+      "exchange.completed"
+    ],
+    "secret": "your_webhook_secret"
+  }'
+```
+
+<Note>
+  Use a randomly generated, high-entropy string for your `secret`. This value is used to sign every payload Rail sends to your endpoint. Store it securely — treat it like a password.
+</Note>
+
+See the [Webhooks API Reference](/api-reference/webhooks) for the full subscription management API, including how to update or delete subscriptions.
+
+---
+
+## Webhook payload structure
+
+Every event Rail delivers shares the same envelope structure. The `type` field identifies the event, and the `data` object contains the event-specific payload.
+
+```json
+{
+  "id": "evt_abc123",
+  "type": "account.deposit.completed",
+  "created_at": "2024-01-15T10:30:00Z",
+  "data": {
+    "account_id": "CUST001.USD.001",
+    "amount": 5000.00,
+    "asset_type": "FIAT_USD",
+    "transaction_id": "txn_xyz789"
+  }
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | string | Unique event identifier. Use this for idempotency. |
+| `type` | string | Event type, e.g. `deposit.completed`. |
+| `created_at` | ISO 8601 | Timestamp when the event was created on the Rail platform. |
+| `data` | object | Event-specific payload. Schema varies by event type. |
+
+---
+
+## Verify webhook signatures
+
+Rail signs every outgoing webhook payload using HMAC-SHA256 and includes the signature in the `X-Rail-Signature` request header. You must verify this signature before processing any webhook to ensure the request genuinely originated from Rail.
+
+**How it works:**
+
+1. Rail computes `HMAC-SHA256(your_secret, raw_request_body)`
+2. Rail sets `X-Rail-Signature: sha256=<hex_digest>` on the request
+3. Your server recomputes the HMAC using the same secret and the raw request body
+4. If your computed value matches the header value, the payload is authentic
+
+<Warning>
+  Always verify the signature before processing a webhook payload. Skipping verification leaves your endpoint vulnerable to spoofed requests from third parties.
+</Warning>
+
+<Tabs>
+  <Tab title="Node.js">
+    ```javascript
+    const crypto = require('crypto');
+
+    function verifyWebhook(payload, signature, secret) {
+      const expected = crypto
+        .createHmac('sha256', secret)
+        .update(payload)
+        .digest('hex');
+      return `sha256=${expected}` === signature;
+    }
+
+    // In your Express route handler:
+    app.post('/webhooks/rail', express.raw({ type: 'application/json' }), (req, res) => {
+      const signature = req.headers['x-rail-signature'];
+      const isValid = verifyWebhook(req.body, signature, process.env.RAIL_WEBHOOK_SECRET);
+
+      if (!isValid) {
+        return res.status(401).send('Invalid signature');
+      }
+
+      const event = JSON.parse(req.body);
+      // Process event asynchronously...
+      res.status(200).send('OK');
+    });
+    ```
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import hmac
+    import hashlib
+
+    def verify_webhook(payload: bytes, signature: str, secret: str) -> bool:
+        expected = hmac.new(
+            secret.encode('utf-8'),
+            payload,
+            hashlib.sha256
+        ).hexdigest()
+        return f"sha256={expected}" == signature
+
+    # In your Flask route handler:
+    @app.route('/webhooks/rail', methods=['POST'])
+    def handle_webhook():
+        signature = request.headers.get('X-Rail-Signature')
+        is_valid = verify_webhook(request.get_data(), signature, os.environ['RAIL_WEBHOOK_SECRET'])
+
+        if not is_valid:
+            return 'Invalid signature', 401
+
+        event = request.get_json()
+        # Process event asynchronously...
+        return 'OK', 200
+    ```
+  </Tab>
+  <Tab title="Ruby">
+    ```ruby
+    require 'openssl'
+
+    def verify_webhook(payload, signature, secret)
+      expected = OpenSSL::HMAC.hexdigest('SHA256', secret, payload)
+      "sha256=#{expected}" == signature
+    end
+
+    # In your Rails controller:
+    def handle_webhook
+      signature = request.headers['X-Rail-Signature']
+      is_valid = verify_webhook(request.raw_post, signature, ENV['RAIL_WEBHOOK_SECRET'])
+
+      return head :unauthorized unless is_valid
+
+      event = JSON.parse(request.raw_post)
+      # Process event asynchronously...
+      head :ok
+    end
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  Always use the **raw request body** — before any JSON parsing — when computing the HMAC. Parsing and re-serializing the JSON can alter whitespace or key ordering and cause verification to fail.
+</Note>
+
+---
+
+## Idempotency
+
+Rail guarantees at-least-once delivery, which means your endpoint may occasionally receive the same event more than once (for example, if a delivery attempt times out before your server responds). Use the `id` field in each payload to deduplicate events on your side.
+
+```javascript
+// Example: skip already-processed events
+const eventId = event.id;
+
+if (await db.events.exists({ id: eventId })) {
+  return res.status(200).send('Already processed');
+}
+
+await db.events.insert({ id: eventId, processed_at: new Date() });
+// Continue processing...
+```
+
+---
+
+## Best practices
+
+<Accordion title="Respond immediately with 200, process asynchronously">
+  Rail considers a delivery successful only when your endpoint responds with an HTTP `2xx` status code. Aim to respond within **5 seconds**. If your processing logic takes longer, acknowledge receipt immediately and hand off to a background queue:
+
+  ```javascript
+  app.post('/webhooks/rail', (req, res) => {
+    // Respond immediately
+    res.status(200).send('OK');
+
+    // Hand off to background worker
+    queue.push({ event: req.body });
+  });
+  ```
+</Accordion>
+
+<Accordion title="Understand the retry policy">
+  If your endpoint returns a non-`2xx` response, or if the request times out, Rail automatically retries delivery using **exponential backoff**. Retries are attempted at increasing intervals over a window of 24 hours. After the maximum number of retry attempts, the event is marked as failed and no further deliveries are attempted.
+
+  To avoid unnecessary retries, make sure your endpoint:
+  - Returns `200` as soon as the request is received
+  - Does not return `5xx` errors for events you have already processed
+  - Is available and responsive in production
+</Accordion>
+
+<Accordion title="Always verify signatures">
+  Never process a webhook payload without first verifying the `X-Rail-Signature` header. This protects your integration from spoofed requests and replay attacks. See the [signature verification section](#verify-webhook-signatures) above for code examples.
+</Accordion>
+
+<Accordion title="Implement idempotency">
+  Rail delivers events at least once. Store the event `id` after processing and skip any event you have already handled. This prevents duplicate side effects such as double-crediting an account or sending a confirmation email twice.
+</Accordion>
+
+<Accordion title="Use HTTPS endpoints only">
+  Your webhook endpoint must be served over HTTPS. Rail will not deliver events to plain HTTP URLs. Use a valid TLS certificate from a trusted certificate authority.
+</Accordion>
+
+---
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Webhook Events Reference" icon="list" href="/webhooks/events">
+    Browse all events Rail can send, grouped by category, with example payloads.
+  </Card>
+  <Card title="Webhooks API Reference" icon="code" href="/api-reference/webhooks">
+    Full API reference for managing webhook subscriptions.
+  </Card>
+  <Card title="Wallet as a Service" icon="wallet" href="/use-cases/wallet-as-a-service">
+    See webhooks in action in an end-to-end WaaS integration.
+  </Card>
+  <Card title="Idempotency" icon="shield-check" href="/api-reference/idempotency">
+    Learn about idempotency keys for safe request retries.
+  </Card>
+</CardGroup>

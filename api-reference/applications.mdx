@@ -1,0 +1,584 @@
+---
+title: "Applications API — Onboarding & KYC Management"
+sidebarTitle: "Applications"
+description: "Create, update, and submit INDIVIDUAL or CORPORATION onboarding applications. Manage KYC status, add officers, and generate SDK access codes."
+---
+
+The Applications resource is the entry point for onboarding new customers onto the Rail platform. An application collects the identity and compliance information needed to satisfy KYC/KYB requirements — once approved, a corresponding [Customer](/api-reference/customers) record is created that you can use to open accounts and initiate money movement. Applications can be of type `INDIVIDUAL` (a natural person) or `CORPORATION` (a legal entity with one or more associated individuals).
+
+---
+
+## POST /v1/applications
+
+Creates a new onboarding application. Set `application_type` to `INDIVIDUAL` for a natural person or `CORPORATION` for a legal entity. The application begins in `INCOMPLETE` status and must reach `READY_FOR_SUBMISSION` before it can be submitted for review.
+
+<ParamField body="application_type" type="string" required>
+  The type of applicant. Must be `INDIVIDUAL` or `CORPORATION`.
+</ParamField>
+
+<ParamField body="applicant" type="object" required>
+  Identity and contact information for the primary applicant.
+  <Expandable title="applicant fields">
+    <ParamField body="first_name" type="string" required>
+      Applicant's legal first name.
+    </ParamField>
+    <ParamField body="last_name" type="string" required>
+      Applicant's legal last name.
+    </ParamField>
+    <ParamField body="email" type="string" required>
+      Contact email address. Used for notifications and identity verification.
+    </ParamField>
+    <ParamField body="date_of_birth" type="string">
+      Date of birth in `YYYY-MM-DD` format. Required for `INDIVIDUAL` applications.
+    </ParamField>
+    <ParamField body="address" type="object">
+      Residential or registered address.
+      <Expandable title="address fields">
+        <ParamField body="street_line_1" type="string" required>
+          Primary street address line.
+        </ParamField>
+        <ParamField body="street_line_2" type="string">
+          Apartment, suite, or unit number (optional).
+        </ParamField>
+        <ParamField body="city" type="string" required>
+          City name.
+        </ParamField>
+        <ParamField body="state" type="string" required>
+          Two-letter US state code (e.g. `NY`).
+        </ParamField>
+        <ParamField body="postal_code" type="string" required>
+          ZIP or postal code.
+        </ParamField>
+        <ParamField body="country_code" type="string" required>
+          ISO 3166-1 alpha-2 country code (e.g. `US`).
+        </ParamField>
+      </Expandable>
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+```bash
+curl -X POST https://sandbox.layer2financial.com/api/v1/applications \
+  -H "Authorization: Bearer {AUTH_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "application_type": "INDIVIDUAL",
+    "applicant": {
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "email": "jane.doe@example.com",
+      "date_of_birth": "1990-01-01",
+      "address": {
+        "street_line_1": "123 Main St",
+        "city": "New York",
+        "state": "NY",
+        "postal_code": "10001",
+        "country_code": "US"
+      }
+    }
+  }'
+```
+
+<ResponseField name="data" type="object">
+  The newly created application object.
+  <Expandable title="data fields">
+    <ResponseField name="id" type="string">
+      Unique application identifier (e.g. `app_abc123`).
+    </ResponseField>
+    <ResponseField name="application_type" type="string">
+      `INDIVIDUAL` or `CORPORATION`.
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Current application status. Starts as `INCOMPLETE`.
+    </ResponseField>
+    <ResponseField name="applicant" type="object">
+      The submitted applicant details.
+    </ResponseField>
+    <ResponseField name="created_at" type="string">
+      ISO 8601 timestamp of creation.
+    </ResponseField>
+    <ResponseField name="updated_at" type="string">
+      ISO 8601 timestamp of the last update.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": {
+    "id": "app_abc123",
+    "application_type": "INDIVIDUAL",
+    "status": "INCOMPLETE",
+    "applicant": {
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "email": "jane.doe@example.com",
+      "date_of_birth": "1990-01-01",
+      "address": {
+        "street_line_1": "123 Main St",
+        "city": "New York",
+        "state": "NY",
+        "postal_code": "10001",
+        "country_code": "US"
+      }
+    },
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+---
+
+## GET /v1/applications
+
+Returns a paginated list of all applications associated with your platform. Use the optional query parameters to filter by status or application type.
+
+<ParamField query="status" type="string">
+  Filter by application status. One of: `INCOMPLETE`, `READY_FOR_SUBMISSION`, `SUBMITTED`, `APPROVED`, `CHANGES_REQUESTED`, `DENIED`.
+</ParamField>
+
+<ParamField query="application_type" type="string">
+  Filter by application type: `INDIVIDUAL` or `CORPORATION`.
+</ParamField>
+
+<ParamField query="page" type="integer">
+  Page number for pagination. Defaults to `1`.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Number of results per page. Defaults to `20`, maximum `100`.
+</ParamField>
+
+```bash
+curl -X GET "https://sandbox.layer2financial.com/api/v1/applications?status=APPROVED&application_type=INDIVIDUAL&page=1&page_size=20" \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+<ResponseField name="data" type="array">
+  Array of application objects. Each item has the same shape as the single-application response.
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Pagination metadata.
+  <Expandable title="pagination fields">
+    <ResponseField name="total" type="integer">
+      Total number of matching records.
+    </ResponseField>
+    <ResponseField name="page" type="integer">
+      Current page number.
+    </ResponseField>
+    <ResponseField name="page_size" type="integer">
+      Number of records per page.
+    </ResponseField>
+    <ResponseField name="total_pages" type="integer">
+      Total number of pages.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": [
+    {
+      "id": "app_abc123",
+      "application_type": "INDIVIDUAL",
+      "status": "APPROVED",
+      "applicant": {
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "jane.doe@example.com"
+      },
+      "created_at": "2024-01-15T10:30:00Z",
+      "updated_at": "2024-01-16T09:00:00Z"
+    }
+  ],
+  "pagination": {
+    "total": 1,
+    "page": 1,
+    "page_size": 20,
+    "total_pages": 1
+  }
+}
+```
+
+---
+
+## GET /v1/applications/{application_id}
+
+Retrieves full details for a single application by its ID.
+
+<ParamField path="application_id" type="string" required>
+  The unique identifier of the application (e.g. `app_abc123`).
+</ParamField>
+
+```bash
+curl -X GET https://sandbox.layer2financial.com/api/v1/applications/app_abc123 \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+<ResponseField name="data" type="object">
+  Full application object including applicant details, status, and any compliance metadata.
+  <Expandable title="data fields">
+    <ResponseField name="id" type="string">Unique application identifier.</ResponseField>
+    <ResponseField name="application_type" type="string">`INDIVIDUAL` or `CORPORATION`.</ResponseField>
+    <ResponseField name="status" type="string">Current status of the application.</ResponseField>
+    <ResponseField name="applicant" type="object">Primary applicant details.</ResponseField>
+    <ResponseField name="customer_id" type="string">
+      Populated once the application is `APPROVED` — links to the created Customer record.
+    </ResponseField>
+    <ResponseField name="created_at" type="string">ISO 8601 creation timestamp.</ResponseField>
+    <ResponseField name="updated_at" type="string">ISO 8601 last-update timestamp.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": {
+    "id": "app_abc123",
+    "application_type": "INDIVIDUAL",
+    "status": "APPROVED",
+    "applicant": {
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "email": "jane.doe@example.com",
+      "date_of_birth": "1990-01-01",
+      "address": {
+        "street_line_1": "123 Main St",
+        "city": "New York",
+        "state": "NY",
+        "postal_code": "10001",
+        "country_code": "US"
+      }
+    },
+    "customer_id": "CUST001",
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-16T09:00:00Z"
+  }
+}
+```
+
+---
+
+## PATCH /v1/applications/{application_id}
+
+Updates fields on an existing application. You can only update applications that are in `INCOMPLETE` or `CHANGES_REQUESTED` status.
+
+<ParamField path="application_id" type="string" required>
+  The unique identifier of the application to update.
+</ParamField>
+
+<ParamField body="applicant" type="object">
+  Partial applicant object. Only the fields you include are updated.
+  <Expandable title="applicant fields">
+    <ParamField body="first_name" type="string">Updated first name.</ParamField>
+    <ParamField body="last_name" type="string">Updated last name.</ParamField>
+    <ParamField body="email" type="string">Updated email address.</ParamField>
+    <ParamField body="date_of_birth" type="string">Updated date of birth (`YYYY-MM-DD`).</ParamField>
+    <ParamField body="address" type="object">Updated address object.</ParamField>
+  </Expandable>
+</ParamField>
+
+<Warning>
+  Updates to applications in `SUBMITTED`, `APPROVED`, or `DENIED` status are not permitted and will return a `409 Conflict` error.
+</Warning>
+
+```bash
+curl -X PATCH https://sandbox.layer2financial.com/api/v1/applications/app_abc123 \
+  -H "Authorization: Bearer {AUTH_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "applicant": {
+      "email": "jane.newemail@example.com"
+    }
+  }'
+```
+
+```json
+{
+  "data": {
+    "id": "app_abc123",
+    "application_type": "INDIVIDUAL",
+    "status": "INCOMPLETE",
+    "applicant": {
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "email": "jane.newemail@example.com",
+      "date_of_birth": "1990-01-01",
+      "address": {
+        "street_line_1": "123 Main St",
+        "city": "New York",
+        "state": "NY",
+        "postal_code": "10001",
+        "country_code": "US"
+      }
+    },
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T11:45:00Z"
+  }
+}
+```
+
+---
+
+## GET /v1/applications/{application_id}/status
+
+Returns a detailed status object for the application, including any outstanding requirements or reviewer notes that explain why changes were requested.
+
+<ParamField path="application_id" type="string" required>
+  The unique identifier of the application.
+</ParamField>
+
+```bash
+curl -X GET https://sandbox.layer2financial.com/api/v1/applications/app_abc123/status \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+<ResponseField name="data" type="object">
+  <Expandable title="data fields">
+    <ResponseField name="application_id" type="string">The application ID.</ResponseField>
+    <ResponseField name="status" type="string">
+      Current status. One of: `INCOMPLETE`, `READY_FOR_SUBMISSION`, `SUBMITTED`, `APPROVED`, `CHANGES_REQUESTED`, `DENIED`.
+    </ResponseField>
+    <ResponseField name="requirements" type="array">
+      List of outstanding items that must be resolved before the application can advance. Each item includes a `field` and `message`.
+    </ResponseField>
+    <ResponseField name="reviewer_notes" type="string">
+      Human-readable notes from the compliance reviewer (present when status is `CHANGES_REQUESTED` or `DENIED`).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": {
+    "application_id": "app_abc123",
+    "status": "CHANGES_REQUESTED",
+    "requirements": [
+      {
+        "field": "applicant.date_of_birth",
+        "message": "Date of birth could not be verified. Please re-enter."
+      }
+    ],
+    "reviewer_notes": "Identity document did not match the provided date of birth."
+  }
+}
+```
+
+---
+
+## POST /v1/applications/{application_id}/submit
+
+Submits the application to Rail's compliance team for review. The application must be in `READY_FOR_SUBMISSION` status before calling this endpoint.
+
+<ParamField path="application_id" type="string" required>
+  The unique identifier of the application to submit.
+</ParamField>
+
+<Note>
+  After submission, the application transitions to `SUBMITTED` status. You will receive a webhook event when the status changes to `APPROVED`, `CHANGES_REQUESTED`, or `DENIED`. Subscribe to application events via the [Webhooks API](/api-reference/webhooks).
+</Note>
+
+```bash
+curl -X POST https://sandbox.layer2financial.com/api/v1/applications/app_abc123/submit \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+```json
+{
+  "data": {
+    "id": "app_abc123",
+    "status": "SUBMITTED",
+    "submitted_at": "2024-01-15T12:00:00Z"
+  }
+}
+```
+
+---
+
+## POST /v1/applications/{application_id}/individual
+
+Adds a new individual (e.g. a beneficial owner, officer, or director) to a `CORPORATION` application. Corporate applications require at least one associated individual before they can be submitted.
+
+<ParamField path="application_id" type="string" required>
+  The ID of the corporation application to add an individual to.
+</ParamField>
+
+<ParamField body="first_name" type="string" required>
+  Individual's legal first name.
+</ParamField>
+
+<ParamField body="last_name" type="string" required>
+  Individual's legal last name.
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  Individual's contact email.
+</ParamField>
+
+<ParamField body="date_of_birth" type="string" required>
+  Date of birth in `YYYY-MM-DD` format.
+</ParamField>
+
+<ParamField body="role" type="string" required>
+  The individual's role in the corporation (e.g. `BENEFICIAL_OWNER`, `OFFICER`, `DIRECTOR`).
+</ParamField>
+
+<ParamField body="address" type="object">
+  Residential address of the individual.
+  <Expandable title="address fields">
+    <ParamField body="street_line_1" type="string" required>Primary street address.</ParamField>
+    <ParamField body="city" type="string" required>City.</ParamField>
+    <ParamField body="state" type="string" required>Two-letter state code.</ParamField>
+    <ParamField body="postal_code" type="string" required>ZIP or postal code.</ParamField>
+    <ParamField body="country_code" type="string" required>ISO 3166-1 alpha-2 country code.</ParamField>
+  </Expandable>
+</ParamField>
+
+```bash
+curl -X POST https://sandbox.layer2financial.com/api/v1/applications/app_corp456/individual \
+  -H "Authorization: Bearer {AUTH_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@acmecorp.com",
+    "date_of_birth": "1975-06-15",
+    "role": "BENEFICIAL_OWNER",
+    "address": {
+      "street_line_1": "456 Corporate Blvd",
+      "city": "Boston",
+      "state": "MA",
+      "postal_code": "02101",
+      "country_code": "US"
+    }
+  }'
+```
+
+```json
+{
+  "data": {
+    "individual_id": "ind_def456",
+    "application_id": "app_corp456",
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith@acmecorp.com",
+    "role": "BENEFICIAL_OWNER",
+    "created_at": "2024-01-15T13:00:00Z"
+  }
+}
+```
+
+---
+
+## PATCH /v1/applications/{application_id}/individual/{individual_id}
+
+Updates information for an individual associated with a corporate application.
+
+<ParamField path="application_id" type="string" required>
+  The ID of the corporation application.
+</ParamField>
+
+<ParamField path="individual_id" type="string" required>
+  The ID of the individual to update.
+</ParamField>
+
+<ParamField body="first_name" type="string">Updated first name.</ParamField>
+<ParamField body="last_name" type="string">Updated last name.</ParamField>
+<ParamField body="email" type="string">Updated email address.</ParamField>
+<ParamField body="date_of_birth" type="string">Updated date of birth (`YYYY-MM-DD`).</ParamField>
+<ParamField body="role" type="string">Updated role.</ParamField>
+<ParamField body="address" type="object">Updated address object.</ParamField>
+
+```bash
+curl -X PATCH https://sandbox.layer2financial.com/api/v1/applications/app_corp456/individual/ind_def456 \
+  -H "Authorization: Bearer {AUTH_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john.smith.updated@acmecorp.com"
+  }'
+```
+
+```json
+{
+  "data": {
+    "individual_id": "ind_def456",
+    "application_id": "app_corp456",
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john.smith.updated@acmecorp.com",
+    "role": "BENEFICIAL_OWNER",
+    "updated_at": "2024-01-15T14:00:00Z"
+  }
+}
+```
+
+---
+
+## DELETE /v1/applications/{application_id}/individual/{individual_id}
+
+Removes an individual from a corporate application. This is only permitted while the application is in `INCOMPLETE` or `CHANGES_REQUESTED` status.
+
+<ParamField path="application_id" type="string" required>
+  The ID of the corporation application.
+</ParamField>
+
+<ParamField path="individual_id" type="string" required>
+  The ID of the individual to remove.
+</ParamField>
+
+```bash
+curl -X DELETE https://sandbox.layer2financial.com/api/v1/applications/app_corp456/individual/ind_def456 \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+```json
+{
+  "data": {
+    "message": "Individual ind_def456 successfully removed from application app_corp456."
+  }
+}
+```
+
+---
+
+## POST /v1/applications/{application_id}/accesscode
+
+Generates a short-lived SDK access code that can be passed to Rail's front-end SDK, allowing the applicant to complete identity verification steps (document upload, selfie, etc.) directly in your interface.
+
+<ParamField path="application_id" type="string" required>
+  The ID of the application for which to generate the access code.
+</ParamField>
+
+<Tip>
+  Access codes are single-use and expire after 15 minutes. Generate a new one each time you present the SDK verification flow to the applicant.
+</Tip>
+
+```bash
+curl -X POST https://sandbox.layer2financial.com/api/v1/applications/app_abc123/accesscode \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+<ResponseField name="data" type="object">
+  <Expandable title="data fields">
+    <ResponseField name="access_code" type="string">
+      The one-time SDK access code string.
+    </ResponseField>
+    <ResponseField name="expires_at" type="string">
+      ISO 8601 timestamp when the code expires (15 minutes from issuance).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": {
+    "access_code": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "expires_at": "2024-01-15T12:15:00Z"
+  }
+}
+```
+
+<Note>
+  For a complete walkthrough of the onboarding flow — from application creation through customer approval — see the [Customer Onboarding guide](/guides/customer-onboarding).
+</Note>

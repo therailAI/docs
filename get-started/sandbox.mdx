@@ -1,0 +1,163 @@
+---
+title: "Test Integrations with the Rail Sandbox"
+sidebarTitle: "Sandbox"
+description: "Use Rail's isolated sandbox environment to build and test your integration safely — with test assets, synthetic data, and no real money at risk."
+---
+
+The Rail sandbox is a fully isolated environment that mirrors the production API surface. You can create customers, open accounts, simulate transactions, and test webhook flows without touching real money or real customer data. Every new Rail integration should be built and validated in the sandbox before being pointed at production.
+
+## Sandbox vs production
+
+The sandbox and production environments share the same API structure, endpoints, and authentication model. The key differences are in the base URL, the credentials you use, and the assets available.
+
+| | Sandbox | Production |
+|---|---|---|
+| **Base URL** | `https://sandbox.layer2financial.com/api` | `https://platform.layer2financial.com/api` |
+| **Auth endpoint** | `https://auth.layer2financial.com/oauth2/ausbdqlx69rH6OjWd696/v1/token` | Same |
+| **Credentials** | Sandbox client ID & secret | Production client ID & secret |
+| **Assets** | Test assets (e.g. `FIAT_TESTNET_USD`) | Live fiat & digital assets |
+| **Real money** | No | Yes |
+| **Data isolation** | Fully isolated from production | — |
+| **KYC/KYB** | Automated test outcomes | Real compliance checks |
+
+<Warning>
+  Sandbox and production use separate credential sets. A client ID and secret issued for the sandbox will not work against the production API, and vice versa. Never use production credentials in a development or CI environment.
+</Warning>
+
+## Requesting sandbox access
+
+Sandbox access is available to all registered Rail developers.
+
+<Steps>
+
+  <Step title="Request access">
+    Visit [rail.io/contact-us](https://rail.io/contact-us) or [docs.rail.io](https://docs.rail.io) and complete the sandbox access form. Provide your name, company, and a brief description of what you're building.
+  </Step>
+
+  <Step title="Receive your credentials">
+    Once your request is approved, you'll receive a **Client ID** and **Client Secret** by email. These are your sandbox-only credentials.
+  </Step>
+
+  <Step title="Store your credentials securely">
+    Add your credentials to your local environment or secrets manager:
+
+    ```bash
+    export RAIL_CLIENT_ID="your_sandbox_client_id"
+    export RAIL_CLIENT_SECRET="your_sandbox_client_secret"
+    ```
+  </Step>
+
+  <Step title="Authenticate and start building">
+    Follow the [Authentication guide](/get-started/authentication) to exchange your credentials for an access token, then work through the [Quickstart](/quickstart) to make your first API calls.
+  </Step>
+
+</Steps>
+
+## Test assets
+
+The sandbox provides dedicated test assets that behave like their production equivalents but carry no real monetary value. Use these assets when opening accounts and creating transactions during development.
+
+| Asset identifier | Represents | Notes |
+|---|---|---|
+| `FIAT_TESTNET_USD` | US Dollar (test) | Use for all fiat USD testing in the sandbox |
+| `ETH_TESTNET` | Ethereum (test) | Test ETH transactions without real gas costs |
+| `BTC_TESTNET` | Bitcoin (test) | Test BTC transactions on the Bitcoin testnet |
+
+<Tip>
+  Always use the `_TESTNET` or `TESTNET_` prefixed asset identifiers in sandbox requests. Attempting to use production asset identifiers (e.g. `USD`, `ETH`) in the sandbox will return a validation error.
+</Tip>
+
+## Sandbox behavior
+
+### Automated compliance outcomes
+
+In the sandbox, KYC and KYB checks are processed automatically using test data patterns. This lets you test the full application lifecycle — including edge cases — without waiting for manual review.
+
+<Tabs>
+  <Tab title="Auto-approved applications">
+    Applications submitted with standard test data (like the Jane Doe example in the Quickstart) are automatically approved within seconds.
+  </Tab>
+  <Tab title="Triggering specific outcomes">
+    You can trigger specific compliance outcomes in the sandbox by using reserved test values in applicant fields. Refer to the [customer onboarding guide](/guides/customer-onboarding) for the full list of test trigger values.
+  </Tab>
+  <Tab title="Rejection scenarios">
+    To test rejection handling, use the reserved last name `"Rejected"` in your applicant data. The application will be declined, allowing you to test your application's error-handling and notification flows.
+  </Tab>
+</Tabs>
+
+### Transaction simulation
+
+Sandbox transactions follow the same state machine as production (e.g. `PENDING` → `PROCESSING` → `COMPLETED`), but state transitions happen automatically and near-instantly so you can test your full flow without artificial delays.
+
+### Webhook delivery
+
+Webhooks work in the sandbox exactly as they do in production. You can register a webhook endpoint (we recommend [webhook.site](https://webhook.site) for quick local testing) and receive real event payloads for every state change.
+
+<Note>
+  If you're developing locally, use a tunneling tool like ngrok to expose your local server to the internet so Rail's sandbox can deliver webhook events to it.
+</Note>
+
+## Data and reset policy
+
+### Isolation
+
+All sandbox data is completely isolated from production. Nothing you create, submit, or transact in the sandbox has any effect on production — including customers, accounts, balances, or transaction history.
+
+### Persistence
+
+Sandbox data persists between sessions unless explicitly deleted. You can reuse customers, accounts, and counterparties across multiple development sessions. Use the API to delete test resources you no longer need.
+
+### Limitations
+
+The sandbox has a small number of limitations compared to production:
+
+- **Rate limits** are applied at a lower threshold than production to prevent unintentional load on shared infrastructure.
+- **Some payment rails** (e.g., specific real-time payment networks) may be simulated rather than connected to live test networks.
+- **Balances** do not carry over between major sandbox resets. Rail will announce scheduled resets in advance.
+
+## Tips for effective sandbox testing
+
+<CardGroup cols={2}>
+  <Card title="Test the full lifecycle" icon="rotate">
+    Don't just test the happy path. Exercise every state transition — approvals, rejections, pending reviews, and failed transactions.
+  </Card>
+  <Card title="Use unique reference data" icon="fingerprint">
+    Give each test customer a unique email address so you can easily look them up and avoid conflicts between test runs.
+  </Card>
+  <Card title="Subscribe to all events" icon="bell">
+    Create a broad webhook subscription during development so you can observe every event Rail emits and understand the full event flow.
+  </Card>
+  <Card title="Simulate error conditions" icon="triangle-exclamation">
+    Use reserved test values to trigger errors and edge cases. Verify that your error handling and retry logic behave correctly before going live.
+  </Card>
+</CardGroup>
+
+## Moving to production
+
+When you're ready to go live, you'll need a separate set of production credentials. Your sandbox integration code requires only two changes:
+
+1. Swap your **client ID and secret** for production credentials.
+2. Update the **base URL** from `https://sandbox.layer2financial.com/api` to `https://platform.layer2financial.com/api`.
+
+Everything else — endpoints, request shapes, response schemas, authentication flow — is identical.
+
+<Note>
+  Production access requires completing Rail's platform agreement and onboarding process. Contact the Rail team at [rail.io/contact-us](https://rail.io/contact-us) when you're ready to launch.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="lock" href="/get-started/authentication">
+    Obtain your first OAuth2 access token using your sandbox credentials.
+  </Card>
+  <Card title="Quickstart" icon="bolt" href="/quickstart">
+    Follow a step-by-step guide to make your first API calls in the sandbox.
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/webhooks/overview">
+    Set up real-time event delivery so your app stays in sync with Rail.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/overview">
+    Browse every endpoint available in the sandbox and production environments.
+  </Card>
+</CardGroup>

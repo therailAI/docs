@@ -1,0 +1,231 @@
+---
+title: "Authenticate with Rail's OAuth2 API"
+sidebarTitle: "Authentication"
+description: "Learn how to obtain and use OAuth2 Bearer tokens to authenticate every request to the Rail API using the Client Credentials grant flow."
+---
+
+Every request to the Rail API must include a valid Bearer token in the `Authorization` header. Rail uses the OAuth2 Client Credentials grant — a server-to-server flow designed for machine-to-machine authentication where there is no end-user login involved. You exchange your client ID and secret for a short-lived access token, then include that token with each API call.
+
+## How the Client Credentials grant works
+
+The flow has two steps: obtain a token, then use it. There is no redirect, no user interaction, and no refresh token — when a token expires you simply request a new one using the same credentials.
+
+```
+Your Server                      Rail Auth Server
+     |                                  |
+     |  POST /token (Basic Auth)        |
+     |  client_id + client_secret  ───► |
+     |                                  |
+     |  ◄─── access_token (12h TTL)     |
+     |                                  |
+     |  GET /api/v1/customers           |
+     |  Authorization: Bearer <token> ──► Rail API
+     |                                  |
+     |  ◄─── 200 OK                     |
+```
+
+## Prerequisites
+
+Before you can authenticate, you need a client ID and client secret. You receive these when you [request sandbox access](/get-started/sandbox). Keep your client secret secure — treat it the same way you would a database password.
+
+<Warning>
+  Never expose your client secret in client-side code, mobile apps, or public repositories. All calls to the Rail Auth endpoint must originate from your backend server.
+</Warning>
+
+## Step 1 — Encode your credentials
+
+The token endpoint expects your credentials as a Base64-encoded string in the format `clientId:clientSecret`, passed as an HTTP Basic Auth header.
+
+<CodeGroup>
+
+```bash cURL / Shell
+export RAIL_CLIENT_ID="your_client_id"
+export RAIL_CLIENT_SECRET="your_client_secret"
+
+# Encode clientId:clientSecret as Base64
+export RAIL_BASIC=$(echo -n "$RAIL_CLIENT_ID:$RAIL_CLIENT_SECRET" | base64)
+```
+
+```javascript Node.js
+const clientId = process.env.RAIL_CLIENT_ID;
+const clientSecret = process.env.RAIL_CLIENT_SECRET;
+
+const encoded = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+```
+
+```python Python
+import base64
+import os
+
+client_id = os.environ['RAIL_CLIENT_ID']
+client_secret = os.environ['RAIL_CLIENT_SECRET']
+
+encoded = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
+```
+
+</CodeGroup>
+
+## Step 2 — Request an access token
+
+POST to the token endpoint with your Base64-encoded credentials and the scopes your integration needs. Scopes are space-separated (encoded as `+` in the query string).
+
+```bash
+curl --request POST \
+  'https://auth.layer2financial.com/oauth2/ausbdqlx69rH6OjWd696/v1/token?grant_type=client_credentials&scope=customers:read+customers:write+accounts:read+accounts:write' \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --header "Authorization: Basic $RAIL_BASIC"
+```
+
+A successful response returns the token and metadata:
+
+```json
+{
+  "token_type": "Bearer",
+  "expires_in": 43200,
+  "access_token": "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ5b3VyX2NsaWVudF9pZCJ9...",
+  "scope": "customers:read customers:write accounts:read accounts:write"
+}
+```
+
+<ResponseField name="token_type" type="string">
+  Always `"Bearer"`. Use this value as the prefix in your `Authorization` header.
+</ResponseField>
+
+<ResponseField name="expires_in" type="integer">
+  Seconds until the token expires. Rail tokens expire after **43 200 seconds (12 hours)**.
+</ResponseField>
+
+<ResponseField name="access_token" type="string">
+  The token value to include in subsequent API requests.
+</ResponseField>
+
+<ResponseField name="scope" type="string">
+  The scopes granted to this token. May be a subset of what you requested if your client is not authorized for certain scopes.
+</ResponseField>
+
+## Step 3 — Use the token in API requests
+
+Include the access token as a Bearer token in the `Authorization` header of every Rail API request:
+
+```bash
+curl --request GET \
+  'https://sandbox.layer2financial.com/api/v1/customers' \
+  --header "Authorization: Bearer $RAIL_TOKEN" \
+  --header 'Accept: application/json'
+```
+
+## Available scopes
+
+Request only the scopes your integration actually needs. Requesting broader access than necessary increases your exposure if credentials are ever compromised.
+
+| Scope | Access granted |
+|---|---|
+| `customers:read` | Read customer profiles and KYC status |
+| `customers:write` | Create and update customers |
+| `accounts:read` | Read account details and balances |
+| `accounts:write` | Open and manage accounts |
+| `counterparties:read` | Read saved counterparty details |
+| `counterparties:write` | Add and update counterparties |
+| `deposits:read` | Read deposit records and instructions |
+| `deposits:write` | Initiate deposits |
+| `withdrawals:read` | Read withdrawal records |
+| `withdrawals:write` | Initiate withdrawals |
+| `transfers:read` | Read transfer records |
+| `transfers:write` | Initiate transfers between accounts |
+| `exchanges:read` | Read exchange records |
+| `exchanges:write` | Initiate asset exchanges |
+| `payments:read` | Read payment records |
+| `payments:write` | Initiate payments and collections |
+| `subscriptions:read` | Read webhook subscriptions |
+| `subscriptions:write` | Create and manage webhook subscriptions |
+
+## Token lifecycle and refresh strategy
+
+Rail tokens expire after **12 hours**. Your integration should handle expiry gracefully rather than waiting for a request to fail.
+
+<Tip>
+  Cache the token and schedule a proactive refresh roughly 30–60 minutes before expiry. This avoids failed requests during token transitions and keeps your application's error rate clean.
+</Tip>
+
+A simple caching pattern:
+
+```javascript Node.js
+let cachedToken = null;
+let tokenExpiresAt = null;
+
+async function getAccessToken() {
+  const bufferSeconds = 3600; // refresh 1 hour before expiry
+  const now = Math.floor(Date.now() / 1000);
+
+  if (cachedToken && tokenExpiresAt && now < tokenExpiresAt - bufferSeconds) {
+    return cachedToken;
+  }
+
+  const response = await fetchNewToken(); // your token request logic
+  cachedToken = response.access_token;
+  tokenExpiresAt = now + response.expires_in;
+
+  return cachedToken;
+}
+```
+
+```python Python
+import time
+import requests
+
+_token_cache = {"token": None, "expires_at": 0}
+BUFFER_SECONDS = 3600  # refresh 1 hour before expiry
+
+def get_access_token():
+    now = time.time()
+    if _token_cache["token"] and now < _token_cache["expires_at"] - BUFFER_SECONDS:
+        return _token_cache["token"]
+
+    response = fetch_new_token()  # your token request logic
+    _token_cache["token"] = response["access_token"]
+    _token_cache["expires_at"] = now + response["expires_in"]
+
+    return _token_cache["token"]
+```
+
+## Common authentication errors
+
+If your request returns a `401` or `403`, use the table below to diagnose the issue:
+
+| HTTP Status | Error | Likely cause |
+|---|---|---|
+| `401 Unauthorized` | `invalid_client` | Client ID or secret is incorrect, or the Basic Auth header is malformed |
+| `401 Unauthorized` | `invalid_token` | The Bearer token has expired or is otherwise invalid |
+| `403 Forbidden` | `insufficient_scope` | Your token does not include the scope required by the endpoint you're calling |
+| `400 Bad Request` | `invalid_request` | The `grant_type` or `scope` parameter is missing or misspelled |
+
+<Warning>
+  If you receive repeated `401` errors with a previously working token, your token has likely expired. Request a new one using your client credentials. Do not retry with the same expired token.
+</Warning>
+
+### Checking your token
+
+You can inspect a JWT access token by base64-decoding the middle segment (the payload) to confirm the `exp` claim and granted scopes:
+
+```bash
+# Decode the JWT payload (middle segment)
+echo "eyJzdWIiOiJ5b3VyX2NsaWVudF9pZCJ9" | base64 --decode | python3 -m json.tool
+```
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Sandbox environment" icon="flask" href="/get-started/sandbox">
+    Learn how to use the sandbox and the test assets available during development.
+  </Card>
+  <Card title="API Reference: Authentication" icon="code" href="/api-reference/authentication">
+    Full reference documentation for the token endpoint and auth headers.
+  </Card>
+  <Card title="Quickstart" icon="bolt" href="/quickstart">
+    Walk through a complete end-to-end flow using your new access token.
+  </Card>
+  <Card title="Error reference" icon="triangle-exclamation" href="/api-reference/errors">
+    Detailed guide to every error code Rail can return and how to handle them.
+  </Card>
+</CardGroup>

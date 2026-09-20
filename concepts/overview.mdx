@@ -1,0 +1,105 @@
+---
+title: "Core Concepts: Rail Platform Building Blocks"
+sidebarTitle: "Overview"
+description: "Understand the key entities in Rail — customers, accounts, assets, counterparties, and money movement — and how they work together."
+---
+
+Rail organizes every financial operation around a small set of well-defined entities. Before you write your first API call, taking a few minutes to understand how these entities relate to one another will save you significant time as you design your integration. This page maps out the full data model and links to the detailed reference for each concept.
+
+## Data Model Hierarchy
+
+Every object on Rail traces back to a **Customer**. Customers are created through the **Application** (onboarding) process and then serve as the root entity for all subsequent operations. Each customer can hold one or more **Accounts**, and every financial transaction — deposit, withdrawal, transfer, exchange, or payment — is always scoped to an account. **Counterparties** represent the external world: bank accounts and crypto wallets that your customers send to or receive from.
+
+```
+Application ──► Customer
+                   │
+                   ├── Account (FIAT_USD)
+                   │       └── Deposits / Withdrawals / Transfers / Exchanges / Payments
+                   │
+                   ├── Account (ETHEREUM_MAINNET_ETH)
+                   │       └── Deposits / Withdrawals / Transfers / Exchanges
+                   │
+                   └── Counterparties (bank accounts, crypto wallets)
+```
+
+<Note>
+  A Customer is **only** created as the result of an approved Application. You cannot create a Customer record directly through the API — you must complete the onboarding flow first.
+</Note>
+
+## Entity Relationships at a Glance
+
+| Entity | Belongs To | Key Relationship |
+|---|---|---|
+| Application | Your platform | Produces a Customer on approval |
+| Customer | Application | Owns Accounts and Counterparties |
+| Account | Customer | Holds a balance for one asset type |
+| Asset | Platform-wide | Referenced by Account and transactions |
+| Counterparty | Customer | Target or source of external transfers |
+| Transaction | Account | Records every money movement event |
+
+## Core Concepts
+
+<CardGroup cols={2}>
+  <Card title="Customers" icon="user" href="/concepts/customers">
+    Individual or corporate users created through the onboarding Application flow. The Customer ID is your central identifier for all operations.
+  </Card>
+  <Card title="Accounts" icon="building-columns" href="/concepts/accounts">
+    Balance containers scoped to a single asset type. Each customer can have multiple accounts across fiat and crypto asset classes.
+  </Card>
+  <Card title="Assets" icon="coins" href="/concepts/assets">
+    The fiat currencies and digital assets supported by Rail, identified by a structured `asset_type_id` string.
+  </Card>
+  <Card title="Counterparties" icon="arrow-right-arrow-left" href="/concepts/counterparties">
+    External financial endpoints — bank accounts and crypto wallets — that represent the destinations and sources of funds outside Rail.
+  </Card>
+  <Card title="Money Movement" icon="money-bill-transfer" href="/concepts/money-movement">
+    The five transaction types: deposits, withdrawals, transfers, exchanges, and payments — each with its own lifecycle and API resource.
+  </Card>
+  <Card title="Applications" icon="file-lines" href="/guides/customer-onboarding">
+    The KYC/KYB onboarding flow that must be completed before a Customer record is created and activated.
+  </Card>
+</CardGroup>
+
+## Lifecycle Overview
+
+Understanding the lifecycle of each entity helps you predict which API calls are valid at any given point.
+
+<Steps>
+  <Step title="Onboard a Customer">
+    Submit an Application for an individual or corporation. After KYC/KYB review, Rail creates an **ACTIVE** Customer record and returns a `customer_id`. See [Customer Onboarding](/guides/customer-onboarding).
+  </Step>
+  <Step title="Open an Account">
+    Create one or more Accounts for the customer, each tied to a specific `asset_type_id`. Accounts move from **PENDING** → **OPEN** before they can receive funds. See [Account Management](/guides/account-management).
+  </Step>
+  <Step title="Add Counterparties">
+    Register the bank accounts or crypto wallets your customer wants to send to or receive from. Counterparties go through compliance verification before becoming **ACTIVE**. See [Counterparties](/concepts/counterparties).
+  </Step>
+  <Step title="Move Money">
+    With an open account and verified counterparties, you can initiate deposits, withdrawals, transfers, exchanges, and payments. See [Money Movement](/concepts/money-movement).
+  </Step>
+</Steps>
+
+## Environments
+
+Rail provides two isolated environments. All entities — customers, accounts, counterparties, and transactions — are completely separate between environments.
+
+<Tabs>
+  <Tab title="Sandbox">
+    Use the sandbox to build and test your integration without touching real funds. Sandbox asset IDs use a `TESTNET` network segment (e.g., `FIAT_TESTNET_USD`, `ETHEREUM_GOERLI_ETH`).
+
+    **Base URL:** `https://sandbox.layer2financial.com/api`
+
+    See the [Sandbox Guide](/get-started/sandbox) for test credentials and simulated event triggers.
+  </Tab>
+  <Tab title="Production">
+    The production environment processes real funds and requires fully approved credentials.
+
+    **Base URL:** `https://platform.layer2financial.com/api`
+
+    See [Authentication](/get-started/authentication) for credential setup.
+  </Tab>
+</Tabs>
+
+## Next Steps
+
+Start with [Authentication](/get-started/authentication) to obtain your API credentials, then work through the [Quickstart](/quickstart) to make your first API call. When you're ready to go deeper, each concept page below covers the full field reference, lifecycle states, and code examples for its entity.

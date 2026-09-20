@@ -1,0 +1,81 @@
+---
+title: "Rail — Next-Generation Payments Infrastructure"
+sidebarTitle: "Introduction"
+description: "Rail is a unified REST API for building compliant fiat and digital-asset financial products — onboard customers, open accounts, and move money in minutes."
+---
+
+Rail is a next-generation payments infrastructure platform that gives developers a single, unified REST API to build compliant financial products spanning both fiat currencies and digital assets. Whether you're embedding a wallet, powering a crypto on-ramp, or orchestrating multi-rail money movement, Rail handles the complexity — KYC/KYB verification, AML screening, fraud checks, regulatory compliance — so your team can focus on building great products.
+
+## How Rail works
+
+Every integration follows the same high-level flow, regardless of the product you're building:
+
+1. **Onboard** — Create an Application for your individual or business customer and submit it for compliance review. Rail performs KYC/KYB and AML checks automatically.
+2. **Open an account** — Once an application is approved, open one or more Accounts for the customer. Accounts hold balances in fiat (USD) or supported digital assets (ETH, BTC, stablecoins).
+3. **Transact** — Move money via Deposits, Withdrawals, Transfers, Exchanges, or Payments. Rail routes each transaction across the appropriate rails and keeps your webhooks informed in real time.
+
+<Note>
+  All API interactions require an OAuth2 access token obtained using your client credentials. See the [Authentication guide](/get-started/authentication) to get set up in under five minutes.
+</Note>
+
+## Explore the documentation
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="bolt" href="/quickstart">
+    Make your first authenticated API call and onboard a test customer in under 10 minutes.
+  </Card>
+  <Card title="Core Concepts" icon="book-open" href="/concepts/overview">
+    Learn the building blocks — Applications, Customers, Accounts, and money-movement primitives.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/overview">
+    Full reference for every endpoint, parameter, and response schema in the Rail API.
+  </Card>
+  <Card title="Guides" icon="map" href="/guides/customer-onboarding">
+    Step-by-step guides for common integration patterns, from onboarding to payouts.
+  </Card>
+</CardGroup>
+
+## Key capabilities
+
+Rail exposes a consistent set of resources through its REST API. Every resource follows the same request and response conventions, uses the same authentication model, and emits the same webhook event structure.
+
+| Resource | What it does |
+|---|---|
+| **Applications** | Capture and submit customer onboarding data for compliance review |
+| **Customers** | Represent approved individuals or businesses on your platform |
+| **Accounts** | Hold balances in fiat or digital assets |
+| **Counterparties** | External bank accounts or wallets for sending/receiving funds |
+| **Deposits** | Receive funds into a Rail account |
+| **Withdrawals** | Send funds from a Rail account to a counterparty |
+| **Transfers** | Move funds between two Rail accounts |
+| **Exchanges** | Convert between fiat and digital assets |
+| **Payments** | Initiate outbound payments or collections |
+| **Webhooks** | Subscribe to real-time event notifications |
+
+## API base URLs
+
+Rail provides separate environments for development and production. Always build and test against the sandbox before pointing your integration at production.
+
+| Environment | Base URL |
+|---|---|
+| **Sandbox** | `https://sandbox.layer2financial.com/api` |
+| **Production** | `https://platform.layer2financial.com/api` |
+
+## What to read next
+
+If this is your first time working with Rail, follow the path below:
+
+<CardGroup cols={2}>
+  <Card title="Get sandbox credentials" icon="key" href="/get-started/sandbox">
+    Request access to the sandbox environment and receive your client ID and secret.
+  </Card>
+  <Card title="Authenticate" icon="lock" href="/get-started/authentication">
+    Exchange your credentials for an OAuth2 access token using the Client Credentials grant.
+  </Card>
+  <Card title="Use cases" icon="lightbulb" href="/use-cases/wallet-as-a-service">
+    Explore pre-built patterns for wallets, on-ramps, off-ramps, and more.
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/webhooks/overview">
+    Subscribe to real-time events to keep your application in sync with Rail.
+  </Card>
+</CardGroup>

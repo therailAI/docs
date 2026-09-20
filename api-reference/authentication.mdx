@@ -1,0 +1,232 @@
+---
+title: "API Authentication: OAuth2 Client Credentials"
+sidebarTitle: "Authentication"
+description: "Authenticate with Rail's REST API using the OAuth2 Client Credentials grant. Covers token requests, scopes, expiry, and renewal."
+---
+
+Rail's API uses the **OAuth2 Client Credentials** grant to authenticate server-to-server requests. You exchange your `clientId` and `clientSecret` for a short-lived Bearer token, then attach that token to every API call in the `Authorization` header. This page is the complete technical reference for the authentication flow — if you want a quick walkthrough for getting your first token in the sandbox, see the [Quickstart](quickstart).
+
+<Warning>
+  Your `clientSecret` is equivalent to a password. Never embed it in client-side code, commit it to source control, or log it. Rotate it immediately if you believe it has been compromised.
+</Warning>
+
+## Credentials
+
+Rail issues a `clientId` and `clientSecret` pair per environment (sandbox and production). Retrieve your credentials from the Rail developer dashboard. You'll use these credentials exclusively to request tokens — they are never passed directly to API endpoints.
+
+## Token Endpoint
+
+```
+POST https://auth.layer2financial.com/oauth2/ausbdqlx69rH6OjWd696/v1/token
+```
+
+## Requesting a Token
+
+<Steps>
+  <Step title="Base64-encode your credentials">
+    Concatenate your `clientId` and `clientSecret` with a colon separator, then Base64-encode the result:
+
+    ```
+    Base64("{clientId}:{clientSecret}")
+    ```
+
+    For example, if your `clientId` is `myclient` and your `clientSecret` is `s3cr3t`, the encoded value is:
+
+    ```bash
+    echo -n "myclient:s3cr3t" | base64
+    # bXljbGllbnQ6czNjcjN0
+    ```
+  </Step>
+
+  <Step title="POST to the token endpoint">
+    Send the encoded credentials in the `Authorization` header as a Basic credential, alongside the `grant_type` and the scopes your application needs:
+
+    <CodeGroup>
+
+    ```bash cURL
+    curl --request POST \
+      'https://auth.layer2financial.com/oauth2/ausbdqlx69rH6OjWd696/v1/token' \
+      --header 'Authorization: Basic {BASE64_ENCODED_CREDENTIALS}' \
+      --header 'Content-Type: application/x-www-form-urlencoded' \
+      --data-urlencode 'grant_type=client_credentials' \
+      --data-urlencode 'scope=accounts:read accounts:write customers:read customers:write'
+    ```
+
+    ```javascript Node.js
+    const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
+    const response = await fetch(
+      'https://auth.layer2financial.com/oauth2/ausbdqlx69rH6OjWd696/v1/token',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${credentials}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          grant_type: 'client_credentials',
+          scope: 'accounts:read accounts:write customers:read customers:write',
+        }),
+      }
+    );
+
+    const { access_token, expires_in } = await response.json();
+    ```
+
+    ```python Python
+    import base64
+    import requests
+
+    credentials = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
+
+    response = requests.post(
+        'https://auth.layer2financial.com/oauth2/ausbdqlx69rH6OjWd696/v1/token',
+        headers={
+            'Authorization': f'Basic {credentials}',
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        data={
+            'grant_type': 'client_credentials',
+            'scope': 'accounts:read accounts:write customers:read customers:write',
+        },
+    )
+
+    token_data = response.json()
+    access_token = token_data['access_token']
+    ```
+
+    </CodeGroup>
+  </Step>
+
+  <Step title="Parse the token response">
+    A successful token request returns HTTP `200` with a JSON body:
+
+    ```json
+    {
+      "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "token_type": "Bearer",
+      "expires_in": 43200,
+      "scope": "accounts:read accounts:write customers:read customers:write"
+    }
+    ```
+
+    Store the `access_token` securely in memory. The `expires_in` value is in seconds — **43200 seconds equals 12 hours**.
+  </Step>
+
+  <Step title="Attach the token to API requests">
+    Pass the token in the `Authorization` header as a Bearer credential on every API call:
+
+    ```bash
+    curl --request GET \
+      'https://sandbox.layer2financial.com/api/v1/accounts' \
+      --header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...' \
+      --header 'Content-Type: application/json'
+    ```
+  </Step>
+</Steps>
+
+## Available Scopes
+
+Request only the scopes your integration actually needs. Requesting excessive scopes increases the blast radius if a token is ever compromised.
+
+| Scope | Description |
+|-------|-------------|
+| `applications:read` | Read application records and status |
+| `applications:write` | Create and update applications |
+| `customers:read` | Read customer profiles |
+| `customers:write` | Create and update customer records |
+| `accounts:read` | Read account details and balances |
+| `accounts:write` | Open and manage accounts |
+| `counterparties:read` | Read counterparty records |
+| `counterparties:write` | Create and manage counterparties |
+| `deposits:read` | Read deposit records |
+| `deposits:write` | Initiate deposits |
+| `withdrawals:read` | Read withdrawal records |
+| `withdrawals:write` | Initiate withdrawals |
+| `transfers:read` | Read transfer records |
+| `transfers:write` | Create internal transfers |
+| `exchanges:read` | Read exchange records and quotes |
+| `exchanges:write` | Execute exchanges |
+| `payments:read` | Read payment and collection records |
+| `payments:write` | Initiate payments and collections |
+| `webhooks:read` | Read webhook endpoint configurations |
+| `webhooks:write` | Create and manage webhook endpoints |
+
+<Tip>
+  In the sandbox environment, you can request all scopes during development to avoid token-related friction. Narrow the scope list down to what you actually use before moving to production.
+</Tip>
+
+## Token Expiry and Renewal
+
+Tokens expire after **43,200 seconds (12 hours)**. Rail does not issue refresh tokens under the Client Credentials grant — you simply request a new token when the current one expires.
+
+**Recommended renewal strategy:**
+
+1. Record the `issued_at` timestamp when you receive a token.
+2. Before each API call, check whether `now > issued_at + expires_in - 300` (i.e., within 5 minutes of expiry).
+3. If yes, request a new token before making the API call.
+
+This proactive renewal approach prevents mid-request failures caused by token expiry:
+
+```javascript
+class TokenManager {
+  constructor(clientId, clientSecret) {
+    this.clientId = clientId;
+    this.clientSecret = clientSecret;
+    this.token = null;
+    this.expiresAt = 0;
+  }
+
+  async getToken() {
+    // Renew if expired or expiring within 5 minutes
+    if (Date.now() / 1000 < this.expiresAt - 300) {
+      return this.token;
+    }
+
+    const credentials = Buffer.from(
+      `${this.clientId}:${this.clientSecret}`
+    ).toString('base64');
+
+    const response = await fetch(
+      'https://auth.layer2financial.com/oauth2/ausbdqlx69rH6OjWd696/v1/token',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${credentials}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          grant_type: 'client_credentials',
+          scope: 'accounts:read accounts:write',
+        }),
+      }
+    );
+
+    const { access_token, expires_in } = await response.json();
+    this.token = access_token;
+    this.expiresAt = Date.now() / 1000 + expires_in;
+    return this.token;
+  }
+}
+```
+
+## Authentication Errors
+
+| HTTP Status | Error Code | Cause | Resolution |
+|-------------|------------|-------|------------|
+| `401 Unauthorized` | `INVALID_CREDENTIALS` | `clientId` or `clientSecret` is wrong | Verify your credentials in the dashboard |
+| `401 Unauthorized` | `TOKEN_EXPIRED` | The Bearer token has passed its expiry time | Request a new token |
+| `401 Unauthorized` | — | `Authorization` header is missing or malformed | Ensure the header is present and uses the `Bearer` scheme |
+| `403 Forbidden` | `INSUFFICIENT_SCOPES` | The token does not include the scope required by the endpoint | Re-request the token with the appropriate scopes |
+
+<Note>
+  A `403` response means your token is valid but lacks permission for the requested operation. Review the [scopes table](#available-scopes) to confirm which scope the endpoint requires, then re-issue your token with that scope included.
+</Note>
+
+## Security Best Practices
+
+- **Store secrets in environment variables** — never hard-code `clientSecret` in source files.
+- **Use a secrets manager** in production (e.g., AWS Secrets Manager, HashiCorp Vault) to inject credentials at runtime.
+- **Request minimal scopes** — limit the token's capabilities to what the integration requires.
+- **Enable request signing** for high-value operations — see [Request Signing](api-reference/request-signing) for details.
+- **Rotate credentials** on a regular schedule and immediately after any suspected exposure.

@@ -1,0 +1,207 @@
+---
+title: "Open and Manage Customer Accounts on Rail"
+sidebarTitle: "Account Management"
+description: "Learn how to open deposit accounts, monitor account status, retrieve banking instructions, and manage the full account lifecycle on Rail."
+---
+
+After a customer is approved through the onboarding process, you can open one or more deposit accounts on their behalf. Each account is tied to a specific product and asset type, giving you fine-grained control over what currencies and rails are supported per customer. Rail's Accounts API provides everything you need to open accounts, monitor their status, and retrieve the routing details your customers need to receive funds.
+
+## Account status lifecycle
+
+Every account moves through a predictable set of states from creation to closure:
+
+```
+PENDING_APPROVAL → OPEN → SUSPENDED → CLOSED
+```
+
+| Status | Meaning |
+|---|---|
+| `PENDING_APPROVAL` | Account created; awaiting internal approval or compliance review |
+| `OPEN` | Account is active; deposits, withdrawals, and transfers are permitted |
+| `SUSPENDED` | Account is temporarily restricted; no debits or credits allowed |
+| `CLOSED` | Account permanently closed; no further activity permitted |
+
+<Note>
+  Accounts in `PENDING_APPROVAL` cannot receive funds. Wait for the status to transition to `OPEN` before sharing deposit instructions with your customer.
+</Note>
+
+---
+
+## Opening and managing an account
+
+<Steps>
+  <Step title="Open a deposit account">
+    Send a `POST /v1/accounts/deposits` request with the customer's ID, your chosen account identifier, the product, and the asset type. The `account_id` you supply becomes the permanent identifier for this account across all Rail APIs.
+
+    ```bash
+    curl -X POST 'https://sandbox.layer2financial.com/api/v1/accounts/deposits' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "customer_id": "CUST001",
+        "account_to_open": {
+          "account_id": "CUST001.USD.001",
+          "product_id": "DEPOSIT_FORT_FIAT",
+          "asset_type_id": "FIAT_TESTNET_USD"
+        }
+      }'
+    ```
+
+    **Response:**
+
+    ```json
+    {
+      "data": {
+        "id": "CUST001.USD.001"
+      }
+    }
+    ```
+
+    <Tip>
+      Adopt a consistent `account_id` naming convention — for example `{CUSTOMER_ID}.{CURRENCY}.{SEQUENCE}` — so accounts remain easy to query and audit across your system.
+    </Tip>
+  </Step>
+
+  <Step title="Check account status">
+    Retrieve the account to confirm it has transitioned to `OPEN` before attempting any deposits or transactions. The response also includes current and available balance fields.
+
+    ```bash
+    curl -X GET 'https://sandbox.layer2financial.com/api/v1/accounts/deposits/CUST001.USD.001' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}'
+    ```
+
+    **Response:**
+
+    ```json
+    {
+      "data": {
+        "id": "CUST001.USD.001",
+        "status": "OPEN",
+        "asset_type_id": "FIAT_TESTNET_USD",
+        "product_id": "DEPOSIT_FORT_FIAT",
+        "current_balance": 10000.00,
+        "available_balance": 9500.00
+      }
+    }
+    ```
+
+    <Note>
+      `available_balance` may differ from `current_balance` when funds are held pending transaction settlement. Always use `available_balance` to determine how much a customer can move.
+    </Note>
+  </Step>
+
+  <Step title="Retrieve deposit instructions">
+    Once the account is `OPEN`, fetch its deposit instructions to obtain the routing details your customer needs to fund the account via ACH, Fedwire, SWIFT, or other supported rails.
+
+    ```bash
+    curl -X GET 'https://sandbox.layer2financial.com/api/v1/accounts/deposits/CUST001.USD.001/deposit-instructions' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}'
+    ```
+
+    **Response (example):**
+
+    ```json
+    {
+      "data": {
+        "account_id": "CUST001.USD.001",
+        "rails": {
+          "ach": {
+            "routing_number": "021000021",
+            "account_number": "9876543210",
+            "account_type": "CHECKING"
+          },
+          "fedwire": {
+            "routing_number": "021000021",
+            "account_number": "9876543210",
+            "bank_name": "Rail Partner Bank",
+            "bank_address": "1 Finance St, New York, NY 10001"
+          },
+          "swift": {
+            "swift_code": "RLBNUS33",
+            "account_number": "9876543210",
+            "bank_name": "Rail Partner Bank",
+            "bank_address": "1 Finance St, New York, NY 10001"
+          }
+        }
+      }
+    }
+    ```
+
+    Deposit instructions are stable — they do not change after the account is opened. You can safely cache and display them in your product UI.
+  </Step>
+</Steps>
+
+---
+
+## Monitoring account events with webhooks
+
+Rather than polling for balance changes or status updates, subscribe to account webhook events for real-time notifications. Configure your webhook endpoint in the Rail dashboard, then listen for the following events:
+
+| Event | Description |
+|---|---|
+| `account.opened` | Account status has transitioned to `OPEN` |
+| `account.suspended` | Account has been suspended |
+| `account.deposit.completed` | An inbound deposit has settled to the account |
+| `account.withdrawal.completed` | An outbound withdrawal has been processed |
+
+```json
+{
+  "event": "account.deposit.completed",
+  "data": {
+    "account_id": "CUST001.USD.001",
+    "amount": 2500.00,
+    "asset_type": "FIAT_USD",
+    "transaction_id": "txn_def456"
+  }
+}
+```
+
+<Tip>
+  Always respond to webhook deliveries with a `200 OK` immediately, and process the payload asynchronously. This prevents timeout-related redelivery and duplicate processing on your end. See the [Webhooks Overview](/webhooks/overview) for retry policies and signature verification.
+</Tip>
+
+---
+
+## Account fields reference
+
+<ResponseField name="id" type="string">
+  The unique account identifier you provided when opening the account (e.g. `CUST001.USD.001`).
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Current account status. One of `PENDING_APPROVAL`, `OPEN`, `SUSPENDED`, or `CLOSED`.
+</ResponseField>
+
+<ResponseField name="asset_type_id" type="string">
+  The asset held in this account (e.g. `FIAT_TESTNET_USD`, `ETHEREUM_MAINNET_ETH`). See [Assets](/concepts/assets) for the full list.
+</ResponseField>
+
+<ResponseField name="product_id" type="string">
+  The Rail product associated with this account, which governs applicable limits and rails.
+</ResponseField>
+
+<ResponseField name="current_balance" type="number">
+  Total balance including pending transactions.
+</ResponseField>
+
+<ResponseField name="available_balance" type="number">
+  Balance available for immediate use, net of any holds or pending debits.
+</ResponseField>
+
+---
+
+## Next steps
+
+With an open account and deposit instructions in hand, you're ready to accept inbound funds and move money on behalf of your customers.
+
+<CardGroup cols={3}>
+  <Card title="Deposits" icon="arrow-down-to-line" href="/guides/deposits">
+    Understand how funds arrive and how to track incoming transactions.
+  </Card>
+  <Card title="Withdrawals" icon="arrow-up-from-line" href="/guides/withdrawals">
+    Move funds out to external bank accounts and crypto addresses.
+  </Card>
+  <Card title="Accounts API Reference" icon="code" href="/api-reference/accounts">
+    Full endpoint reference for the Accounts API.
+  </Card>
+</CardGroup>

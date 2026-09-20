@@ -1,0 +1,234 @@
+---
+title: "Deposits API — View Incoming Funds and Deposit History"
+sidebarTitle: "Deposits"
+description: "Query deposit transactions on customer accounts. Filter the account transaction ledger by type, status, and date range to track incoming fiat and digital-asset funds."
+---
+
+Deposits represent inbound funds credited to a customer's [Account](/api-reference/accounts) — whether arriving via ACH, Fedwire, SWIFT, or an on-chain crypto transfer. On Rail, deposits are surfaced as transactions on an account's ledger rather than as a standalone resource. You query them through the Accounts transaction endpoints, filtering by `transaction_type=DEPOSIT` to isolate incoming funds. This page documents the deposit-specific parameters, response fields, and worked examples to help you build deposit-monitoring workflows.
+
+<Note>
+  To get deposit instructions (routing numbers, account numbers, or crypto wallet addresses) that you share with payers, use the [GET /v1/accounts/deposits/{id}/deposit-instructions](/api-reference/accounts) endpoint. The endpoints below are for reading the history of deposits that have already arrived.
+</Note>
+
+---
+
+## GET /v1/accounts/deposits/{id}/transactions
+
+Returns a paginated transaction ledger for the account. Apply `transaction_type=DEPOSIT` to see only incoming deposits.
+
+<ParamField path="id" type="string" required>
+  The unique account identifier (e.g. `CUST001.USD.001`).
+</ParamField>
+
+<ParamField query="transaction_type" type="string">
+  Set to `DEPOSIT` to return only deposit transactions. Other values: `WITHDRAWAL`, `TRANSFER`, `EXCHANGE`.
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter by deposit status. Common values:
+  - `PENDING` — Funds received but not yet settled.
+  - `COMPLETED` — Funds settled and available.
+  - `FAILED` — Deposit was rejected or returned.
+</ParamField>
+
+<ParamField query="from_date" type="string">
+  Return deposits on or after this ISO 8601 datetime (e.g. `2024-01-01T00:00:00Z`).
+</ParamField>
+
+<ParamField query="to_date" type="string">
+  Return deposits on or before this ISO 8601 datetime.
+</ParamField>
+
+<ParamField query="page" type="integer">
+  Page number. Defaults to `1`.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Results per page. Defaults to `20`, maximum `100`.
+</ParamField>
+
+```bash
+curl -X GET "https://sandbox.layer2financial.com/api/v1/accounts/deposits/CUST001.USD.001/transactions?transaction_type=DEPOSIT&status=COMPLETED&from_date=2024-01-01T00:00:00Z" \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+<ResponseField name="data" type="array">
+  List of deposit transaction objects.
+  <Expandable title="deposit transaction fields">
+    <ResponseField name="id" type="string">
+      Unique transaction identifier (e.g. `txn_001`).
+    </ResponseField>
+    <ResponseField name="type" type="string">
+      Always `DEPOSIT` when filtering by `transaction_type=DEPOSIT`.
+    </ResponseField>
+    <ResponseField name="amount" type="number">
+      The deposit amount, expressed in the account's asset units.
+    </ResponseField>
+    <ResponseField name="asset_type" type="string">
+      The asset received (e.g. `FIAT_USD`, `FIAT_TESTNET_USD`, `ETHEREUM_MAINNET_ETH`).
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Current status: `PENDING`, `COMPLETED`, or `FAILED`.
+    </ResponseField>
+    <ResponseField name="description" type="string">
+      Optional memo or description provided by the sender.
+    </ResponseField>
+    <ResponseField name="network" type="string">
+      The payment network used (e.g. `ACH`, `FEDWIRE`, `SWIFT`, `ETHEREUM`).
+    </ResponseField>
+    <ResponseField name="sender_name" type="string">
+      Name of the originating sender, if available.
+    </ResponseField>
+    <ResponseField name="trace_number" type="string">
+      Network trace or reference number for reconciliation (fiat deposits).
+    </ResponseField>
+    <ResponseField name="tx_hash" type="string">
+      On-chain transaction hash (crypto deposits only).
+    </ResponseField>
+    <ResponseField name="created_at" type="string">
+      ISO 8601 timestamp when the deposit was first detected or initiated.
+    </ResponseField>
+    <ResponseField name="settled_at" type="string">
+      ISO 8601 timestamp when the deposit completed settlement. `null` if still pending.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Standard pagination metadata.
+  <Expandable title="pagination fields">
+    <ResponseField name="total" type="integer">Total matching deposits.</ResponseField>
+    <ResponseField name="page" type="integer">Current page.</ResponseField>
+    <ResponseField name="page_size" type="integer">Records per page.</ResponseField>
+    <ResponseField name="total_pages" type="integer">Total pages available.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": [
+    {
+      "id": "txn_001",
+      "type": "DEPOSIT",
+      "amount": 2500.00,
+      "asset_type": "FIAT_TESTNET_USD",
+      "status": "COMPLETED",
+      "description": "Invoice payment - INV-2024-001",
+      "network": "ACH",
+      "sender_name": "Acme Corp",
+      "trace_number": "021000021987654",
+      "tx_hash": null,
+      "created_at": "2024-01-18T08:00:00Z",
+      "settled_at": "2024-01-20T08:00:00Z"
+    },
+    {
+      "id": "txn_004",
+      "type": "DEPOSIT",
+      "amount": 10000.00,
+      "asset_type": "FIAT_TESTNET_USD",
+      "status": "COMPLETED",
+      "description": "Wire transfer - Contract payment",
+      "network": "FEDWIRE",
+      "sender_name": "Global Ventures LLC",
+      "trace_number": "FEDWIRE20240119001",
+      "tx_hash": null,
+      "created_at": "2024-01-19T09:15:00Z",
+      "settled_at": "2024-01-19T14:30:00Z"
+    },
+    {
+      "id": "txn_007",
+      "type": "DEPOSIT",
+      "amount": 0.5,
+      "asset_type": "ETHEREUM_MAINNET_ETH",
+      "status": "COMPLETED",
+      "description": null,
+      "network": "ETHEREUM",
+      "sender_name": null,
+      "trace_number": null,
+      "tx_hash": "0xabc123def456789abc123def456789abc123def456789abc123def456789abcd",
+      "created_at": "2024-01-20T12:00:00Z",
+      "settled_at": "2024-01-20T12:05:00Z"
+    }
+  ],
+  "pagination": {
+    "total": 3,
+    "page": 1,
+    "page_size": 20,
+    "total_pages": 1
+  }
+}
+```
+
+---
+
+## GET /v1/accounts/deposits/{id}/transactions/{txn_id}
+
+Retrieves the full details of a single deposit transaction by its ID.
+
+<ParamField path="id" type="string" required>
+  The account identifier (e.g. `CUST001.USD.001`).
+</ParamField>
+
+<ParamField path="txn_id" type="string" required>
+  The unique deposit transaction identifier (e.g. `txn_001`).
+</ParamField>
+
+```bash
+curl -X GET https://sandbox.layer2financial.com/api/v1/accounts/deposits/CUST001.USD.001/transactions/txn_001 \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+<ResponseField name="data" type="object">
+  Full deposit transaction object.
+  <Expandable title="data fields">
+    <ResponseField name="id" type="string">Transaction identifier.</ResponseField>
+    <ResponseField name="account_id" type="string">The account this deposit landed in.</ResponseField>
+    <ResponseField name="type" type="string">`DEPOSIT`.</ResponseField>
+    <ResponseField name="amount" type="number">Deposit amount.</ResponseField>
+    <ResponseField name="asset_type" type="string">Asset type received.</ResponseField>
+    <ResponseField name="status" type="string">Current status.</ResponseField>
+    <ResponseField name="description" type="string">Sender memo or description.</ResponseField>
+    <ResponseField name="network" type="string">Payment network used.</ResponseField>
+    <ResponseField name="sender_name" type="string">Originating sender name.</ResponseField>
+    <ResponseField name="trace_number" type="string">Network trace reference (fiat).</ResponseField>
+    <ResponseField name="tx_hash" type="string">On-chain hash (crypto).</ResponseField>
+    <ResponseField name="metadata" type="object">
+      Additional network-specific metadata (e.g. originating bank, settlement batch ID).
+    </ResponseField>
+    <ResponseField name="created_at" type="string">ISO 8601 detection/initiation timestamp.</ResponseField>
+    <ResponseField name="settled_at" type="string">ISO 8601 settlement timestamp.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": {
+    "id": "txn_001",
+    "account_id": "CUST001.USD.001",
+    "type": "DEPOSIT",
+    "amount": 2500.00,
+    "asset_type": "FIAT_TESTNET_USD",
+    "status": "COMPLETED",
+    "description": "Invoice payment - INV-2024-001",
+    "network": "ACH",
+    "sender_name": "Acme Corp",
+    "trace_number": "021000021987654",
+    "tx_hash": null,
+    "metadata": {
+      "originating_bank": "Bank of America",
+      "settlement_batch": "BATCH20240120",
+      "standard_entry_code": "CCD"
+    },
+    "created_at": "2024-01-18T08:00:00Z",
+    "settled_at": "2024-01-20T08:00:00Z"
+  }
+}
+```
+
+<Tip>
+  Subscribe to the `deposit.completed` and `deposit.failed` webhook events to receive real-time notifications when funds arrive or are returned, rather than polling this endpoint. See the [Webhooks API](/api-reference/webhooks) and [Webhook Events](/webhooks/events) reference.
+</Tip>
+
+<Note>
+  For a full walkthrough of funding accounts and reconciling incoming deposits, see the [Deposits guide](/guides/deposits). To obtain deposit instructions to share with payers, see the [Accounts API](/api-reference/accounts).
+</Note>

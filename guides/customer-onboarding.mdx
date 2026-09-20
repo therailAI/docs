@@ -1,0 +1,277 @@
+---
+title: "Onboard Individual and Corporate Customers"
+sidebarTitle: "Customer Onboarding"
+description: "Learn how to onboard individual and corporate customers through Rail's Applications API, from creating an application to receiving approval."
+---
+
+Rail's Applications API provides a structured, compliance-ready workflow for onboarding both individual and corporate customers. Each application moves through a defined status lifecycle, giving you full visibility into where a customer stands at every stage — from initial data collection through identity verification and final approval.
+
+## Application status lifecycle
+
+Every application begins in `INCOMPLETE` and advances through the following states:
+
+```
+INCOMPLETE → READY_FOR_SUBMISSION → SUBMITTED → APPROVED
+                                              ↘ CHANGES_REQUESTED
+```
+
+| Status | Meaning |
+|---|---|
+| `INCOMPLETE` | Application created; required fields or documents are missing |
+| `READY_FOR_SUBMISSION` | All required data collected; ready to submit for review |
+| `SUBMITTED` | Under compliance review |
+| `APPROVED` | Customer onboarded; accounts can now be opened |
+| `CHANGES_REQUESTED` | Reviewer requires additional information or documents |
+
+<Note>
+  Poll `GET /v1/applications/{id}/status` or subscribe to application webhooks to receive real-time status updates without busy-waiting. See [Webhooks Overview](/webhooks/overview) for setup instructions.
+</Note>
+
+---
+
+## Onboarding flows
+
+<Tabs>
+  <Tab title="Individual">
+    Use the `INDIVIDUAL` application type for natural persons. Rail collects personal identity details and, where required by your compliance configuration, KYC documents.
+
+    <Steps>
+      <Step title="Create the application">
+        Send a `POST /v1/applications` request with `application_type: INDIVIDUAL` and the applicant's personal details.
+
+        ```bash
+        curl -X POST 'https://sandbox.layer2financial.com/api/v1/applications' \
+          --header 'Authorization: Bearer {AUTH_TOKEN}' \
+          --header 'Content-Type: application/json' \
+          --data '{
+            "application_type": "INDIVIDUAL",
+            "applicant": {
+              "first_name": "Jane",
+              "last_name": "Doe",
+              "email": "jane.doe@example.com",
+              "date_of_birth": "1990-01-01",
+              "address": {
+                "street_line_1": "123 Main St",
+                "city": "New York",
+                "state": "NY",
+                "postal_code": "10001",
+                "country_code": "US"
+              }
+            }
+          }'
+        ```
+
+        **Response:**
+
+        ```json
+        {
+          "data": {
+            "id": "app_abc123",
+            "status": "INCOMPLETE"
+          }
+        }
+        ```
+
+        Store the returned `id` — you'll use it for all subsequent steps.
+      </Step>
+
+      <Step title="Upload KYC documents (if required)">
+        Depending on your compliance configuration, Rail may require identity documents such as a government-issued ID or proof of address. Use the documents endpoint to attach files to the application.
+
+        ```bash
+        curl -X POST 'https://sandbox.layer2financial.com/api/v1/applications/app_abc123/documents' \
+          --header 'Authorization: Bearer {AUTH_TOKEN}' \
+          --form 'document_type="GOVERNMENT_ID"' \
+          --form 'file=@"/path/to/id.jpg"'
+        ```
+
+        <Tip>
+          Upload documents early in the flow. Missing documents are the most common reason applications move to `CHANGES_REQUESTED` after submission.
+        </Tip>
+      </Step>
+
+      <Step title="Check application status">
+        Poll the status endpoint to confirm all required fields and documents have been received. The status will advance to `READY_FOR_SUBMISSION` once the application is complete.
+
+        ```bash
+        curl -X GET 'https://sandbox.layer2financial.com/api/v1/applications/app_abc123/status' \
+          --header 'Authorization: Bearer {AUTH_TOKEN}'
+        ```
+
+        **Response:**
+
+        ```json
+        {
+          "data": {
+            "id": "app_abc123",
+            "status": "READY_FOR_SUBMISSION"
+          }
+        }
+        ```
+      </Step>
+
+      <Step title="Handle CHANGES_REQUESTED (if applicable)">
+        If the compliance team requires additional information, the application status will be set to `CHANGES_REQUESTED`. Retrieve the application to view the specific fields or documents flagged for update, address each item, and then re-submit.
+
+        ```bash
+        curl -X GET 'https://sandbox.layer2financial.com/api/v1/applications/app_abc123' \
+          --header 'Authorization: Bearer {AUTH_TOKEN}'
+        ```
+
+        Review the `changes_requested` field in the response for a list of required updates, then upload any additional documents or patch the applicant fields before resubmitting.
+
+        <Warning>
+          Do not create a new application when changes are requested. Update and resubmit the existing application using the same `id`.
+        </Warning>
+      </Step>
+
+      <Step title="Submit the application">
+        Once the status is `READY_FOR_SUBMISSION`, send the application for compliance review.
+
+        ```bash
+        curl -X POST 'https://sandbox.layer2financial.com/api/v1/applications/app_abc123/submit' \
+          --header 'Authorization: Bearer {AUTH_TOKEN}'
+        ```
+
+        **Response:**
+
+        ```json
+        {
+          "data": {
+            "id": "app_abc123",
+            "status": "SUBMITTED"
+          }
+        }
+        ```
+      </Step>
+
+      <Step title="Wait for APPROVED status">
+        Poll `GET /v1/applications/app_abc123/status` or listen for the `application.approved` webhook event. Once the status is `APPROVED`, a `customer_id` is issued and the customer can have accounts opened on their behalf.
+
+        ```json
+        {
+          "data": {
+            "id": "app_abc123",
+            "status": "APPROVED",
+            "customer_id": "CUST001"
+          }
+        }
+        ```
+
+        Store the `customer_id` — it is the primary identifier used across the Accounts, Withdrawals, and Payments APIs.
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab title="Corporate">
+    Use the `CORPORATE` application type for legal entities such as LLCs, corporations, and partnerships. Corporate onboarding extends the individual flow with entity details, beneficial owner information, and KYB document collection.
+
+    <Steps>
+      <Step title="Create the corporate application">
+        Submit a `POST /v1/applications` request with `application_type: CORPORATE` and your entity's details.
+
+        ```bash
+        curl -X POST 'https://sandbox.layer2financial.com/api/v1/applications' \
+          --header 'Authorization: Bearer {AUTH_TOKEN}' \
+          --header 'Content-Type: application/json' \
+          --data '{
+            "application_type": "CORPORATE",
+            "entity": {
+              "legal_name": "Acme Corp",
+              "registration_number": "12-3456789",
+              "incorporation_country": "US",
+              "incorporation_state": "DE",
+              "address": {
+                "street_line_1": "1 Corporate Blvd",
+                "city": "Wilmington",
+                "state": "DE",
+                "postal_code": "19801",
+                "country_code": "US"
+              }
+            }
+          }'
+        ```
+      </Step>
+
+      <Step title="Add beneficial owners">
+        Corporate applications require you to add each individual with significant control or ownership (typically 25% or more) using the individuals endpoint.
+
+        ```bash
+        curl -X POST 'https://sandbox.layer2financial.com/api/v1/applications/app_corp456/individual' \
+          --header 'Authorization: Bearer {AUTH_TOKEN}' \
+          --header 'Content-Type: application/json' \
+          --data '{
+            "role": "BENEFICIAL_OWNER",
+            "ownership_percentage": 51,
+            "first_name": "John",
+            "last_name": "Smith",
+            "email": "john.smith@acmecorp.com",
+            "date_of_birth": "1975-06-15",
+            "address": {
+              "street_line_1": "456 Elm St",
+              "city": "Newark",
+              "state": "NJ",
+              "postal_code": "07101",
+              "country_code": "US"
+            }
+          }'
+        ```
+
+        Repeat this step for every beneficial owner and controlling officer.
+      </Step>
+
+      <Step title="Upload KYB documents">
+        Attach entity formation documents, proof of business address, and any other documents required by your compliance configuration.
+
+        ```bash
+        curl -X POST 'https://sandbox.layer2financial.com/api/v1/applications/app_corp456/documents' \
+          --header 'Authorization: Bearer {AUTH_TOKEN}' \
+          --form 'document_type="ARTICLES_OF_INCORPORATION"' \
+          --form 'file=@"/path/to/articles.pdf"'
+        ```
+      </Step>
+
+      <Step title="Check status, handle changes, and submit">
+        Follow the same status-check, change-handling, and submission steps as the individual flow. Poll `GET /v1/applications/app_corp456/status` until the status reaches `READY_FOR_SUBMISSION`, then call the `/submit` endpoint.
+      </Step>
+    </Steps>
+
+    <Note>
+      Each beneficial owner added to a corporate application may themselves require KYC document uploads. Check the application detail response for per-individual document requirements.
+    </Note>
+  </Tab>
+</Tabs>
+
+---
+
+## Best practices
+
+<CardGroup cols={2}>
+  <Card title="Use webhooks for status updates" icon="bell">
+    Rather than polling, subscribe to `application.status_changed` events to receive instant notifications when a status transitions. See the [Webhooks Events](/webhooks/events) reference for the full event list.
+  </Card>
+  <Card title="Collect data upfront" icon="clipboard-check">
+    Gather all required fields — especially date of birth, full legal address, and government ID — before creating the application. Incomplete submissions are the leading cause of delays.
+  </Card>
+  <Card title="Test with sandbox identities" icon="flask">
+    Use the Rail [Sandbox](/get-started/sandbox) to simulate each status transition, including `CHANGES_REQUESTED` and `APPROVED`, without involving real compliance review.
+  </Card>
+  <Card title="Store application and customer IDs" icon="database">
+    Map your internal user ID to Rail's `application_id` immediately after creation and to the `customer_id` upon approval. You'll need both for account management and support queries.
+  </Card>
+</CardGroup>
+
+---
+
+## Next steps
+
+Once your customer's application is `APPROVED`, you're ready to open accounts and start moving money.
+
+<CardGroup cols={2}>
+  <Card title="Account Management" icon="building-columns" href="/guides/account-management">
+    Open deposit accounts and retrieve banking instructions for your customers.
+  </Card>
+  <Card title="Customers API Reference" icon="code" href="/api-reference/customers">
+    Explore the full customers and applications endpoint reference.
+  </Card>
+</CardGroup>

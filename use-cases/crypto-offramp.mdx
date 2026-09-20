@@ -1,0 +1,168 @@
+---
+title: "Convert Crypto to Fiat with Rail Off-Ramp"
+sidebarTitle: "Crypto Off-Ramp"
+description: "Let customers deposit crypto, convert it to fiat, and withdraw to their bank account — all through one unified, compliant API flow."
+---
+
+Rail's crypto off-ramp enables your customers to convert their digital assets into fiat currency and withdraw directly to a bank account. This flow is ideal for crypto wallets and exchanges that want to give users a seamless path from crypto holdings to spendable cash — without you needing to build your own fiat rails or compliance infrastructure.
+
+## Who this is for
+
+<CardGroup cols={2}>
+  <Card title="Crypto Wallets" icon="wallet">
+    Let users cash out their crypto holdings directly to a linked bank account from within your wallet app.
+  </Card>
+  <Card title="Crypto Exchanges" icon="chart-candlestick">
+    Offer a compliant, automated path from trading positions to bank withdrawals.
+  </Card>
+  <Card title="DeFi Platforms" icon="link">
+    Bridge on-chain DeFi positions to traditional bank accounts for everyday spending.
+  </Card>
+  <Card title="Payroll & Treasury" icon="briefcase">
+    Pay contractors or treasury recipients in fiat after converting crypto proceeds.
+  </Card>
+</CardGroup>
+
+---
+
+## Prerequisites
+
+Before you start, make sure you have:
+
+- A valid API token (see [Authentication](/get-started/authentication))
+- A customer with `ACTIVE` status and an open crypto account (see [Account Management](/guides/account-management))
+- An open fiat account ready to receive converted funds
+- Access to the Rail sandbox (see [Sandbox](/get-started/sandbox))
+
+---
+
+## Off-ramp flow
+
+<Steps>
+
+  <Step title="Verify customer and account status">
+    Confirm the customer has `ACTIVE` status and holds an `OPEN` crypto deposit account. Both the source crypto account and the destination fiat account must be open before you can execute an exchange.
+
+    ```bash
+    curl --request GET 'https://sandbox.layer2financial.com/api/v1/customers/CUST001' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}'
+    ```
+
+    If the customer does not yet have a fiat account, open one before proceeding. See [Account Management](/guides/account-management) for details on opening fiat accounts.
+  </Step>
+
+  <Step title="Generate a crypto deposit address">
+    Retrieve the on-chain deposit address for the customer's crypto account. The customer will send crypto from their external wallet to this address to fund the off-ramp.
+
+    ```bash
+    curl --request GET 'https://sandbox.layer2financial.com/api/v1/accounts/deposits/CUST001.ETH.001/deposit-instructions' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}'
+    ```
+
+    Share the returned blockchain address with your customer. Rail detects the incoming on-chain transaction and credits the account balance after the required number of confirmations.
+
+    <Note>
+      In sandbox, use Goerli testnet ETH to simulate crypto deposits. Real mainnet assets are required in production. See [Sandbox](/get-started/sandbox) for faucet and testing guidance.
+    </Note>
+  </Step>
+
+  <Step title="Receive the crypto deposit">
+    Rail monitors the blockchain for incoming transactions to the deposit address. Once the deposit reaches the required confirmation threshold, Rail credits the account and fires an `account.deposit.completed` webhook event.
+
+    **Example webhook payload:**
+    ```json
+    {
+      "id": "evt_def456",
+      "type": "account.deposit.completed",
+      "created_at": "2024-01-15T11:00:00Z",
+      "data": {
+        "account_id": "CUST001.ETH.001",
+        "amount": 2.0,
+        "asset_type": "ETHEREUM_MAINNET_ETH",
+        "transaction_id": "txn_onchain_abc"
+      }
+    }
+    ```
+
+    Use this event to trigger the next step automatically. Avoid polling the balance endpoint — webhook-driven flows are faster and more efficient. See [Webhooks Overview](/webhooks/overview) for setup instructions.
+  </Step>
+
+  <Step title="Execute the crypto-to-fiat exchange">
+    Once the crypto deposit is confirmed, execute an exchange to convert it into fiat. Specify the crypto source account, the fiat destination account, and the amount you want to convert.
+
+    ```bash
+    curl --request POST 'https://sandbox.layer2financial.com/api/v1/exchanges' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "source_account_id": "CUST001.ETH.001",
+        "destination_account_id": "CUST001.USD.001",
+        "source_amount": 2.0,
+        "source_asset_type": "ETHEREUM_MAINNET_ETH",
+        "destination_asset_type": "FIAT_USD"
+      }'
+    ```
+
+    Rail applies the current market rate and settles both sides atomically. When the exchange completes, the USD equivalent is available in the fiat account and an `exchange.completed` event is fired.
+
+    <Warning>
+      Exchange rates reflect live market conditions. If your product requires customers to approve a rate before execution, build a rate-preview step before calling the exchange endpoint.
+    </Warning>
+  </Step>
+
+  <Step title="(Optional) Withdraw fiat to a bank account">
+    Once fiat is available in the customer's fiat account, you can initiate a bank withdrawal. The customer must have an approved counterparty (bank account) on file before you can withdraw.
+
+    ```bash
+    curl --request POST 'https://sandbox.layer2financial.com/api/v1/withdrawals' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "source_account_id": "CUST001.USD.001",
+        "counterparty_id": "CP001",
+        "amount": 3800.00,
+        "asset_type": "FIAT_USD"
+      }'
+    ```
+
+    Rail routes the withdrawal via ACH or wire depending on the counterparty configuration. Track the withdrawal status using `withdrawal.status.changed` and `withdrawal.completed` events.
+
+    See [Withdrawals](/guides/withdrawals) for a full guide to fiat withdrawals and counterparty setup.
+  </Step>
+
+</Steps>
+
+---
+
+## Key events to handle
+
+| Event | When it fires |
+|---|---|
+| `account.deposit.completed` | Crypto deposit confirmed — trigger the exchange |
+| `exchange.completed` | Exchange settled — fiat available in account |
+| `exchange.failed` | Exchange failed — notify customer and retry |
+| `withdrawal.status.changed` | Withdrawal progresses through processing states |
+| `withdrawal.completed` | Fiat successfully sent to bank account |
+| `withdrawal.failed` | Withdrawal failed — action required |
+| `withdrawal.rfi.requested` | Additional documentation required — prompt customer |
+
+See [Webhook Events](/webhooks/events) for the full event reference and payload schemas.
+
+---
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Crypto On-Ramp" icon="arrow-right-to-bracket" href="/use-cases/crypto-onramp">
+    Accept fiat and deliver crypto to customer wallets.
+  </Card>
+  <Card title="Wallet as a Service" icon="wallet" href="/use-cases/wallet-as-a-service">
+    Embed a full-featured crypto wallet with hold, transfer, and exchange.
+  </Card>
+  <Card title="Withdrawals Guide" icon="money-bill-transfer" href="/guides/withdrawals">
+    Learn how to set up counterparties and initiate fiat withdrawals.
+  </Card>
+  <Card title="Webhook Events" icon="bell" href="/webhooks/events">
+    Browse all events you can subscribe to for real-time updates.
+  </Card>
+</CardGroup>

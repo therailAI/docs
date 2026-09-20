@@ -1,0 +1,143 @@
+---
+title: "Supported Assets: Fiat and Digital Currencies"
+sidebarTitle: "Assets"
+description: "Explore all fiat and crypto assets available on Rail, understand the asset_type_id format, sandbox vs. production IDs, and custody arrangements."
+---
+
+Rail supports a range of fiat currencies and digital assets, each identified by a structured `asset_type_id` string. Understanding the asset identifier format is important because you will use it every time you open an account, look up supported assets, or interpret transaction records. Assets are held in custody by qualified financial institutions, ensuring regulatory compliance and fund security for both you and your customers.
+
+## Asset ID Format
+
+The `asset_type_id` follows a consistent three-part convention:
+
+```
+{BLOCKCHAIN}_{NETWORK}_{CURRENCY_CODE}
+```
+
+Each segment serves a specific purpose:
+
+| Segment | Description | Example |
+|---|---|---|
+| `BLOCKCHAIN` | The underlying chain or asset class | `ETHEREUM`, `BITCOIN`, `FIAT` |
+| `NETWORK` | The network environment | `MAINNET`, `TESTNET`, `GOERLI` |
+| `CURRENCY_CODE` | The ISO currency code or token symbol | `ETH`, `BTC`, `USD`, `USDC` |
+
+For fiat assets, the `BLOCKCHAIN` segment is replaced with `FIAT`, since no blockchain applies:
+
+```
+FIAT_{NETWORK}_{CURRENCY_CODE}
+
+# Examples
+FIAT_USD           # Production US Dollar
+FIAT_TESTNET_USD   # Sandbox US Dollar
+```
+
+<Note>
+  The `NETWORK` segment differentiates production assets from sandbox assets. Always use `TESTNET` or a specific test network (such as `GOERLI`) when working in the sandbox environment. Production asset IDs are rejected in sandbox, and vice versa.
+</Note>
+
+## Supported Fiat Assets
+
+<Tabs>
+  <Tab title="Production">
+    | Currency | asset_type_id | Rails Supported |
+    |---|---|---|
+    | US Dollar | `FIAT_USD` | ACH, FEDWIRE, SWIFT |
+  </Tab>
+  <Tab title="Sandbox">
+    | Currency | asset_type_id | Notes |
+    |---|---|---|
+    | US Dollar (test) | `FIAT_TESTNET_USD` | Simulated funds, no real settlement |
+  </Tab>
+</Tabs>
+
+## Supported Crypto Assets
+
+<Tabs>
+  <Tab title="Production">
+    | Asset | Symbol | asset_type_id | Network |
+    |---|---|---|---|
+    | Ethereum | ETH | `ETHEREUM_MAINNET_ETH` | Ethereum Mainnet |
+    | Bitcoin | BTC | `BITCOIN_MAINNET_BTC` | Bitcoin Mainnet |
+    | USD Coin | USDC | `ETHEREUM_MAINNET_USDC` | Ethereum Mainnet |
+    | Tether | USDT | `ETHEREUM_MAINNET_USDT` | Ethereum Mainnet |
+
+    <Tip>
+      Rail supports additional digital assets beyond this list. Contact your account manager or check the [API Reference](/api-reference/overview) for the full up-to-date catalogue.
+    </Tip>
+  </Tab>
+  <Tab title="Sandbox">
+    | Asset | Symbol | asset_type_id | Network |
+    |---|---|---|---|
+    | Ethereum (test) | ETH | `ETHEREUM_GOERLI_ETH` | Ethereum Goerli Testnet |
+
+    <Note>
+      The sandbox supports a subset of the full production asset catalogue. Additional testnet assets may be made available — see the [Sandbox Guide](/get-started/sandbox) for the latest sandbox configuration.
+    </Note>
+  </Tab>
+</Tabs>
+
+## Production vs. Sandbox Asset IDs
+
+It is easy to mix up production and sandbox identifiers. The table below shows side-by-side equivalents for the most common assets:
+
+| Asset | Production ID | Sandbox ID |
+|---|---|---|
+| US Dollar | `FIAT_USD` | `FIAT_TESTNET_USD` |
+| Ethereum | `ETHEREUM_MAINNET_ETH` | `ETHEREUM_GOERLI_ETH` |
+
+<Warning>
+  Using a production `asset_type_id` (e.g., `FIAT_USD`) in a sandbox API call will result in a validation error. Ensure your environment configuration maps asset IDs correctly before switching between sandbox and production.
+</Warning>
+
+## Asset Custody
+
+Rail does not self-custody your customers' funds. All assets — fiat and digital — are held at **qualified custodians**: regulated banks, trust companies, and licensed digital asset custodians.
+
+Key points:
+
+- **Fiat assets** are held at FDIC-member institutions or regulated trust companies.
+- **Crypto assets** are custodied at licensed digital asset custodians with institutional-grade security, insurance coverage, and segregated account structures.
+- Custodian assignments are managed by Rail and may span multiple institutions for redundancy and regulatory compliance.
+- You do not interact with custodians directly — all custody operations are abstracted through the Rail API.
+
+<Note>
+  Specific custodian relationships are disclosed as part of your platform agreement. Contact your Rail account manager if you need custodian documentation for your own compliance program.
+</Note>
+
+## Using Asset IDs in API Calls
+
+You reference `asset_type_id` when creating accounts and when interpreting balances and transaction records. Here is an example showing the `asset_type_id` in context:
+
+```json
+{
+  "id": "acct_eth_bob_001",
+  "customer_id": "cust_01hq7z3xkfbp9rn2vwme4d5j6c",
+  "product_id": "DEPOSIT_FORT_CRYPTO",
+  "asset_type_id": "ETHEREUM_MAINNET_ETH",
+  "status": "OPEN",
+  "current_balance": "2.450000000000000000",
+  "available_balance": "2.450000000000000000"
+}
+```
+
+<Tip>
+  Crypto balances are represented as decimal strings with full precision for the asset's native decimal places (18 decimal places for ETH). Always treat balance values as strings rather than floating-point numbers to avoid precision loss.
+</Tip>
+
+## Related Resources
+
+<CardGroup cols={2}>
+  <Card title="Accounts" icon="building-columns" href="/concepts/accounts">
+    Every account is tied to a single asset_type_id. Learn how to create accounts for your customers.
+  </Card>
+  <Card title="Money Movement" icon="money-bill-transfer" href="/concepts/money-movement">
+    Exchanges let you convert between asset types. Learn how deposits, withdrawals, and exchanges work.
+  </Card>
+  <Card title="Sandbox Guide" icon="flask" href="/get-started/sandbox">
+    Configure your sandbox environment and use testnet asset IDs to simulate transactions.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/overview">
+    Explore the full API reference including asset and account endpoints.
+  </Card>
+</CardGroup>

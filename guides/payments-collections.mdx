@@ -1,0 +1,303 @@
+---
+title: "Collect Payments from External Counterparties"
+sidebarTitle: "Payments"
+description: "Learn how to collect funds from external counterparties into Rail accounts using the Payments API — ideal for invoicing, subscriptions, and payment gateways."
+---
+
+Rail's Payments API lets you collect funds from an external party — a counterparty — and credit them directly into a customer's Rail deposit account. Unlike deposits (which arrive passively when a sender initiates a bank transfer) or withdrawals (which push funds out), a Payment is a pull-oriented collection initiated by you: you create a payment request linking a source counterparty to a destination account, and Rail orchestrates the fund collection. This makes Payments ideal for subscription billing, invoice settlement, and marketplace payment gateways.
+
+## Payment status lifecycle
+
+```
+REQUESTED → ACCEPTED → COMPLETED
+                     ↘ CHANGES_REQUESTED
+```
+
+| Status | Meaning |
+|---|---|
+| `REQUESTED` | Payment created; awaiting review and acceptance |
+| `ACCEPTED` | Payment approved; funds collection in progress |
+| `COMPLETED` | Funds collected and credited to the destination account |
+| `CHANGES_REQUESTED` | Additional information or documents required before acceptance |
+
+<Note>
+  A payment in `REQUESTED` status has not yet been accepted by the compliance engine. Do not consider funds available until the status reaches `COMPLETED`.
+</Note>
+
+---
+
+## Collecting a payment
+
+<Steps>
+  <Step title="Authenticate your request">
+    All API requests require a valid Bearer token in the `Authorization` header. If you haven't set up authentication yet, see the [Authentication guide](/get-started/authentication) for instructions on obtaining and managing your tokens.
+
+    ```bash
+    --header 'Authorization: Bearer {AUTH_TOKEN}'
+    ```
+
+    <Tip>
+      Use separate API tokens for sandbox and production environments. Tokens issued in the sandbox cannot be used against the production API and vice versa.
+    </Tip>
+  </Step>
+
+  <Step title="Create a counterparty">
+    Every payment requires a registered counterparty representing the external payer. For collections, use `counterparty_type: BASIC` — this is sufficient when you are pulling funds from a known individual or business.
+
+    ```bash
+    curl -X POST 'https://sandbox.layer2financial.com/api/v1/counterparties' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "customer_id": "CUST001",
+        "counterparty_type": "BASIC",
+        "profile": {
+          "profile_type": "INDIVIDUAL",
+          "name": "Joe Bloggs",
+          "address": {
+            "state": "MA",
+            "country_code": "US"
+          },
+          "relationship_to_customer": "CUSTOMER"
+        }
+      }'
+    ```
+
+    **Response:**
+
+    ```json
+    {
+      "data": {
+        "id": "9843d07c-1e52-463e-a7d1-f35f40971025",
+        "status": "ACTIVE"
+      }
+    }
+    ```
+
+    Note the counterparty `id` — you'll use it as the `source_counterparty_id` in the next step.
+
+    <Note>
+      A `BASIC` counterparty is appropriate for collection use cases. If you also need to send funds to this counterparty via withdrawal, you will need to upgrade or create an `ENHANCED` counterparty with full bank details. See the [Counterparties API Reference](/api-reference/counterparties).
+    </Note>
+  </Step>
+
+  <Step title="Create the payment">
+    With a counterparty in place, submit a payment request that links the source counterparty to the destination Rail account.
+
+    ```bash
+    curl -X POST 'https://sandbox.layer2financial.com/api/v1/payments' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "payment_source": {
+          "source_counterparty_id": "9843d07c-1e52-463e-a7d1-f35f40971025",
+          "asset_type": ["FIAT_TESTNET_USD"]
+        },
+        "payment_destination": {
+          "account_id": "CUST001.USD.001"
+        },
+        "payment_info": {
+          "description": "Invoice 123"
+        }
+      }'
+    ```
+
+    **Response:**
+
+    ```json
+    {
+      "data": {
+        "id": "pmt_vwx111",
+        "status": "REQUESTED",
+        "payment_source": {
+          "source_counterparty_id": "9843d07c-1e52-463e-a7d1-f35f40971025"
+        },
+        "payment_destination": {
+          "account_id": "CUST001.USD.001"
+        },
+        "payment_info": {
+          "description": "Invoice 123"
+        }
+      }
+    }
+    ```
+
+    Store the `id` for status tracking and potential document uploads.
+  </Step>
+
+  <Step title="Review the payment (handle CHANGES_REQUESTED)">
+    If the compliance engine requires additional information, the payment status will be set to `CHANGES_REQUESTED`. Retrieve the payment to view what is required:
+
+    ```bash
+    curl -X GET 'https://sandbox.layer2financial.com/api/v1/payments/pmt_vwx111' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}'
+    ```
+
+    **Response (changes requested):**
+
+    ```json
+    {
+      "data": {
+        "id": "pmt_vwx111",
+        "status": "CHANGES_REQUESTED",
+        "changes_required": {
+          "documents": ["SOURCE_OF_FUNDS"],
+          "notes": "Please provide documentation for the source of funds for this payment."
+        }
+      }
+    }
+    ```
+
+    Upload the required document to the payment:
+
+    ```bash
+    curl -X POST 'https://sandbox.layer2financial.com/api/v1/payments/pmt_vwx111/documents' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}' \
+      --form 'document_type="SOURCE_OF_FUNDS"' \
+      --form 'file=@"/path/to/invoice.pdf"'
+    ```
+
+    <Tip>
+      For recurring payments — such as monthly subscriptions — proactively attach supporting documents (signed agreements, invoices) when creating the payment. This reduces the likelihood of `CHANGES_REQUESTED` and speeds up acceptance.
+    </Tip>
+  </Step>
+
+  <Step title="Accept the payment">
+    Once all required information is provided and the payment is in `REQUESTED` or back from `CHANGES_REQUESTED`, accept it to trigger fund collection.
+
+    ```bash
+    curl -X POST 'https://sandbox.layer2financial.com/api/v1/payments/pmt_vwx111/accept' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}'
+    ```
+
+    **Response:**
+
+    ```json
+    {
+      "data": {
+        "id": "pmt_vwx111",
+        "status": "ACCEPTED"
+      }
+    }
+    ```
+
+    Rail will now coordinate the fund pull from the counterparty's payment source. Monitor the payment for the `COMPLETED` status transition via webhook or polling.
+
+    ```bash
+    curl -X GET 'https://sandbox.layer2financial.com/api/v1/payments/pmt_vwx111' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}'
+    ```
+
+    **Response (completed):**
+
+    ```json
+    {
+      "data": {
+        "id": "pmt_vwx111",
+        "status": "COMPLETED",
+        "amount_collected": 250.00,
+        "asset_type": "FIAT_USD",
+        "completed_at": "2024-06-15T15:30:00Z"
+      }
+    }
+    ```
+  </Step>
+</Steps>
+
+---
+
+## Use cases
+
+<CardGroup cols={3}>
+  <Card title="Subscription billing" icon="calendar-check">
+    Collect recurring payments from customers on a defined schedule. Create a counterparty once per subscriber and reuse it for each billing cycle.
+  </Card>
+  <Card title="Invoice settlement" icon="file-invoice-dollar">
+    Issue invoices and collect against them by creating a payment per invoice with the invoice reference in the `description` field for easy reconciliation.
+  </Card>
+  <Card title="Payment gateway" icon="credit-card">
+    Build a checkout or gateway experience where end-users authorize payments that flow into your platform accounts via Rail's collection infrastructure.
+  </Card>
+</CardGroup>
+
+---
+
+## Payment request fields reference
+
+<ParamField body="payment_source.source_counterparty_id" type="string" required>
+  The ID of the counterparty from whom funds will be collected. Must be in `ACTIVE` status.
+</ParamField>
+
+<ParamField body="payment_source.asset_type" type="array" required>
+  An array of acceptable asset types for the collection (e.g. `["FIAT_TESTNET_USD"]`). Rail will attempt to collect in the first matching asset type.
+</ParamField>
+
+<ParamField body="payment_destination.account_id" type="string" required>
+  The Rail deposit account ID to credit upon successful collection. Must be `OPEN`.
+</ParamField>
+
+<ParamField body="payment_info.description" type="string">
+  A human-readable memo or reference for the payment. Included in transaction records and may appear on bank statements.
+</ParamField>
+
+---
+
+## Monitoring payment events
+
+Subscribe to the following webhook events for real-time payment lifecycle notifications:
+
+| Event | Description |
+|---|---|
+| `payment.accepted` | Payment has been accepted and collection is in progress |
+| `payment.completed` | Funds have been collected and credited to the destination account |
+| `payment.changes_requested` | Compliance review requires additional information |
+
+```json
+{
+  "event": "payment.completed",
+  "data": {
+    "payment_id": "pmt_vwx111",
+    "account_id": "CUST001.USD.001",
+    "amount": 250.00,
+    "asset_type": "FIAT_USD",
+    "completed_at": "2024-06-15T15:30:00Z"
+  }
+}
+```
+
+See [Webhooks Overview](/webhooks/overview) for endpoint setup, and [Webhooks Events](/webhooks/events) for the complete event catalog.
+
+---
+
+## Best practices
+
+<CardGroup cols={2}>
+  <Card title="Upload documents proactively" icon="file-arrow-up">
+    Attach invoices, signed agreements, or source-of-funds documentation when creating the payment rather than waiting for `CHANGES_REQUESTED`. This shortens the acceptance cycle significantly.
+  </Card>
+  <Card title="Use descriptive memos" icon="memo">
+    Always populate the `description` field with a reference number (e.g. invoice ID or subscription cycle). This aids reconciliation on both your side and the counterparty's bank statement.
+  </Card>
+  <Card title="Reuse counterparties" icon="recycle">
+    Create one counterparty per external payer and reuse it across multiple payments. Avoid creating a new counterparty for every transaction — this creates unnecessary compliance overhead.
+  </Card>
+  <Card title="Idempotent payment creation" icon="shield-check">
+    Use the `Idempotency-Key` header when creating payments to safely handle retries. This ensures a duplicate network call does not result in a double collection. See the [Idempotency guide](/api-reference/idempotency).
+  </Card>
+</CardGroup>
+
+---
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Counterparties API Reference" icon="code" href="/api-reference/counterparties">
+    Manage counterparty profiles, bank details, and status transitions.
+  </Card>
+  <Card title="Payments API Reference" icon="code" href="/api-reference/payments">
+    Full endpoint reference for the Payments API.
+  </Card>
+  <Card title="Webhooks Events" icon="bell" href="/webhooks/events">
+    Browse all payment and collection events available for subscription.
+  </Card>
+</CardGroup>

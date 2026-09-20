@@ -1,0 +1,419 @@
+---
+title: "Payments API — Collect Funds from External Counterparties"
+sidebarTitle: "Payments"
+description: "Create payment collection requests, generate payment instructions for counterparties, manage RFI document submissions, and track incoming payment status end-to-end."
+---
+
+The Payments resource lets you initiate inbound collection requests — asking an external [Counterparty](/api-reference/counterparties) to send funds into a customer's Rail [Account](/api-reference/accounts). A Payment represents a single collection event: you create it, accept it to generate payment instructions, and share those instructions with the counterparty (or their bank). Rail monitors the incoming funds and updates the payment status as money moves through the network. Like withdrawals, payments may trigger a **Request for Information (RFI)** that requires you to upload supporting documentation before settlement can complete.
+
+---
+
+## POST /v1/payments
+
+Creates a new payment collection request. After creation, call [POST /v1/payments/{payment_id}/accept](#post-v1paymentspayment_idaccept) to generate the payment instructions you share with the counterparty.
+
+<ParamField body="payment_source" type="object" required>
+  Describes where the payment will come from.
+  <Expandable title="payment_source fields">
+    <ParamField body="source_counterparty_id" type="string" required>
+      The ID of the counterparty who will send the funds.
+    </ParamField>
+    <ParamField body="asset_type" type="array" required>
+      One or more asset types the payment can be received in (e.g. `["FIAT_TESTNET_USD"]`). Providing multiple values allows the counterparty to choose their preferred asset.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="payment_destination" type="object" required>
+  Describes where the received funds will land.
+  <Expandable title="payment_destination fields">
+    <ParamField body="account_id" type="string" required>
+      The Rail account that will receive the credited funds (e.g. `CUST001.USD.001`).
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="payment_info" type="object">
+  Optional metadata about the payment.
+  <Expandable title="payment_info fields">
+    <ParamField body="description" type="string">
+      A human-readable description or reference for the payment (e.g. `Invoice 123`).
+    </ParamField>
+    <ParamField body="amount" type="number">
+      If specified, the exact amount expected. Leave blank to accept any amount.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+```bash
+curl -X POST https://sandbox.layer2financial.com/api/v1/payments \
+  -H "Authorization: Bearer {AUTH_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "payment_source": {
+      "source_counterparty_id": "9843d07c-1e52-463e-a7d1-f35f40971025",
+      "asset_type": ["FIAT_TESTNET_USD"]
+    },
+    "payment_destination": {
+      "account_id": "CUST001.USD.001"
+    },
+    "payment_info": {
+      "description": "Invoice 123",
+      "amount": 2500.00
+    }
+  }'
+```
+
+<ResponseField name="data" type="object">
+  The newly created payment object.
+  <Expandable title="data fields">
+    <ResponseField name="id" type="string">
+      Unique payment identifier (e.g. `pay_abc001`).
+    </ResponseField>
+    <ResponseField name="payment_source" type="object">Submitted source details.</ResponseField>
+    <ResponseField name="payment_destination" type="object">Submitted destination details.</ResponseField>
+    <ResponseField name="payment_info" type="object">Submitted payment metadata.</ResponseField>
+    <ResponseField name="status" type="string">
+      Current payment status. Starts as `REQUESTED`.
+    </ResponseField>
+    <ResponseField name="created_at" type="string">ISO 8601 creation timestamp.</ResponseField>
+    <ResponseField name="updated_at" type="string">ISO 8601 last-update timestamp.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": {
+    "id": "pay_abc001",
+    "payment_source": {
+      "source_counterparty_id": "9843d07c-1e52-463e-a7d1-f35f40971025",
+      "asset_type": ["FIAT_TESTNET_USD"]
+    },
+    "payment_destination": {
+      "account_id": "CUST001.USD.001"
+    },
+    "payment_info": {
+      "description": "Invoice 123",
+      "amount": 2500.00
+    },
+    "status": "REQUESTED",
+    "created_at": "2024-01-22T10:00:00Z",
+    "updated_at": "2024-01-22T10:00:00Z"
+  }
+}
+```
+
+**Payment status lifecycle:**
+
+| Status | Description |
+|--------|-------------|
+| `REQUESTED` | Payment created and awaiting acceptance. |
+| `ACCEPTED` | Accepted; payment instructions generated and shared. |
+| `PENDING_SETTLEMENT` | Funds received; undergoing final compliance checks. |
+| `COMPLETED` | Funds settled into the destination account. |
+| `CHANGES_REQUESTED` | An RFI has been raised; documents required. |
+| `CANCELLED` | Payment was cancelled or expired. |
+
+---
+
+## GET /v1/payments
+
+Returns a paginated list of all payment collection requests on your platform.
+
+<ParamField query="account_id" type="string">
+  Filter by destination account ID.
+</ParamField>
+
+<ParamField query="counterparty_id" type="string">
+  Filter by source counterparty ID.
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter by payment status: `REQUESTED`, `ACCEPTED`, `PENDING_SETTLEMENT`, `COMPLETED`, `CHANGES_REQUESTED`, or `CANCELLED`.
+</ParamField>
+
+<ParamField query="from_date" type="string">
+  Return payments created on or after this ISO 8601 datetime.
+</ParamField>
+
+<ParamField query="to_date" type="string">
+  Return payments created on or before this ISO 8601 datetime.
+</ParamField>
+
+<ParamField query="page" type="integer">Page number. Defaults to `1`.</ParamField>
+<ParamField query="page_size" type="integer">Results per page. Defaults to `20`, maximum `100`.</ParamField>
+
+```bash
+curl -X GET "https://sandbox.layer2financial.com/api/v1/payments?status=COMPLETED&account_id=CUST001.USD.001" \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+```json
+{
+  "data": [
+    {
+      "id": "pay_abc001",
+      "payment_source": {
+        "source_counterparty_id": "9843d07c-1e52-463e-a7d1-f35f40971025"
+      },
+      "payment_destination": {
+        "account_id": "CUST001.USD.001"
+      },
+      "payment_info": {
+        "description": "Invoice 123",
+        "amount": 2500.00
+      },
+      "status": "COMPLETED",
+      "created_at": "2024-01-22T10:00:00Z",
+      "updated_at": "2024-01-22T15:00:00Z"
+    }
+  ],
+  "pagination": {
+    "total": 1,
+    "page": 1,
+    "page_size": 20,
+    "total_pages": 1
+  }
+}
+```
+
+---
+
+## GET /v1/payments/{payment_id}
+
+Retrieves full details for a single payment by its ID.
+
+<ParamField path="payment_id" type="string" required>
+  The unique payment identifier (e.g. `pay_abc001`).
+</ParamField>
+
+```bash
+curl -X GET https://sandbox.layer2financial.com/api/v1/payments/pay_abc001 \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+```json
+{
+  "data": {
+    "id": "pay_abc001",
+    "payment_source": {
+      "source_counterparty_id": "9843d07c-1e52-463e-a7d1-f35f40971025",
+      "asset_type": ["FIAT_TESTNET_USD"]
+    },
+    "payment_destination": {
+      "account_id": "CUST001.USD.001"
+    },
+    "payment_info": {
+      "description": "Invoice 123",
+      "amount": 2500.00
+    },
+    "payment_instructions": {
+      "ach": {
+        "routing_number": "021000021",
+        "account_number": "123456789",
+        "bank_name": "Rail Partner Bank",
+        "beneficiary_name": "Jane Doe",
+        "memo": "Invoice 123"
+      }
+    },
+    "status": "COMPLETED",
+    "settled_amount": 2500.00,
+    "settled_asset_type": "FIAT_TESTNET_USD",
+    "created_at": "2024-01-22T10:00:00Z",
+    "accepted_at": "2024-01-22T10:05:00Z",
+    "completed_at": "2024-01-22T15:00:00Z",
+    "updated_at": "2024-01-22T15:00:00Z"
+  }
+}
+```
+
+---
+
+## GET /v1/payments/{payment_id}/status
+
+Returns the detailed status of a payment, including any active RFI (Request for Information) that must be resolved before settlement can complete.
+
+<ParamField path="payment_id" type="string" required>
+  The unique payment identifier.
+</ParamField>
+
+<Note>
+  **RFI (Request for Information)**: Rail's compliance engine may pause a payment in `CHANGES_REQUESTED` status and raise an RFI if the inbound transaction requires additional review. The `rfi` object in the response describes the documents required. Upload them using [POST /v1/payments/{payment_id}/documents](#post-v1paymentspayment_iddocuments) to unblock settlement.
+</Note>
+
+```bash
+curl -X GET https://sandbox.layer2financial.com/api/v1/payments/pay_abc001/status \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+<ResponseField name="data" type="object">
+  Detailed status object.
+  <Expandable title="data fields">
+    <ResponseField name="payment_id" type="string">The payment ID.</ResponseField>
+    <ResponseField name="status" type="string">Current payment status.</ResponseField>
+    <ResponseField name="rfi" type="object">
+      Present only when an RFI is active (status is `CHANGES_REQUESTED`).
+      <Expandable title="rfi fields">
+        <ResponseField name="rfi_id" type="string">Unique RFI identifier.</ResponseField>
+        <ResponseField name="status" type="string">`OPEN` or `RESOLVED`.</ResponseField>
+        <ResponseField name="reason" type="string">Human-readable reason for the RFI.</ResponseField>
+        <ResponseField name="required_documents" type="array">
+          List of required document types (e.g. `INVOICE`, `CONTRACT`, `SOURCE_OF_FUNDS`).
+        </ResponseField>
+        <ResponseField name="due_by" type="string">
+          ISO 8601 deadline for document submission before the payment is cancelled.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="cancellation_reason" type="string">
+      Reason for cancellation, if applicable.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": {
+    "payment_id": "pay_abc002",
+    "status": "CHANGES_REQUESTED",
+    "rfi": {
+      "rfi_id": "rfi_pay002",
+      "status": "OPEN",
+      "reason": "Source of funds verification required for this transaction amount.",
+      "required_documents": ["SOURCE_OF_FUNDS", "INVOICE"],
+      "due_by": "2024-01-25T10:00:00Z"
+    },
+    "cancellation_reason": null
+  }
+}
+```
+
+---
+
+## POST /v1/payments/{payment_id}/accept
+
+Accepts the payment request and generates the payment instructions that you (or the counterparty) use to send funds. Call this endpoint after creating a payment to move it from `REQUESTED` to `ACCEPTED` status and receive routing details.
+
+<ParamField path="payment_id" type="string" required>
+  The unique payment identifier to accept.
+</ParamField>
+
+<Tip>
+  The `payment_instructions` returned in the response body contain the exact details (routing number, account number, memo, or crypto address) that the counterparty must use to send funds. Present these to the payer in your UI or include them in a payment link or invoice.
+</Tip>
+
+```bash
+curl -X POST https://sandbox.layer2financial.com/api/v1/payments/pay_abc001/accept \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+<ResponseField name="data" type="object">
+  Updated payment object with `payment_instructions` populated.
+  <Expandable title="data fields">
+    <ResponseField name="id" type="string">Payment identifier.</ResponseField>
+    <ResponseField name="status" type="string">`ACCEPTED`.</ResponseField>
+    <ResponseField name="payment_instructions" type="object">
+      Instructions for the counterparty to send funds.
+      <Expandable title="payment_instructions fields">
+        <ResponseField name="ach" type="object">ACH routing details (fiat payments).</ResponseField>
+        <ResponseField name="fedwire" type="object">Fedwire routing details (fiat payments).</ResponseField>
+        <ResponseField name="swift" type="object">SWIFT details (international payments).</ResponseField>
+        <ResponseField name="crypto_address" type="string">Wallet address (crypto payments).</ResponseField>
+        <ResponseField name="memo" type="string">
+          Reference or memo the sender must include with the payment.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="accepted_at" type="string">ISO 8601 timestamp of acceptance.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": {
+    "id": "pay_abc001",
+    "status": "ACCEPTED",
+    "payment_instructions": {
+      "ach": {
+        "routing_number": "021000021",
+        "account_number": "123456789",
+        "account_type": "CHECKING",
+        "bank_name": "Rail Partner Bank",
+        "beneficiary_name": "Jane Doe",
+        "memo": "Invoice 123"
+      },
+      "fedwire": {
+        "routing_number": "021000021",
+        "account_number": "123456789",
+        "bank_name": "Rail Partner Bank",
+        "beneficiary_name": "Jane Doe",
+        "reference": "Invoice 123"
+      }
+    },
+    "accepted_at": "2024-01-22T10:05:00Z"
+  }
+}
+```
+
+---
+
+## POST /v1/payments/{payment_id}/documents
+
+Uploads supporting documents to resolve an open RFI on a payment that is in `CHANGES_REQUESTED` status. Documents must be submitted as `multipart/form-data`.
+
+<ParamField path="payment_id" type="string" required>
+  The unique payment identifier.
+</ParamField>
+
+<ParamField body="document_type" type="string" required>
+  Type of document being uploaded. Must match one of the types in the active RFI's `required_documents` array (e.g. `INVOICE`, `SOURCE_OF_FUNDS`, `CONTRACT`).
+</ParamField>
+
+<ParamField body="file" type="file" required>
+  The document file. Accepted formats: PDF, PNG, JPEG. Maximum size: 10 MB.
+</ParamField>
+
+<ParamField body="description" type="string">
+  Optional description or notes about the document.
+</ParamField>
+
+<Warning>
+  Submit all required documents before the `due_by` deadline in the RFI. Payments with unresolved RFIs past the deadline will be automatically `CANCELLED` and funds may be returned to the sender.
+</Warning>
+
+```bash
+curl -X POST https://sandbox.layer2financial.com/api/v1/payments/pay_abc002/documents \
+  -H "Authorization: Bearer {AUTH_TOKEN}" \
+  -F "document_type=INVOICE" \
+  -F "file=@/path/to/invoice-123.pdf" \
+  -F "description=Invoice 123 for consulting services"
+```
+
+<ResponseField name="data" type="object">
+  Confirmation of the uploaded document.
+  <Expandable title="data fields">
+    <ResponseField name="document_id" type="string">Unique ID of the uploaded document.</ResponseField>
+    <ResponseField name="payment_id" type="string">Associated payment ID.</ResponseField>
+    <ResponseField name="rfi_id" type="string">The RFI this document addresses.</ResponseField>
+    <ResponseField name="document_type" type="string">Type of document.</ResponseField>
+    <ResponseField name="status" type="string">`UPLOADED` (pending review) or `ACCEPTED`.</ResponseField>
+    <ResponseField name="uploaded_at" type="string">ISO 8601 upload timestamp.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": {
+    "document_id": "doc_pay002",
+    "payment_id": "pay_abc002",
+    "rfi_id": "rfi_pay002",
+    "document_type": "INVOICE",
+    "status": "UPLOADED",
+    "uploaded_at": "2024-01-23T09:00:00Z"
+  }
+}
+```
+
+<Note>
+  For a full guide on creating payment collection flows and handling RFIs, see [Payments & Collections](/guides/payments-collections). To learn how payments integrate with the wallet-as-a-service architecture, see [Wallet as a Service](/use-cases/wallet-as-a-service).
+</Note>

@@ -1,0 +1,432 @@
+---
+title: "Webhooks API — Subscribe to Real-Time Platform Events"
+sidebarTitle: "Webhooks"
+description: "Register webhook subscriptions to receive real-time event notifications for deposits, withdrawals, payments, exchanges, and application status changes on your endpoint."
+---
+
+Webhooks let your server receive real-time push notifications whenever something important happens on the Rail platform — a deposit completes, a withdrawal changes status, an application is approved, or an RFI is raised. Instead of polling the API, you register a subscription pointing to an HTTPS endpoint on your server, and Rail delivers a signed JSON payload to that URL for each matching event. You can manage your subscriptions programmatically using the endpoints below.
+
+<Note>
+  For the full list of event types you can subscribe to and their payload schemas, see the [Webhook Events](/webhooks/events) reference. For an overview of delivery guarantees, retries, and signature verification, see [Webhooks Overview](/webhooks/overview).
+</Note>
+
+---
+
+## POST /v1/subscriptions
+
+Registers a new webhook subscription. Rail will begin delivering matching events to your `endpoint_url` immediately after creation.
+
+<ParamField body="endpoint_url" type="string" required>
+  The publicly accessible HTTPS URL where Rail will POST event payloads (e.g. `https://your-server.com/webhooks/rail`). Must use HTTPS.
+</ParamField>
+
+<ParamField body="events" type="array" required>
+  An array of event type strings to subscribe to. Use `["*"]` to subscribe to all events. Example individual events:
+  - `deposit.completed`
+  - `deposit.failed`
+  - `withdrawal.status.changed`
+  - `withdrawal.rfi.raised`
+  - `transfer.completed`
+  - `exchange.completed`
+  - `payment.status.changed`
+  - `payment.rfi.raised`
+  - `application.status.changed`
+  - `customer.status.changed`
+  - `account.status.changed`
+
+  See [Webhook Events](/webhooks/events) for the complete list.
+</ParamField>
+
+<ParamField body="secret" type="string" required>
+  A secret string used to sign outgoing webhook payloads. Rail includes an `X-Rail-Signature` header on every delivery computed using HMAC-SHA256 with this secret. Store this securely and use it to verify incoming payloads. See [Request Signing](/api-reference/request-signing) for details.
+</ParamField>
+
+<ParamField body="description" type="string">
+  Optional human-readable label for this subscription (e.g. `Production deposit listener`).
+</ParamField>
+
+<Warning>
+  Your `endpoint_url` must respond with an HTTP `2xx` status code within **10 seconds** for Rail to consider the delivery successful. Rail will retry failed deliveries with exponential backoff for up to 72 hours. Ensure your endpoint is idempotent — the same event may be delivered more than once.
+</Warning>
+
+```bash
+curl -X POST https://sandbox.layer2financial.com/api/v1/subscriptions \
+  -H "Authorization: Bearer {AUTH_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "endpoint_url": "https://your-server.com/webhooks/rail",
+    "events": ["deposit.completed", "withdrawal.status.changed"],
+    "secret": "your_webhook_secret",
+    "description": "Production deposit and withdrawal listener"
+  }'
+```
+
+<ResponseField name="data" type="object">
+  The newly created subscription object.
+  <Expandable title="data fields">
+    <ResponseField name="id" type="string">
+      Unique subscription identifier (e.g. `sub_abc001`).
+    </ResponseField>
+    <ResponseField name="endpoint_url" type="string">
+      The registered delivery URL.
+    </ResponseField>
+    <ResponseField name="events" type="array">
+      The list of subscribed event types.
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Subscription status: `ACTIVE` or `DISABLED`.
+    </ResponseField>
+    <ResponseField name="description" type="string">
+      Optional label for this subscription.
+    </ResponseField>
+    <ResponseField name="created_at" type="string">
+      ISO 8601 creation timestamp.
+    </ResponseField>
+    <ResponseField name="updated_at" type="string">
+      ISO 8601 last-update timestamp.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": {
+    "id": "sub_abc001",
+    "endpoint_url": "https://your-server.com/webhooks/rail",
+    "events": [
+      "deposit.completed",
+      "withdrawal.status.changed"
+    ],
+    "status": "ACTIVE",
+    "description": "Production deposit and withdrawal listener",
+    "created_at": "2024-01-22T08:00:00Z",
+    "updated_at": "2024-01-22T08:00:00Z"
+  }
+}
+```
+
+---
+
+## GET /v1/subscriptions
+
+Returns a list of all webhook subscriptions registered on your platform.
+
+<ParamField query="status" type="string">
+  Filter by subscription status: `ACTIVE` or `DISABLED`.
+</ParamField>
+
+<ParamField query="page" type="integer">
+  Page number. Defaults to `1`.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Results per page. Defaults to `20`, maximum `100`.
+</ParamField>
+
+```bash
+curl -X GET "https://sandbox.layer2financial.com/api/v1/subscriptions?status=ACTIVE" \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+<ResponseField name="data" type="array">
+  Array of subscription objects.
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Standard pagination metadata.
+  <Expandable title="pagination fields">
+    <ResponseField name="total" type="integer">Total matching subscriptions.</ResponseField>
+    <ResponseField name="page" type="integer">Current page.</ResponseField>
+    <ResponseField name="page_size" type="integer">Records per page.</ResponseField>
+    <ResponseField name="total_pages" type="integer">Total pages.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": [
+    {
+      "id": "sub_abc001",
+      "endpoint_url": "https://your-server.com/webhooks/rail",
+      "events": ["deposit.completed", "withdrawal.status.changed"],
+      "status": "ACTIVE",
+      "description": "Production deposit and withdrawal listener",
+      "created_at": "2024-01-22T08:00:00Z",
+      "updated_at": "2024-01-22T08:00:00Z"
+    },
+    {
+      "id": "sub_abc002",
+      "endpoint_url": "https://your-server.com/webhooks/rail-applications",
+      "events": ["application.status.changed", "customer.status.changed"],
+      "status": "ACTIVE",
+      "description": "Application and customer status monitor",
+      "created_at": "2024-01-22T08:10:00Z",
+      "updated_at": "2024-01-22T08:10:00Z"
+    }
+  ],
+  "pagination": {
+    "total": 2,
+    "page": 1,
+    "page_size": 20,
+    "total_pages": 1
+  }
+}
+```
+
+---
+
+## GET /v1/subscriptions/{subscription_id}
+
+Retrieves the full details of a single webhook subscription.
+
+<ParamField path="subscription_id" type="string" required>
+  The unique subscription identifier (e.g. `sub_abc001`).
+</ParamField>
+
+```bash
+curl -X GET https://sandbox.layer2financial.com/api/v1/subscriptions/sub_abc001 \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+```json
+{
+  "data": {
+    "id": "sub_abc001",
+    "endpoint_url": "https://your-server.com/webhooks/rail",
+    "events": [
+      "deposit.completed",
+      "withdrawal.status.changed"
+    ],
+    "status": "ACTIVE",
+    "description": "Production deposit and withdrawal listener",
+    "delivery_stats": {
+      "total_deliveries": 142,
+      "successful_deliveries": 141,
+      "failed_deliveries": 1,
+      "last_delivered_at": "2024-01-22T14:55:00Z"
+    },
+    "created_at": "2024-01-22T08:00:00Z",
+    "updated_at": "2024-01-22T08:00:00Z"
+  }
+}
+```
+
+---
+
+## PATCH /v1/subscriptions/{subscription_id}
+
+Updates an existing webhook subscription. You can change the endpoint URL, update the subscribed event list, rotate the signing secret, or disable/re-enable the subscription.
+
+<ParamField path="subscription_id" type="string" required>
+  The unique subscription identifier.
+</ParamField>
+
+<ParamField body="endpoint_url" type="string">
+  Updated delivery URL. Must use HTTPS.
+</ParamField>
+
+<ParamField body="events" type="array">
+  Updated list of event types to subscribe to. Replaces the existing list entirely.
+</ParamField>
+
+<ParamField body="secret" type="string">
+  Rotated signing secret. After updating, all subsequent deliveries will be signed with the new secret. Update your server-side verification logic before rotating.
+</ParamField>
+
+<ParamField body="status" type="string">
+  Set to `DISABLED` to pause delivery without deleting the subscription, or `ACTIVE` to resume.
+</ParamField>
+
+<ParamField body="description" type="string">
+  Updated human-readable label.
+</ParamField>
+
+<Tip>
+  To add a single new event type without replacing the entire list, first call `GET /v1/subscriptions/{subscription_id}` to retrieve the current `events` array, append your new event type, then PATCH with the full updated array.
+</Tip>
+
+```bash
+curl -X PATCH https://sandbox.layer2financial.com/api/v1/subscriptions/sub_abc001 \
+  -H "Authorization: Bearer {AUTH_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "events": [
+      "deposit.completed",
+      "deposit.failed",
+      "withdrawal.status.changed",
+      "withdrawal.rfi.raised"
+    ],
+    "description": "Production deposit, withdrawal, and RFI listener"
+  }'
+```
+
+<ResponseField name="data" type="object">
+  The updated subscription object.
+  <Expandable title="data fields">
+    <ResponseField name="id" type="string">Subscription identifier.</ResponseField>
+    <ResponseField name="endpoint_url" type="string">Delivery URL.</ResponseField>
+    <ResponseField name="events" type="array">Updated event list.</ResponseField>
+    <ResponseField name="status" type="string">Subscription status.</ResponseField>
+    <ResponseField name="description" type="string">Updated label.</ResponseField>
+    <ResponseField name="updated_at" type="string">ISO 8601 update timestamp.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": {
+    "id": "sub_abc001",
+    "endpoint_url": "https://your-server.com/webhooks/rail",
+    "events": [
+      "deposit.completed",
+      "deposit.failed",
+      "withdrawal.status.changed",
+      "withdrawal.rfi.raised"
+    ],
+    "status": "ACTIVE",
+    "description": "Production deposit, withdrawal, and RFI listener",
+    "updated_at": "2024-01-23T09:30:00Z"
+  }
+}
+```
+
+---
+
+## DELETE /v1/subscriptions/{subscription_id}
+
+Permanently deletes a webhook subscription. Rail will stop delivering events to the associated endpoint immediately.
+
+<ParamField path="subscription_id" type="string" required>
+  The unique subscription identifier to delete.
+</ParamField>
+
+<Warning>
+  Deletion is permanent and cannot be undone. Any in-flight deliveries queued at the time of deletion may still be attempted once. If you want to pause deliveries temporarily, use `PATCH` to set `status: "DISABLED"` instead.
+</Warning>
+
+```bash
+curl -X DELETE https://sandbox.layer2financial.com/api/v1/subscriptions/sub_abc001 \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+```json
+{
+  "data": {
+    "message": "Subscription sub_abc001 has been successfully deleted."
+  }
+}
+```
+
+---
+
+## Webhook payload structure
+
+Every event Rail delivers to your endpoint shares the same top-level envelope structure:
+
+```json
+{
+  "id": "evt_xyz001",
+  "type": "deposit.completed",
+  "api_version": "v1.1.2",
+  "created_at": "2024-01-22T14:55:00Z",
+  "data": {
+    "object": "transaction",
+    "id": "txn_001",
+    "account_id": "CUST001.USD.001",
+    "type": "DEPOSIT",
+    "amount": 2500.00,
+    "asset_type": "FIAT_USD",
+    "status": "COMPLETED",
+    "created_at": "2024-01-22T14:50:00Z",
+    "settled_at": "2024-01-22T14:55:00Z"
+  }
+}
+```
+
+<ResponseField name="id" type="string">
+  Unique event identifier. Use this to deduplicate deliveries — Rail may deliver the same event more than once.
+</ResponseField>
+
+<ResponseField name="type" type="string">
+  The event type string (e.g. `deposit.completed`, `withdrawal.status.changed`).
+</ResponseField>
+
+<ResponseField name="api_version" type="string">
+  The API version under which the event was generated.
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp when the event was generated.
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The event payload. Shape varies by event type — see [Webhook Events](/webhooks/events) for per-type schemas.
+</ResponseField>
+
+---
+
+## Verifying webhook signatures
+
+Every delivery includes an `X-Rail-Signature` header. You should validate this on your server before processing the payload to confirm it came from Rail.
+
+<Tabs>
+  <Tab title="Node.js">
+    ```javascript
+    const crypto = require('crypto');
+
+    function verifyRailWebhook(payload, signature, secret) {
+      const expected = crypto
+        .createHmac('sha256', secret)
+        .update(payload, 'utf8')
+        .digest('hex');
+      return crypto.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(expected)
+      );
+    }
+
+    // In your Express handler:
+    app.post('/webhooks/rail', (req, res) => {
+      const rawBody = req.rawBody; // ensure you capture the raw body
+      const signature = req.headers['x-rail-signature'];
+      if (!verifyRailWebhook(rawBody, signature, process.env.RAIL_WEBHOOK_SECRET)) {
+        return res.status(401).send('Invalid signature');
+      }
+      const event = JSON.parse(rawBody);
+      // handle event.type ...
+      res.status(200).send('OK');
+    });
+    ```
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import hmac
+    import hashlib
+    from flask import Flask, request, abort
+
+    app = Flask(__name__)
+
+    def verify_rail_webhook(payload: bytes, signature: str, secret: str) -> bool:
+        expected = hmac.new(
+            secret.encode('utf-8'),
+            payload,
+            hashlib.sha256
+        ).hexdigest()
+        return hmac.compare_digest(signature, expected)
+
+    @app.route('/webhooks/rail', methods=['POST'])
+    def handle_webhook():
+        payload = request.get_data()
+        signature = request.headers.get('X-Rail-Signature', '')
+        if not verify_rail_webhook(payload, signature, RAIL_WEBHOOK_SECRET):
+            abort(401)
+        event = request.get_json()
+        # handle event['type'] ...
+        return '', 200
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  For more on signature verification, retry logic, and best practices for building reliable webhook consumers, see the [Webhooks Overview](/webhooks/overview) and [Request Signing](/api-reference/request-signing) pages.
+</Note>

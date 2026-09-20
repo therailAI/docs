@@ -1,47 +1,250 @@
 ---
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+title: "Get Started with Rail in 10 Minutes"
+sidebarTitle: "Quickstart"
+description: "Authenticate with Rail's API, onboard a test customer, open an account, and retrieve deposit instructions — all in under 10 minutes."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
+This guide walks you through the most common Rail integration flow end to end: obtaining an access token, onboarding a test individual customer, opening an account for them, and fetching deposit instructions. By the end you'll have made real API calls against the sandbox and have a clear picture of how all the pieces fit together.
 
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
-
-## Prerequisites
-
-Before you begin, you must have:
-
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+Before you begin, make sure you have a set of sandbox credentials (a client ID and client secret). If you don't have them yet, [request sandbox access](/get-started/sandbox) — it only takes a moment.
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
+
+  <Step title="Get your sandbox credentials">
+    Every Rail API call requires a Bearer token obtained through the OAuth2 Client Credentials grant. Your credentials consist of two values that you'll find in the Rail developer portal after signing up:
+
+    - **Client ID** — identifies your application
+    - **Client Secret** — authenticates your application (treat this like a password)
+
+    <Note>
+      Store your client secret securely. Never commit it to source control or expose it in client-side code. Use environment variables or a secrets manager in all environments.
+    </Note>
+
+    Set them as environment variables now so the examples below work without modification:
 
     ```bash
-    npm install your-package
+    export RAIL_CLIENT_ID="your_client_id_here"
+    export RAIL_CLIENT_SECRET="your_client_secret_here"
     ```
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
+
+  <Step title="Obtain an access token">
+    Rail uses the OAuth2 Client Credentials grant. You encode your `clientId:clientSecret` as a Base64 string and pass it in the `Authorization` header of a POST request to the token endpoint.
+
+    First, generate your Base64-encoded credentials:
 
     ```bash
-    your-cli init
+    export RAIL_BASIC=$(echo -n "$RAIL_CLIENT_ID:$RAIL_CLIENT_SECRET" | base64)
     ```
-  </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
+
+    Then exchange them for an access token:
 
     ```bash
-    your-cli start
+    curl --request POST \
+      'https://auth.layer2financial.com/oauth2/ausbdqlx69rH6OjWd696/v1/token?grant_type=client_credentials&scope=customers:read+customers:write+accounts:read+accounts:write+deposits:read' \
+      --header 'Accept: application/json' \
+      --header 'Content-Type: application/x-www-form-urlencoded' \
+      --header "Authorization: Basic $RAIL_BASIC"
+    ```
+
+    A successful response looks like this:
+
+    ```json
+    {
+      "token_type": "Bearer",
+      "expires_in": 43200,
+      "access_token": "eyJhbGciOiJSUzI1NiJ9...",
+      "scope": "customers:read customers:write accounts:read accounts:write deposits:read"
+    }
+    ```
+
+    Save the `access_token` value — you'll use it in every subsequent request:
+
+    ```bash
+    export RAIL_TOKEN="eyJhbGciOiJSUzI1NiJ9..."
+    ```
+
+    <Tip>
+      Tokens are valid for 43 200 seconds (12 hours). Your production integration should cache the token and refresh it proactively before it expires rather than fetching a new one on every request.
+    </Tip>
+  </Step>
+
+  <Step title="Create a customer application">
+    Before a customer can hold a Rail account, they must be onboarded through an Application. Rail uses this to run KYC, AML, and fraud checks automatically — you simply supply the applicant's details.
+
+    Create an application for a test individual:
+
+    ```bash
+    curl --request POST \
+      'https://sandbox.layer2financial.com/api/v1/applications' \
+      --header "Authorization: Bearer $RAIL_TOKEN" \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "application_type": "INDIVIDUAL",
+        "applicant": {
+          "first_name": "Jane",
+          "last_name": "Doe",
+          "email": "jane.doe@example.com",
+          "date_of_birth": "1990-01-01",
+          "address": {
+            "street_line_1": "123 Main St",
+            "city": "New York",
+            "state": "NY",
+            "postal_code": "10001",
+            "country_code": "US"
+          }
+        }
+      }'
+    ```
+
+    Rail returns a new application object with a status of `INCOMPLETE`:
+
+    ```json
+    {
+      "data": {
+        "id": "app_abc123",
+        "application_type": "INDIVIDUAL",
+        "status": "INCOMPLETE",
+        "created_at": "2024-01-15T10:00:00Z"
+      }
+    }
+    ```
+
+    Save the application ID:
+
+    ```bash
+    export APP_ID="app_abc123"
+    ```
+
+    <Note>
+      The `INCOMPLETE` status means the application record has been created but hasn't been submitted for review yet. You can update it with additional information before submitting.
+    </Note>
+  </Step>
+
+  <Step title="Submit the application">
+    Once you're satisfied with the application data, submit it for compliance review. Rail will run the necessary checks and transition the application through `PENDING_REVIEW` to either `APPROVED` or `REJECTED`.
+
+    ```bash
+    curl --request POST \
+      "https://sandbox.layer2financial.com/api/v1/applications/$APP_ID/submit" \
+      --header "Authorization: Bearer $RAIL_TOKEN" \
+      --header 'Content-Type: application/json'
+    ```
+
+    The application status moves to `PENDING_REVIEW`:
+
+    ```json
+    {
+      "data": {
+        "id": "app_abc123",
+        "status": "PENDING_REVIEW",
+        "submitted_at": "2024-01-15T10:01:00Z"
+      }
+    }
+    ```
+
+    <Tip>
+      In the sandbox, applications are typically approved automatically within seconds. In production, some applications may require manual review. Use [Webhooks](/webhooks/overview) to receive an event when the status changes rather than polling.
+    </Tip>
+
+    Once approved, a `Customer` record is automatically created and linked to the application. You'll receive the `customer_id` in the approval webhook payload or you can retrieve it by fetching the application.
+  </Step>
+
+  <Step title="Open an account">
+    With an approved customer, you can now open a Rail account for them. Accounts hold balances in a specific asset — use `FIAT_TESTNET_USD` in the sandbox.
+
+    First, retrieve the `customer_id` from the approved application:
+
+    ```bash
+    curl --request GET \
+      "https://sandbox.layer2financial.com/api/v1/applications/$APP_ID" \
+      --header "Authorization: Bearer $RAIL_TOKEN"
+    ```
+
+    Then open an account for that customer:
+
+    ```bash
+    export CUSTOMER_ID="cus_xyz789"
+
+    curl --request POST \
+      'https://sandbox.layer2financial.com/api/v1/accounts' \
+      --header "Authorization: Bearer $RAIL_TOKEN" \
+      --header 'Content-Type: application/json' \
+      --data "{
+        \"customer_id\": \"$CUSTOMER_ID\",
+        \"asset\": \"FIAT_TESTNET_USD\",
+        \"account_type\": \"INDIVIDUAL\"
+      }"
+    ```
+
+    Rail returns the new account:
+
+    ```json
+    {
+      "data": {
+        "id": "acc_def456",
+        "customer_id": "cus_xyz789",
+        "asset": "FIAT_TESTNET_USD",
+        "status": "ACTIVE",
+        "balance": "0.00",
+        "created_at": "2024-01-15T10:02:00Z"
+      }
+    }
+    ```
+
+    Save the account ID:
+
+    ```bash
+    export ACCOUNT_ID="acc_def456"
     ```
   </Step>
+
+  <Step title="Get deposit instructions">
+    The final step is to retrieve deposit instructions for the account. This gives you the routing details your customer would use to fund their account.
+
+    ```bash
+    curl --request GET \
+      "https://sandbox.layer2financial.com/api/v1/accounts/$ACCOUNT_ID/deposit-instructions" \
+      --header "Authorization: Bearer $RAIL_TOKEN"
+    ```
+
+    The response contains the bank details or wallet address your customer should use:
+
+    ```json
+    {
+      "data": {
+        "account_id": "acc_def456",
+        "instructions": {
+          "bank_name": "Rail Test Bank",
+          "routing_number": "021000021",
+          "account_number": "1234567890",
+          "account_type": "CHECKING",
+          "reference": "REF-cus_xyz789"
+        }
+      }
+    }
+    ```
+
+    🎉 **You've completed the core Rail flow.** You authenticated, onboarded a customer, opened an account, and retrieved deposit instructions — all using the sandbox API.
+  </Step>
+
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+## What to explore next
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+Now that you've made your first API calls, here are the natural next steps for building out your integration:
+
+<CardGroup cols={2}>
+  <Card title="Authentication deep dive" icon="lock" href="/get-started/authentication">
+    Learn about OAuth2 scopes, token management, and common authentication errors.
+  </Card>
+  <Card title="Customer onboarding guide" icon="user-check" href="/guides/customer-onboarding">
+    Handle the full onboarding lifecycle, including business customers and edge cases.
+  </Card>
+  <Card title="Deposits & withdrawals" icon="arrow-right-arrow-left" href="/guides/deposits">
+    Accept inbound funds and send outbound payments to external bank accounts.
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/webhooks/overview">
+    Subscribe to real-time events so you never have to poll for status changes.
+  </Card>
+</CardGroup>

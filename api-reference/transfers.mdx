@@ -1,0 +1,267 @@
+---
+title: "Transfers API — Move Funds Between Internal Accounts"
+sidebarTitle: "Transfers"
+description: "Create and track internal transfers between two Rail accounts. Ideal for settlement, fund allocation, and moving balances between customers on your platform."
+---
+
+A Transfer moves funds between two [Accounts](/api-reference/accounts) that both exist on the Rail platform — for example, consolidating balances for settlement, allocating funds between a customer's accounts, or moving money between two different customers you manage. Unlike [Withdrawals](/api-reference/withdrawals), transfers do not leave Rail's network and do not require a [Counterparty](/api-reference/counterparties). Both the source and destination accounts must be in `OPEN` status and hold the same asset type. Transfers are processed synchronously in most cases, completing within seconds.
+
+---
+
+## POST /v1/transfers
+
+Creates a new internal transfer between two accounts. The source account must have sufficient available balance.
+
+<ParamField body="source_account_id" type="string" required>
+  The ID of the account to debit funds from (e.g. `CUST001.USD.001`).
+</ParamField>
+
+<ParamField body="destination_account_id" type="string" required>
+  The ID of the account to credit funds to (e.g. `CUST002.USD.001`).
+</ParamField>
+
+<ParamField body="amount" type="number" required>
+  The amount to transfer, expressed in units of the `asset_type`.
+</ParamField>
+
+<ParamField body="asset_type" type="string" required>
+  The asset to move (e.g. `FIAT_USD`, `FIAT_TESTNET_USD`, `ETHEREUM_MAINNET_ETH`). Both accounts must hold this asset type.
+</ParamField>
+
+<ParamField body="description" type="string">
+  Optional memo or internal reference for the transfer.
+</ParamField>
+
+<ParamField body="idempotency_key" type="string">
+  A unique string to safely retry the request without creating duplicate transfers. See [Idempotency](/api-reference/idempotency).
+</ParamField>
+
+<Note>
+  Both accounts must be on your platform and hold the same `asset_type`. Cross-asset transfers (e.g. USD to ETH) must be performed using the [Exchanges API](/api-reference/exchanges) instead.
+</Note>
+
+```bash
+curl -X POST https://sandbox.layer2financial.com/api/v1/transfers \
+  -H "Authorization: Bearer {AUTH_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source_account_id": "CUST001.USD.001",
+    "destination_account_id": "CUST002.USD.001",
+    "amount": 500.00,
+    "asset_type": "FIAT_USD",
+    "description": "Internal settlement",
+    "idempotency_key": "transfer-20240121-001"
+  }'
+```
+
+<ResponseField name="data" type="object">
+  The newly created transfer object.
+  <Expandable title="data fields">
+    <ResponseField name="id" type="string">
+      Unique transfer identifier (e.g. `trn_abc001`).
+    </ResponseField>
+    <ResponseField name="source_account_id" type="string">
+      The account that was debited.
+    </ResponseField>
+    <ResponseField name="destination_account_id" type="string">
+      The account that was credited.
+    </ResponseField>
+    <ResponseField name="amount" type="number">
+      The transferred amount.
+    </ResponseField>
+    <ResponseField name="asset_type" type="string">
+      The asset that was moved.
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Current transfer status. See status lifecycle below.
+    </ResponseField>
+    <ResponseField name="description" type="string">
+      Optional memo.
+    </ResponseField>
+    <ResponseField name="created_at" type="string">
+      ISO 8601 creation timestamp.
+    </ResponseField>
+    <ResponseField name="updated_at" type="string">
+      ISO 8601 last-update timestamp.
+    </ResponseField>
+    <ResponseField name="completed_at" type="string">
+      ISO 8601 completion timestamp. `null` if still in progress.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": {
+    "id": "trn_abc001",
+    "source_account_id": "CUST001.USD.001",
+    "destination_account_id": "CUST002.USD.001",
+    "amount": 500.00,
+    "asset_type": "FIAT_USD",
+    "status": "COMPLETED",
+    "description": "Internal settlement",
+    "created_at": "2024-01-21T11:00:00Z",
+    "updated_at": "2024-01-21T11:00:05Z",
+    "completed_at": "2024-01-21T11:00:05Z"
+  }
+}
+```
+
+**Transfer status lifecycle:**
+
+| Status | Description |
+|--------|-------------|
+| `REQUESTED` | Transfer accepted and queued for processing. |
+| `PROCESSING` | Debit and credit are being applied to the accounts. |
+| `COMPLETED` | Funds have moved and both account balances updated. |
+| `FAILED` | Transfer could not be completed (e.g. insufficient balance). |
+
+---
+
+## GET /v1/transfers
+
+Returns a paginated list of all transfers on your platform. Filter by account or status.
+
+<ParamField query="source_account_id" type="string">
+  Return transfers debited from this account.
+</ParamField>
+
+<ParamField query="destination_account_id" type="string">
+  Return transfers credited to this account.
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter by transfer status: `REQUESTED`, `PROCESSING`, `COMPLETED`, or `FAILED`.
+</ParamField>
+
+<ParamField query="from_date" type="string">
+  Return transfers created on or after this ISO 8601 datetime.
+</ParamField>
+
+<ParamField query="to_date" type="string">
+  Return transfers created on or before this ISO 8601 datetime.
+</ParamField>
+
+<ParamField query="page" type="integer">
+  Page number. Defaults to `1`.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Results per page. Defaults to `20`, maximum `100`.
+</ParamField>
+
+```bash
+curl -X GET "https://sandbox.layer2financial.com/api/v1/transfers?source_account_id=CUST001.USD.001&status=COMPLETED" \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+<ResponseField name="data" type="array">
+  Array of transfer objects.
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Standard pagination metadata.
+  <Expandable title="pagination fields">
+    <ResponseField name="total" type="integer">Total matching records.</ResponseField>
+    <ResponseField name="page" type="integer">Current page.</ResponseField>
+    <ResponseField name="page_size" type="integer">Records per page.</ResponseField>
+    <ResponseField name="total_pages" type="integer">Total pages.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": [
+    {
+      "id": "trn_abc001",
+      "source_account_id": "CUST001.USD.001",
+      "destination_account_id": "CUST002.USD.001",
+      "amount": 500.00,
+      "asset_type": "FIAT_USD",
+      "status": "COMPLETED",
+      "description": "Internal settlement",
+      "created_at": "2024-01-21T11:00:00Z",
+      "updated_at": "2024-01-21T11:00:05Z",
+      "completed_at": "2024-01-21T11:00:05Z"
+    },
+    {
+      "id": "trn_abc002",
+      "source_account_id": "CUST001.USD.001",
+      "destination_account_id": "CUST001.USD.002",
+      "amount": 1500.00,
+      "asset_type": "FIAT_USD",
+      "status": "COMPLETED",
+      "description": "Balance reallocation",
+      "created_at": "2024-01-22T09:30:00Z",
+      "updated_at": "2024-01-22T09:30:04Z",
+      "completed_at": "2024-01-22T09:30:04Z"
+    }
+  ],
+  "pagination": {
+    "total": 2,
+    "page": 1,
+    "page_size": 20,
+    "total_pages": 1
+  }
+}
+```
+
+---
+
+## GET /v1/transfers/{transfer_id}
+
+Retrieves full details for a single transfer by its ID.
+
+<ParamField path="transfer_id" type="string" required>
+  The unique transfer identifier (e.g. `trn_abc001`).
+</ParamField>
+
+```bash
+curl -X GET https://sandbox.layer2financial.com/api/v1/transfers/trn_abc001 \
+  -H "Authorization: Bearer {AUTH_TOKEN}"
+```
+
+<ResponseField name="data" type="object">
+  Full transfer object.
+  <Expandable title="data fields">
+    <ResponseField name="id" type="string">Transfer identifier.</ResponseField>
+    <ResponseField name="source_account_id" type="string">Debited account.</ResponseField>
+    <ResponseField name="destination_account_id" type="string">Credited account.</ResponseField>
+    <ResponseField name="amount" type="number">Transfer amount.</ResponseField>
+    <ResponseField name="asset_type" type="string">Asset moved.</ResponseField>
+    <ResponseField name="status" type="string">Current status.</ResponseField>
+    <ResponseField name="description" type="string">Optional memo.</ResponseField>
+    <ResponseField name="failure_reason" type="string">
+      Human-readable reason if the transfer failed. `null` otherwise.
+    </ResponseField>
+    <ResponseField name="created_at" type="string">Creation timestamp.</ResponseField>
+    <ResponseField name="updated_at" type="string">Last-update timestamp.</ResponseField>
+    <ResponseField name="completed_at" type="string">Completion timestamp, or `null`.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json
+{
+  "data": {
+    "id": "trn_abc001",
+    "source_account_id": "CUST001.USD.001",
+    "destination_account_id": "CUST002.USD.001",
+    "amount": 500.00,
+    "asset_type": "FIAT_USD",
+    "status": "COMPLETED",
+    "description": "Internal settlement",
+    "failure_reason": null,
+    "created_at": "2024-01-21T11:00:00Z",
+    "updated_at": "2024-01-21T11:00:05Z",
+    "completed_at": "2024-01-21T11:00:05Z"
+  }
+}
+```
+
+<Tip>
+  To move funds between accounts that hold different assets (e.g. converting USD to ETH), use the [Exchanges API](/api-reference/exchanges). For sending funds outside the Rail network, use the [Withdrawals API](/api-reference/withdrawals).
+</Tip>
+
+<Note>
+  For a full guide on transfers and exchanges, see [Transfers & Exchanges](/guides/transfers-exchanges).
+</Note>

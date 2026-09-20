@@ -1,0 +1,241 @@
+---
+title: "Transfer Funds and Exchange Assets on Rail"
+sidebarTitle: "Transfers & Exchanges"
+description: "Learn how to move funds between Rail accounts with Transfers and convert between fiat and digital assets with Exchanges on Rail's unified API."
+---
+
+Rail provides two distinct operations for moving value between accounts on the platform: **Transfers** and **Exchanges**. Transfers move the same asset from one account to another — both must exist on Rail. Exchanges convert one asset type into another, for example swapping USD for ETH or converting between two cryptocurrencies. Both operations are atomic, settle immediately on-platform, and require no external counterparty.
+
+<Note>
+  Transfers and Exchanges only operate between accounts that already exist on Rail. To move funds to an external destination, use [Withdrawals](/guides/withdrawals) instead.
+</Note>
+
+---
+
+<Tabs>
+  <Tab title="Transfers">
+    ## Transfers
+
+    A Transfer debits one Rail deposit account and credits another in the same asset type. Common use cases include internal settlement between business units, rebalancing a customer's accounts, and moving funds from a holding account to a customer account upon a trigger event.
+
+    ### How transfers work
+
+    Transfers are processed synchronously. When you call `POST /v1/transfers`, Rail validates both accounts (both must be `OPEN` with sufficient balance on the source side), executes the debit and credit atomically, and returns a completed transaction record. There is no intermediate pending state under normal conditions.
+
+    ### Create a transfer
+
+    ```bash
+    curl -X POST 'https://sandbox.layer2financial.com/api/v1/transfers' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "source_account_id": "CUST001.USD.001",
+        "destination_account_id": "CUST002.USD.001",
+        "amount": 500.00,
+        "asset_type": "FIAT_USD",
+        "description": "Internal settlement"
+      }'
+    ```
+
+    **Response:**
+
+    ```json
+    {
+      "data": {
+        "id": "txfr_pqr654",
+        "status": "COMPLETED",
+        "source_account_id": "CUST001.USD.001",
+        "destination_account_id": "CUST002.USD.001",
+        "amount": 500.00,
+        "asset_type": "FIAT_USD",
+        "description": "Internal settlement",
+        "created_at": "2024-06-15T10:00:00Z",
+        "completed_at": "2024-06-15T10:00:01Z"
+      }
+    }
+    ```
+
+    ### Transfer request fields
+
+    <ParamField body="source_account_id" type="string" required>
+      The account to debit. Must be `OPEN` with sufficient `available_balance`.
+    </ParamField>
+
+    <ParamField body="destination_account_id" type="string" required>
+      The account to credit. Must be `OPEN` and hold the same `asset_type` as the source.
+    </ParamField>
+
+    <ParamField body="amount" type="number" required>
+      The amount to transfer. Must not exceed the source account's `available_balance`.
+    </ParamField>
+
+    <ParamField body="asset_type" type="string" required>
+      The asset type to move (e.g. `FIAT_USD`). Must match both account `asset_type_id` values.
+    </ParamField>
+
+    <ParamField body="description" type="string">
+      Optional memo. Recorded on both the debit and credit transaction entries.
+    </ParamField>
+
+    ### Common use cases
+
+    <CardGroup cols={2}>
+      <Card title="Customer-to-customer settlement" icon="arrow-right-arrow-left">
+        Instantly settle payments between customers on your platform without leaving Rail's infrastructure.
+      </Card>
+      <Card title="Omnibus to sub-account" icon="sitemap">
+        Move funds from a pooled holding account to individual customer sub-accounts upon verified deposit or event.
+      </Card>
+      <Card title="Fee collection" icon="percent">
+        Debit a service fee from a customer account and credit it to your platform's fee account atomically.
+      </Card>
+      <Card title="Account rebalancing" icon="scale-balanced">
+        Redistribute liquidity across multiple accounts for treasury management purposes.
+      </Card>
+    </CardGroup>
+
+    <Tip>
+      Use idempotency keys on transfer requests to ensure safe retries. If a network timeout occurs after submission, a retry with the same key will return the original response rather than creating a duplicate transfer. See the [Idempotency guide](/api-reference/idempotency).
+    </Tip>
+  </Tab>
+
+  <Tab title="Exchanges">
+    ## Exchanges
+
+    An Exchange converts funds from one asset type to another between two Rail accounts belonging to the same or different customers. The source account is debited in the source asset, and the destination account is credited in the destination asset at the rate determined at execution time. Common use cases include crypto-to-fiat conversion, fiat-to-crypto on-ramp, and cross-currency settlement.
+
+    ### How exchanges work
+
+    When you call `POST /v1/exchanges`, Rail:
+
+    1. Locks a real-time exchange rate for the asset pair.
+    2. Validates both accounts and available source balance.
+    3. Executes the debit and credit atomically using the locked rate.
+    4. Returns the completed transaction with the actual rate and destination amount applied.
+
+    <Warning>
+      Exchange rates are locked at execution time and are not pre-quotable via this endpoint. For rate-sensitive use cases, contact Rail about quote-and-execute flows or rate lock windows.
+    </Warning>
+
+    ### Create an exchange
+
+    ```bash
+    curl -X POST 'https://sandbox.layer2financial.com/api/v1/exchanges' \
+      --header 'Authorization: Bearer {AUTH_TOKEN}' \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "source_account_id": "CUST001.USD.001",
+        "destination_account_id": "CUST001.ETH.001",
+        "source_amount": 1000.00,
+        "source_asset_type": "FIAT_USD",
+        "destination_asset_type": "ETHEREUM_MAINNET_ETH"
+      }'
+    ```
+
+    **Response:**
+
+    ```json
+    {
+      "data": {
+        "id": "exch_stu987",
+        "status": "COMPLETED",
+        "source_account_id": "CUST001.USD.001",
+        "destination_account_id": "CUST001.ETH.001",
+        "source_amount": 1000.00,
+        "source_asset_type": "FIAT_USD",
+        "destination_amount": 0.32147,
+        "destination_asset_type": "ETHEREUM_MAINNET_ETH",
+        "exchange_rate": 0.00032147,
+        "created_at": "2024-06-15T11:00:00Z",
+        "completed_at": "2024-06-15T11:00:02Z"
+      }
+    }
+    ```
+
+    ### Exchange request fields
+
+    <ParamField body="source_account_id" type="string" required>
+      The account to debit in the source asset. Must be `OPEN` with sufficient `available_balance`.
+    </ParamField>
+
+    <ParamField body="destination_account_id" type="string" required>
+      The account to credit in the destination asset. Must be `OPEN`.
+    </ParamField>
+
+    <ParamField body="source_amount" type="number" required>
+      The exact amount to debit from the source account. Rail calculates the destination amount from this value using the locked exchange rate.
+    </ParamField>
+
+    <ParamField body="source_asset_type" type="string" required>
+      The asset type of the source account (e.g. `FIAT_USD`).
+    </ParamField>
+
+    <ParamField body="destination_asset_type" type="string" required>
+      The asset type of the destination account (e.g. `ETHEREUM_MAINNET_ETH`). See [Assets](/concepts/assets) for the full list of supported asset types.
+    </ParamField>
+
+    ### Common use cases
+
+    <CardGroup cols={2}>
+      <Card title="Crypto on-ramp" icon="arrow-right-to-bracket">
+        Convert customer USD holdings into ETH, BTC, or other supported digital assets. See the [Crypto On-Ramp use case](/use-cases/crypto-onramp).
+      </Card>
+      <Card title="Crypto off-ramp" icon="arrow-right-from-bracket">
+        Convert crypto back to fiat for withdrawal to a bank account. See the [Crypto Off-Ramp use case](/use-cases/crypto-offramp).
+      </Card>
+      <Card title="Cross-currency settlement" icon="coins">
+        Settle invoices or payments denominated in one currency into another without leaving the platform.
+      </Card>
+      <Card title="Portfolio rebalancing" icon="chart-pie">
+        Automatically rebalance customer asset allocations by exchanging between digital and fiat holdings.
+      </Card>
+    </CardGroup>
+  </Tab>
+</Tabs>
+
+---
+
+## Comparing transfers and exchanges
+
+| | Transfer | Exchange |
+|---|---|---|
+| **Asset types** | Same asset on source and destination | Different asset types |
+| **Rate involved** | No — 1:1 amount | Yes — exchange rate applied at execution |
+| **Accounts required** | Both on Rail | Both on Rail |
+| **Settlement** | Immediate, atomic | Immediate, atomic |
+| **Typical use** | Internal fund movement | Asset conversion / on-off ramp |
+
+---
+
+## Best practices
+
+<CardGroup cols={2}>
+  <Card title="Always check available balance" icon="gauge">
+    Query the source account's `available_balance` before submitting a transfer or exchange to avoid validation errors from in-flight holds or pending debits.
+  </Card>
+  <Card title="Use idempotency keys" icon="key">
+    Include an `Idempotency-Key` header on every request to safely handle network retries. See [Idempotency](/api-reference/idempotency).
+  </Card>
+  <Card title="Display exchange rates clearly" icon="chart-line">
+    Always show the applied `exchange_rate` and resulting `destination_amount` in your UI before and after an exchange to meet disclosure requirements and build customer trust.
+  </Card>
+  <Card title="Test conversions in sandbox" icon="flask">
+    Rail's [Sandbox environment](/get-started/sandbox) supports both transfer and exchange operations with simulated asset prices, so you can validate your entire flow without real funds.
+  </Card>
+</CardGroup>
+
+---
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Withdrawals" icon="arrow-up-from-line" href="/guides/withdrawals">
+    Send funds to external bank accounts after an exchange.
+  </Card>
+  <Card title="Transfers API Reference" icon="code" href="/api-reference/transfers">
+    Full endpoint reference for the Transfers API.
+  </Card>
+  <Card title="Exchanges API Reference" icon="code" href="/api-reference/exchanges">
+    Full endpoint reference for the Exchanges API.
+  </Card>
+</CardGroup>
