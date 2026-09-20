@@ -1,5 +1,5 @@
 ---
-title: "Process Withdrawals to External Bank Accounts"
+title: "Process Withdrawals to Bank Accounts and Crypto Wallets"
 sidebarTitle: "Withdrawals"
 description: "Learn how to initiate withdrawals from Rail accounts to external bank accounts or crypto addresses, handle Auto-RFI, and monitor withdrawal status."
 ---
@@ -8,20 +8,21 @@ Withdrawals move funds from a customer's Rail deposit account to an external des
 
 ## Withdrawal status lifecycle
 
-```
-REQUESTED → PENDING → COMPLETED
-                    ↘ FAILED
+```text
+REQUESTED → PENDING → PROCESSING → COMPLETED
+                                  ↘ FAILED
 ```
 
 | Status | Meaning |
 |---|---|
 | `REQUESTED` | Withdrawal created; pre-flight validation in progress |
-| `PENDING` | Accepted by the compliance engine; being processed by the payment rail |
+| `PENDING` | Accepted by the compliance engine; queued for processing |
+| `PROCESSING` | Submitted to the payment rail; funds are in transit |
 | `COMPLETED` | Funds have left the platform and been sent to the counterparty |
 | `FAILED` | Withdrawal could not be processed; see the `failure_reason` field |
 
 <Note>
-  A `PENDING` withdrawal cannot be cancelled once it has reached the payment processor. Monitor status proactively and surface it to your customers in real time.
+  A `PROCESSING` withdrawal cannot be cancelled once it has reached the payment processor. Monitor status proactively and surface it to your customers in real time.
 </Note>
 
 ---

@@ -1,7 +1,7 @@
 ---
-title: "Idempotency Keys for Safe API Retries"
+title: "Idempotency Keys — Safe Retries for Rail API Requests"
 sidebarTitle: "Idempotency"
-description: "Use the Idempotency-Key header to safely retry failed Rail API requests without risk of duplicate transactions or double-charges."
+description: "Use the Idempotency-Key header to safely retry failed Rail API requests without risk of duplicate transactions, double-charges, or double-writes."
 ---
 
 Network timeouts, transient errors, and client crashes are unavoidable realities of distributed systems. When a request that creates or modifies a financial record times out, you face a dilemma: did the operation succeed before the connection dropped, or did it fail? Retrying without protection risks executing the same operation twice — a double withdrawal, a duplicate payment, a second account opened in error. Rail's idempotency system solves this by letting you attach a unique key to any mutating request. If you retry with the same key, Rail returns the original response without re-executing the operation.
@@ -79,7 +79,7 @@ Idempotency keys expire **24 hours** after first use. After a key expires, Rail 
 
 If you retry a request with the same `Idempotency-Key` and the **same request body**, Rail returns the cached response with HTTP `200` (or whichever status was returned originally). The response includes a header indicating the result came from the idempotency cache:
 
-```
+```http
 Idempotency-Replayed: true
 ```
 

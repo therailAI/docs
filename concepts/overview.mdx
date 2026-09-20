@@ -1,5 +1,5 @@
 ---
-title: "Core Concepts: Rail Platform Building Blocks"
+title: "Core Concepts: Rail Platform Entities and Building Blocks"
 sidebarTitle: "Overview"
 description: "Understand the key entities in Rail — customers, accounts, assets, counterparties, and money movement — and how they work together."
 ---
@@ -10,7 +10,7 @@ Rail organizes every financial operation around a small set of well-defined enti
 
 Every object on Rail traces back to a **Customer**. Customers are created through the **Application** (onboarding) process and then serve as the root entity for all subsequent operations. Each customer can hold one or more **Accounts**, and every financial transaction — deposit, withdrawal, transfer, exchange, or payment — is always scoped to an account. **Counterparties** represent the external world: bank accounts and crypto wallets that your customers send to or receive from.
 
-```
+```text
 Application ──► Customer
                    │
                    ├── Account (FIAT_USD)

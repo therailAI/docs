@@ -1,5 +1,5 @@
 ---
-title: "Supported Assets: Fiat and Digital Currencies"
+title: "Supported Assets: Fiat and Digital Currencies on Rail"
 sidebarTitle: "Assets"
 description: "Explore all fiat and crypto assets available on Rail, understand the asset_type_id format, sandbox vs. production IDs, and custody arrangements."
 ---
@@ -10,7 +10,7 @@ Rail supports a range of fiat currencies and digital assets, each identified by 
 
 The `asset_type_id` follows a consistent three-part convention:
 
-```
+```text
 {BLOCKCHAIN}_{NETWORK}_{CURRENCY_CODE}
 ```
 
@@ -22,18 +22,19 @@ Each segment serves a specific purpose:
 | `NETWORK` | The network environment | `MAINNET`, `TESTNET`, `GOERLI` |
 | `CURRENCY_CODE` | The ISO currency code or token symbol | `ETH`, `BTC`, `USD`, `USDC` |
 
-For fiat assets, the `BLOCKCHAIN` segment is replaced with `FIAT`, since no blockchain applies:
+For fiat assets, the `BLOCKCHAIN` segment is replaced with `FIAT`, since no blockchain applies. In the production environment the network segment is omitted, while sandbox IDs include an explicit network segment:
 
-```
-FIAT_{NETWORK}_{CURRENCY_CODE}
+```text
+FIAT_{CURRENCY_CODE}          # Production fiat
+FIAT_{NETWORK}_{CURRENCY_CODE} # Sandbox / testnet fiat
 
 # Examples
 FIAT_USD           # Production US Dollar
-FIAT_TESTNET_USD   # Sandbox US Dollar
+FIAT_TESTNET_USD   # Sandbox US Dollar (testnet)
 ```
 
 <Note>
-  The `NETWORK` segment differentiates production assets from sandbox assets. Always use `TESTNET` or a specific test network (such as `GOERLI`) when working in the sandbox environment. Production asset IDs are rejected in sandbox, and vice versa.
+  The presence of the `NETWORK` segment distinguishes sandbox asset IDs from production ones. Always use `TESTNET` (or a named test network such as `GOERLI`) in the sandbox environment. Production asset IDs are rejected in sandbox, and vice versa.
 </Note>
 
 ## Supported Fiat Assets

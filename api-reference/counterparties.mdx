@@ -1,7 +1,7 @@
 ---
 title: "Counterparties API — Manage External Payment Parties"
 sidebarTitle: "Counterparties"
-description: "Create and manage counterparties — the external individuals or businesses your customers send money to and receive money from via ACH, wire, crypto, and linked accounts."
+description: "Create and manage counterparties — external individuals or businesses your customers transact with via ACH, wire, crypto, and linked bank accounts."
 ---
 
 A Counterparty represents an external party — an individual or business — that a [Customer](/api-reference/customers) transacts with. Before your customer can send a [Withdrawal](/api-reference/withdrawals) or receive a [Payment](/api-reference/payments), a Counterparty record must exist to identify the destination or source. Rail supports four counterparty types: `BASIC` (identity profile only), `FIAT_US` (US bank account), `CRYPTO` (blockchain address), and `LINKED` (bank account connected via Plaid or MX for instant verification and pull payments). Counterparties progress from `PENDING` → `ACTIVE` once validated.

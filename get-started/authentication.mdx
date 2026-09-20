@@ -1,5 +1,5 @@
 ---
-title: "Authenticate with Rail's OAuth2 API"
+title: "Rail API Authentication: OAuth2 Client Credentials Guide"
 sidebarTitle: "Authentication"
 description: "Learn how to obtain and use OAuth2 Bearer tokens to authenticate every request to the Rail API using the Client Credentials grant flow."
 ---
@@ -10,7 +10,7 @@ Every request to the Rail API must include a valid Bearer token in the `Authoriz
 
 The flow has two steps: obtain a token, then use it. There is no redirect, no user interaction, and no refresh token — when a token expires you simply request a new one using the same credentials.
 
-```
+```text
 Your Server                      Rail Auth Server
      |                                  |
      |  POST /token (Basic Auth)        |
@@ -150,6 +150,8 @@ Rail tokens expire after **12 hours**. Your integration should handle expiry gra
 
 A simple caching pattern:
 
+<CodeGroup>
+
 ```javascript Node.js
 let cachedToken = null;
 let tokenExpiresAt = null;
@@ -188,6 +190,8 @@ def get_access_token():
 
     return _token_cache["token"]
 ```
+
+</CodeGroup>
 
 ## Common authentication errors
 

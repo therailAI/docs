@@ -1,7 +1,7 @@
 ---
 title: "Transfers API — Move Funds Between Internal Accounts"
 sidebarTitle: "Transfers"
-description: "Create and track internal transfers between two Rail accounts. Ideal for settlement, fund allocation, and moving balances between customers on your platform."
+description: "Create and track internal transfers between two Rail accounts. Ideal for fund settlement, balance allocation, and moving assets between customers."
 ---
 
 A Transfer moves funds between two [Accounts](/api-reference/accounts) that both exist on the Rail platform — for example, consolidating balances for settlement, allocating funds between a customer's accounts, or moving money between two different customers you manage. Unlike [Withdrawals](/api-reference/withdrawals), transfers do not leave Rail's network and do not require a [Counterparty](/api-reference/counterparties). Both the source and destination accounts must be in `OPEN` status and hold the same asset type. Transfers are processed synchronously in most cases, completing within seconds.

@@ -1,5 +1,5 @@
 ---
-title: "Build an Embedded Crypto Wallet with Rail"
+title: "Build a Compliant Embedded Crypto Wallet with Rail"
 sidebarTitle: "Wallet as a Service"
 description: "Embed fully compliant digital currency wallets in your product. Let customers deposit, hold, transfer, and exchange crypto in under 10 minutes."
 ---
@@ -44,11 +44,11 @@ Before you start, make sure you have:
       --header 'Authorization: Bearer {AUTH_TOKEN}' \
       --header 'Content-Type: application/json' \
       --data '{
-        "customer_id": "QUORUM001",
+        "customer_id": "CUST001",
         "account_to_open": {
-          "account_id": "QUORUM001.ETH.001",
+          "account_id": "CUST001.ETH.001",
           "product_id": "DEPOSIT_FORT_CRYPTO",
-          "asset_type_id": "ETHEREUM_GOERLI_ETH"
+          "asset_type_id": "ETHEREUM_MAINNET_ETH"
         }
       }'
     ```
@@ -60,7 +60,7 @@ Before you start, make sure you have:
     Retrieve the on-chain deposit address for the account. Your customer sends crypto to this address to fund their wallet. Each account has a unique, persistent deposit address.
 
     ```bash
-    curl --request GET 'https://sandbox.layer2financial.com/api/v1/accounts/deposits/QUORUM001.ETH.001/deposit-instructions' \
+    curl --request GET 'https://sandbox.layer2financial.com/api/v1/accounts/deposits/CUST001.ETH.001/deposit-instructions' \
       --header 'Authorization: Bearer {AUTH_TOKEN}'
     ```
 
@@ -81,7 +81,7 @@ Before you start, make sure you have:
       "type": "account.deposit.completed",
       "created_at": "2024-01-15T10:30:00Z",
       "data": {
-        "account_id": "QUORUM001.ETH.001",
+        "account_id": "CUST001.ETH.001",
         "amount": 1.5,
         "asset_type": "ETHEREUM_MAINNET_ETH",
         "transaction_id": "txn_xyz789"
@@ -100,8 +100,8 @@ Before you start, make sure you have:
       --header 'Authorization: Bearer {AUTH_TOKEN}' \
       --header 'Content-Type: application/json' \
       --data '{
-        "source_account_id": "QUORUM001.ETH.001",
-        "destination_account_id": "QUORUM001.USD.001",
+        "source_account_id": "CUST001.ETH.001",
+        "destination_account_id": "CUST001.USD.001",
         "amount": 0.5,
         "asset_type": "ETHEREUM_MAINNET_ETH"
       }'
@@ -118,8 +118,8 @@ Before you start, make sure you have:
       --header 'Authorization: Bearer {AUTH_TOKEN}' \
       --header 'Content-Type: application/json' \
       --data '{
-        "source_account_id": "QUORUM001.ETH.001",
-        "destination_account_id": "QUORUM001.USD.001",
+        "source_account_id": "CUST001.ETH.001",
+        "destination_account_id": "CUST001.USD.001",
         "source_amount": 1.0,
         "source_asset_type": "ETHEREUM_MAINNET_ETH",
         "destination_asset_type": "FIAT_USD"

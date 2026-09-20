@@ -1,7 +1,7 @@
 ---
 title: "Exchanges API — Convert Between Fiat and Digital Assets"
 sidebarTitle: "Exchanges"
-description: "Create and track asset exchanges between a customer's accounts. Convert fiat to crypto, crypto to fiat, or between digital assets at real-time exchange rates."
+description: "Create and track asset exchanges between a customer's accounts. Convert fiat to crypto, crypto to fiat, or swap digital assets at live exchange rates."
 ---
 
 An Exchange converts funds from one asset type to another between two of a customer's [Accounts](/api-reference/accounts) — for example, converting USD to ETH (an on-ramp), ETH back to USD (an off-ramp), or swapping between two digital assets. The source and destination accounts must belong to the same customer but hold different asset types. Rail applies a real-time exchange rate at the moment the exchange is executed; the `exchange_rate` and `destination_amount` in the response reflect the locked-in rate for that transaction.

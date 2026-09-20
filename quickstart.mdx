@@ -1,5 +1,5 @@
 ---
-title: "Get Started with Rail in 10 Minutes"
+title: "Rail Quickstart: Authenticate, Onboard, and Transact"
 sidebarTitle: "Quickstart"
 description: "Authenticate with Rail's API, onboard a test customer, open an account, and retrieve deposit instructions — all in under 10 minutes."
 ---
@@ -71,6 +71,10 @@ Before you begin, make sure you have a set of sandbox credentials (a client ID a
 
   <Step title="Create a customer application">
     Before a customer can hold a Rail account, they must be onboarded through an Application. Rail uses this to run KYC, AML, and fraud checks automatically — you simply supply the applicant's details.
+
+    <Note>
+      For all mutating requests (POST, PATCH), include an `Idempotency-Key` header with a unique value (a UUID works well). If a request fails mid-flight and you retry, Rail will return the original response instead of creating a duplicate resource. See the [Idempotency reference](/api-reference/idempotency) for details.
+    </Note>
 
     Create an application for a test individual:
 

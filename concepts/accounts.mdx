@@ -1,5 +1,5 @@
 ---
-title: "Accounts: Hold Balances Across Asset Types"
+title: "Accounts: Hold and Manage Balances Across Asset Types"
 sidebarTitle: "Accounts"
 description: "Learn how Rail accounts work — product types, asset identifiers, lifecycle states, balance fields, and how to create and retrieve accounts."
 ---
@@ -23,13 +23,13 @@ Every account is created with a `product_id` that determines whether it holds fi
 
 Every account is tied to exactly one asset, identified by an `asset_type_id` string. The format is:
 
-```
+```text
 {BLOCKCHAIN}_{NETWORK}_{CURRENCY_CODE}
 ```
 
 For fiat assets, the blockchain segment is replaced with `FIAT`:
 
-```
+```text
 FIAT_{NETWORK}_{CURRENCY_CODE}
 ```
 
@@ -61,7 +61,7 @@ See [Supported Assets](/concepts/assets) for the full list of asset IDs and deta
 
 Accounts move through a defined set of states from creation to closure.
 
-```
+```text
   POST /v1/accounts/deposits
            │
            ▼

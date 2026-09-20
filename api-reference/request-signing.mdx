@@ -1,7 +1,7 @@
 ---
-title: "Secure API Requests with Request Signing"
+title: "Sign Rail API Requests with HMAC-SHA256 or RS256 Keys"
 sidebarTitle: "Request Signing"
-description: "Add a cryptographic signature to Rail API requests to guarantee payload integrity and protect against replay attacks beyond OAuth2."
+description: "Add a cryptographic signature to Rail API requests using HMAC-SHA256 or RS256 to guarantee payload integrity and defeat replay attacks."
 ---
 
 OAuth2 Bearer tokens establish *who* is making a request, but they do not guarantee that the request body has not been tampered with in transit. Rail's optional request-signing feature lets you attach a cryptographic signature to each request using your private key. Rail verifies the signature on receipt — if the payload was altered after you signed it, or if the request is being replayed from a previous capture, Rail rejects it. Signing is strongly recommended for any integration that initiates withdrawals, exchanges, or other high-value operations.
@@ -31,7 +31,7 @@ RS256 with an asymmetric key pair is recommended for production — you register
   <Step title="Compute the body hash">
     Take the raw UTF-8 request body string and compute its SHA-256 hash, then Base64-encode the result. For requests with no body (e.g., GET requests), use the hash of an empty string.
 
-    ```
+    ```text
     BODY_HASH = Base64(SHA256(request_body_utf8))
     ```
   </Step>
@@ -39,7 +39,7 @@ RS256 with an asymmetric key pair is recommended for production — you register
   <Step title="Build the canonical string">
     Concatenate the following fields, each separated by a newline character (`\n`):
 
-    ```
+    ```text
     {HTTP_METHOD}\n{PATH}\n{TIMESTAMP}\n{BODY_HASH}
     ```
 
@@ -50,7 +50,7 @@ RS256 with an asymmetric key pair is recommended for production — you register
     - `BODY_HASH` — the Base64-encoded SHA-256 body hash from Step 1
 
     Example canonical string:
-    ```
+    ```text
     POST
     /v1/withdrawals
     1717200000
@@ -75,7 +75,7 @@ RS256 with an asymmetric key pair is recommended for production — you register
     | `X-Rail-Signature` | The Base64-encoded signature from Step 3 |
     | `X-Rail-Timestamp` | The same Unix timestamp used in the canonical string |
 
-    ```
+    ```http
     X-Rail-Signature: {BASE64_SIGNATURE}
     X-Rail-Timestamp: 1717200000
     ```

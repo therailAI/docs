@@ -1,7 +1,7 @@
 ---
-title: "API Authentication: OAuth2 Client Credentials"
+title: "Authenticate with Rail's API Using OAuth2 Client Credentials"
 sidebarTitle: "Authentication"
-description: "Authenticate with Rail's REST API using the OAuth2 Client Credentials grant. Covers token requests, scopes, expiry, and renewal."
+description: "Obtain and manage OAuth2 Bearer tokens for Rail's REST API. Covers the token request flow, available scopes, expiry, and proactive renewal."
 ---
 
 Rail's API uses the **OAuth2 Client Credentials** grant to authenticate server-to-server requests. You exchange your `clientId` and `clientSecret` for a short-lived Bearer token, then attach that token to every API call in the `Authorization` header. This page is the complete technical reference for the authentication flow — if you want a quick walkthrough for getting your first token in the sandbox, see the [Quickstart](quickstart).
@@ -16,7 +16,7 @@ Rail issues a `clientId` and `clientSecret` pair per environment (sandbox and pr
 
 ## Token Endpoint
 
-```
+```http
 POST https://auth.layer2financial.com/oauth2/ausbdqlx69rH6OjWd696/v1/token
 ```
 
@@ -26,7 +26,7 @@ POST https://auth.layer2financial.com/oauth2/ausbdqlx69rH6OjWd696/v1/token
   <Step title="Base64-encode your credentials">
     Concatenate your `clientId` and `clientSecret` with a colon separator, then Base64-encode the result:
 
-    ```
+    ```text
     Base64("{clientId}:{clientSecret}")
     ```
 

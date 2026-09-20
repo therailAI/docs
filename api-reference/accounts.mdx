@@ -1,7 +1,7 @@
 ---
-title: "Accounts API — Open and Manage Deposit Accounts"
+title: "Accounts API — Open and Manage Accounts for Customers"
 sidebarTitle: "Accounts"
-description: "Open fiat and digital-asset deposit accounts for customers. Retrieve balances, transactions, statements, and deposit instructions for ACH, wire, and crypto."
+description: "Open fiat and crypto deposit accounts for customers. Retrieve balances, transactions, statements, and deposit instructions for ACH, wire, and crypto."
 ---
 
 Accounts are the financial containers on Rail where customer funds are held. Each account is tied to a single [Customer](/api-reference/customers), holds a specific asset type (e.g. `FIAT_USD`, `ETHEREUM_MAINNET_ETH`), and is governed by a product configuration. Once an account is open, you can retrieve its balance, pull transaction history, download statements, and get deposit instructions that your customers can share with payers. Accounts progress through a lifecycle: `PENDING_APPROVAL` → `OPEN` → `SUSPENDED` or `CLOSED`.

@@ -1,7 +1,7 @@
 ---
-title: "Rail REST API Reference Overview"
+title: "Rail REST API v1 — Reference Overview and Base URLs"
 sidebarTitle: "Overview"
-description: "Explore Rail's unified REST API for fiat and digital-asset financial products. JSON over HTTPS, OAuth2 auth, versioned at v1."
+description: "Explore Rail's unified REST API for fiat and digital-asset financial products. JSON over HTTPS, OAuth2 Bearer tokens, and cursor-based pagination."
 ---
 
 Rail exposes a single, versioned REST API that lets you build compliant fiat and digital-asset financial products — customer onboarding, accounts, deposits, withdrawals, transfers, exchanges, and more — through a consistent JSON interface. Every request is authenticated with short-lived OAuth2 Bearer tokens, and every response is wrapped in a top-level `data` envelope for predictable parsing. This page orients you to the API's structure, base URLs, and the supporting reference topics you'll use most.
@@ -21,9 +21,9 @@ All API calls are made over HTTPS. Use the sandbox environment to develop and te
 
 ## API Version
 
-The current API version is **v1**. Prefix every endpoint path with `/v1/`, for example:
+The current API release is **v1.1.2**. Every endpoint path is prefixed with `/v1/`, for example:
 
-```
+```http
 GET https://sandbox.layer2financial.com/api/v1/accounts
 ```
 
@@ -33,7 +33,7 @@ Breaking changes will be introduced under a new version path (e.g., `/v2/`). Non
 
 All request bodies and response bodies use `application/json`. Set the `Content-Type` header on every mutating request:
 
-```
+```http
 Content-Type: application/json
 ```
 

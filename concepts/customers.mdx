@@ -1,5 +1,5 @@
 ---
-title: "Customers: Managing User Records on Rail"
+title: "Customers: Managing Individual and Corporate Records on Rail"
 sidebarTitle: "Customers"
 description: "Learn how Customer records work on Rail — individual and corporate types, lifecycle states, key fields, and how to retrieve customer data after onboarding."
 ---
@@ -23,7 +23,7 @@ Rail supports two customer types, which determine the onboarding requirements an
 
 Customers move through a defined set of statuses as the Application progresses through review.
 
-```
+```text
 Application INCOMPLETE
        │
        ▼
@@ -127,6 +127,61 @@ After an Application is approved, you can fetch the full Customer record at any 
 
 <Tip>
   Store the `customer_id` in your own database immediately after a Customer is created. You will need it to open accounts, add counterparties, and look up transaction history.
+</Tip>
+
+## Updating a Customer
+
+Use `PATCH /v1/customers/{customer_id}` to update mutable fields on an existing customer record, such as contact details or metadata. The `type` and `status` fields are immutable via this endpoint.
+
+<CodeGroup>
+  ```bash cURL
+  curl --request PATCH \
+    --url https://sandbox.layer2financial.com/api/v1/customers/{customer_id} \
+    --header 'Authorization: Bearer YOUR_API_KEY' \
+    --header 'Content-Type: application/json' \
+    --data '{
+      "email": "alice.updated@example.com"
+    }'
+  ```
+
+  ```javascript Node.js
+  const response = await fetch(
+    `https://sandbox.layer2financial.com/api/v1/customers/${customerId}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${process.env.RAIL_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: 'alice.updated@example.com',
+      }),
+    }
+  );
+
+  const customer = await response.json();
+  console.log(customer.customer_id, customer.updated_at);
+  ```
+
+  ```python Python
+  import requests
+
+  response = requests.patch(
+      f"https://sandbox.layer2financial.com/api/v1/customers/{customer_id}",
+      headers={
+          "Authorization": f"Bearer {api_key}",
+          "Content-Type": "application/json",
+      },
+      json={"email": "alice.updated@example.com"},
+  )
+
+  customer = response.json()
+  print(customer["customer_id"], customer["updated_at"])
+  ```
+</CodeGroup>
+
+<Tip>
+  Only include the fields you want to change in the request body. Omitted fields are left unchanged. Consult the [Customers API Reference](/api-reference/customers) for the full list of patchable fields.
 </Tip>
 
 ## Using the Customer ID

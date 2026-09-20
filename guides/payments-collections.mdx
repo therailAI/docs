@@ -1,23 +1,24 @@
 ---
-title: "Collect Payments from External Counterparties"
+title: "Collect Payments from External Counterparties on Rail"
 sidebarTitle: "Payments"
-description: "Learn how to collect funds from external counterparties into Rail accounts using the Payments API — ideal for invoicing, subscriptions, and payment gateways."
+description: "Collect funds from external counterparties into Rail accounts using the Payments API — ideal for invoicing, subscriptions, and payment gateways."
 ---
 
 Rail's Payments API lets you collect funds from an external party — a counterparty — and credit them directly into a customer's Rail deposit account. Unlike deposits (which arrive passively when a sender initiates a bank transfer) or withdrawals (which push funds out), a Payment is a pull-oriented collection initiated by you: you create a payment request linking a source counterparty to a destination account, and Rail orchestrates the fund collection. This makes Payments ideal for subscription billing, invoice settlement, and marketplace payment gateways.
 
 ## Payment status lifecycle
 
-```
-REQUESTED → ACCEPTED → COMPLETED
+```text
+REQUESTED → ACCEPTED → PENDING_SETTLEMENT → COMPLETED
                      ↘ CHANGES_REQUESTED
 ```
 
 | Status | Meaning |
 |---|---|
 | `REQUESTED` | Payment created; awaiting review and acceptance |
-| `ACCEPTED` | Payment approved; funds collection in progress |
-| `COMPLETED` | Funds collected and credited to the destination account |
+| `ACCEPTED` | Payment approved; funds collection initiated |
+| `PENDING_SETTLEMENT` | Funds collected from the counterparty; awaiting final settlement to the destination account |
+| `COMPLETED` | Funds settled and credited to the destination account |
 | `CHANGES_REQUESTED` | Additional information or documents required before acceptance |
 
 <Note>

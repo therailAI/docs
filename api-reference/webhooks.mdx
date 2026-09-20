@@ -1,7 +1,7 @@
 ---
 title: "Webhooks API — Subscribe to Real-Time Platform Events"
 sidebarTitle: "Webhooks"
-description: "Register webhook subscriptions to receive real-time event notifications for deposits, withdrawals, payments, exchanges, and application status changes on your endpoint."
+description: "Register webhook subscriptions to receive real-time event notifications for deposits, withdrawals, payments, exchanges, and application status changes."
 ---
 
 Webhooks let your server receive real-time push notifications whenever something important happens on the Rail platform — a deposit completes, a withdrawal changes status, an application is approved, or an RFI is raised. Instead of polling the API, you register a subscription pointing to an HTTPS endpoint on your server, and Rail delivers a signed JSON payload to that URL for each matching event. You can manage your subscriptions programmatically using the endpoints below.

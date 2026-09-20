@@ -1,7 +1,7 @@
 ---
 title: "Withdrawals API — Send Funds to External Counterparties"
 sidebarTitle: "Withdrawals"
-description: "Create and track outbound withdrawals from customer accounts to external counterparties via ACH, wire, and crypto. Handle Auto-RFI document requests programmatically."
+description: "Create and track outbound withdrawals to external counterparties via ACH, wire, and crypto. Handle Auto-RFI document requests to unblock compliance holds."
 ---
 
 A Withdrawal moves funds from a customer's Rail [Account](/api-reference/accounts) to an external [Counterparty](/api-reference/counterparties) — for example, disbursing earnings to a bank account or sending crypto to an external wallet. Each withdrawal specifies a source account, a destination counterparty, an amount, and an asset type. Rail performs compliance screening on each withdrawal; in some cases an **Auto-RFI** (Request for Information) may be raised, requiring you to upload supporting documents before the transaction can proceed.

@@ -1,5 +1,5 @@
 ---
-title: "API Error Codes and Troubleshooting Guide"
+title: "Rail API Error Codes, Rate Limits, and Troubleshooting"
 sidebarTitle: "Errors"
 description: "Understand Rail API error responses, HTTP status codes, domain error codes, rate limits, and how to resolve the most common integration issues."
 ---
@@ -243,9 +243,10 @@ async function handleRailResponse(response) {
     case 422:
       throw new BusinessRuleError(errorCode, errorBody.error?.message, errorBody.error?.details);
 
-    case 429:
+    case 429: {
       const resetAt = parseInt(response.headers.get('X-RateLimit-Reset'), 10);
       throw new RateLimitError(resetAt);
+    }
 
     case 500:
       // Safe to retry with backoff

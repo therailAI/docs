@@ -1,7 +1,7 @@
 ---
 title: "Payments API — Collect Funds from External Counterparties"
 sidebarTitle: "Payments"
-description: "Create payment collection requests, generate payment instructions for counterparties, manage RFI document submissions, and track incoming payment status end-to-end."
+description: "Create payment collection requests, generate payment instructions, manage RFI document submissions, and track incoming payment status to settlement."
 ---
 
 The Payments resource lets you initiate inbound collection requests — asking an external [Counterparty](/api-reference/counterparties) to send funds into a customer's Rail [Account](/api-reference/accounts). A Payment represents a single collection event: you create it, accept it to generate payment instructions, and share those instructions with the counterparty (or their bank). Rail monitors the incoming funds and updates the payment status as money moves through the network. Like withdrawals, payments may trigger a **Request for Information (RFI)** that requires you to upload supporting documentation before settlement can complete.

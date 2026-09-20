@@ -1,7 +1,7 @@
 ---
 title: "Deposits API — View Incoming Funds and Deposit History"
 sidebarTitle: "Deposits"
-description: "Query deposit transactions on customer accounts. Filter the account transaction ledger by type, status, and date range to track incoming fiat and digital-asset funds."
+description: "Query deposit transactions on customer accounts. Filter the transaction ledger by type, status, and date range to track incoming fiat and crypto funds."
 ---
 
 Deposits represent inbound funds credited to a customer's [Account](/api-reference/accounts) — whether arriving via ACH, Fedwire, SWIFT, or an on-chain crypto transfer. On Rail, deposits are surfaced as transactions on an account's ledger rather than as a standalone resource. You query them through the Accounts transaction endpoints, filtering by `transaction_type=DEPOSIT` to isolate incoming funds. This page documents the deposit-specific parameters, response fields, and worked examples to help you build deposit-monitoring workflows.
