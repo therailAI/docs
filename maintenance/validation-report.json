@@ -1,6 +1,6 @@
 {
   "status": "local-checks-passed",
-  "pages": 155,
+  "pages": 163,
   "customer_operations": 127,
   "legacy_redirects": 27,
   "mint_cli": "4.2.502",
@@ -14,12 +14,21 @@
     "Five JSON examples validated against contract schemas",
     "Shell example syntax",
     "TypeScript examples compile against development SDK",
-    "Python examples execute against schema-valid mock responses, including transport closure"
+    "Python examples execute against schema-valid mock responses, including transport closure",
+    "Collapsed product/resource navigation and generated grouping consistency",
+    "Isolated CLI payments-template initialization and simulated effect",
+    "19 CLI/SDK shell examples pass bash syntax checks",
+    "Governed TypeScript examples compile against development SDK",
+    "Governed Python examples execute with the real SDK and replayed transport; completion disabled, resume does not rerun recorded effect, clients close",
+    "SDK governed lifecycle suites: TypeScript 7 tests, Python 11 tests"
   ],
   "limits": [
     "No live authenticated API environment was exercised",
     "SDK examples were checked against supplied development source, not public package releases",
-    "No browser visual inspection performed"
+    "No browser visual inspection performed",
+    "No development stack was started or reset during this update"
   ],
-  "published_openapi_sha256": "512b1a70250d015677c94f9378c52dcc2de16d0adb71054bd6a9aa826b194105"
+  "published_openapi_sha256": "512b1a70250d015677c94f9378c52dcc2de16d0adb71054bd6a9aa826b194105",
+  "api_product_groups": 8,
+  "api_resource_groups": 30
 }

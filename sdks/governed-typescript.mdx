@@ -1,0 +1,79 @@
+---
+title: "Govern an action with TypeScript"
+description: "Use Rail.fromProfile and an effect callback to run a protected action through the development runtime."
+---
+
+The `@rail/sdk/govern` helper coordinates action submission, authorization, worker dispatch, and signed result reporting. It invokes your effect callback only after dispatch is permitted.
+
+Install the [supplied TypeScript SDK](/sdks/typescript), then configure a [shared profile](/cli/profiles). This helper needs agent and enrolled worker credentials, signing material, and a matching runtime. A customer API bearer token alone is insufficient. Production deployments must preserve their intended separation of agent, worker, approver, and verifier responsibilities.
+
+## Run a simulated action
+
+Use the action definition and resources from the [local development template](/cli/local-development). Set `RAIL_OPERATION_ID` to an operation identifier allocated and durably saved for this intent before calling Rail.
+
+The callback below simulates a result. It makes no supplier or payment-provider call.
+
+```typescript
+import { Rail, type Effect } from '@rail/sdk/govern';
+
+const operation = process.env.RAIL_OPERATION_ID;
+if (!operation) throw new Error('Set a persisted operation identifier');
+
+const rail = Rail.fromProfile('dev');
+const simulatePurchaseOrder: Effect = async (permit) => ({
+  effect: 'executed',
+  output: { simulation: true, effect_key: permit.effectKey },
+  reference: `sim_${permit.executionId}`,
+});
+
+const result = await rail.govern({
+  action: 'procurement.purchase_order.create',
+  input: { supplier_id: 'SUP-ACME', amount: '250.00' },
+  resource: { namespace: 'suppliers', type: 'vendor', id: 'SUP-ACME' },
+  purpose: 'procurement',
+  operation,
+  autoComplete: false,
+}, simulatePurchaseOrder);
+
+console.log({
+  execution: result.executionId,
+  journey: result.journeyId,
+  state: result.state,
+  completed: result.completed,
+  approval: result.approvalId,
+  basis: result.basisCodes,
+  receipts: result.receipts,
+});
+```
+
+Persist the returned identifiers with your operation record. Inspect `denied`, `state`, and `completed`; a resolved promise is not proof of completion. With `autoComplete: false`, an executed action can remain `verification_pending` until the verification workflow supplies the required dispositions.
+
+## Connect your target adapter
+
+Replace the simulation callback with your adapter. Use `permit.effectKey` as the target's idempotency key, retain `permit.executionId` and the provider reference, and enforce `permit.fence` where your target supports fencing. Return an explicit outcome:
+
+| `effect` | Meaning |
+| --- | --- |
+| `executed` | Your target confirms the effect occurred |
+| `rejected` | Your target definitively refused the effect |
+| `indeterminate` | You cannot establish whether the effect occurred |
+
+Return output matching the declared action output contract. Do not map an ambiguous timeout to `rejected`. Returning nothing defaults to an executed outcome in this development helper, so always return an explicit outcome.
+
+## Continue after approval
+
+After the eligible approver votes, resume the returned execution with the same callback:
+
+```typescript
+if (result.state === 'awaiting_approval') {
+  // Run after the required approval is satisfied; persist this ID across processes.
+  const resumed = await rail.resume(result.executionId, simulatePurchaseOrder, {
+    autoComplete: false,
+  });
+  console.log(resumed.state, resumed.completed, resumed.receipts);
+}
+```
+
+Alternatively, `waitForApproval: true` waits within the call; `timeoutMs` controls its wait duration. A timeout does not create a new business intent.
+
+If the callback throws, the helper attempts to submit an indeterminate result and then throws. A reporting failure can leave the external outcome unresolved. Preserve your operation record and use [recovery](/sdks/recovery); do not retry by generating a new operation ID.

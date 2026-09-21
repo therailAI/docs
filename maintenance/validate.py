@@ -25,6 +25,14 @@ def pages(node):
         for item in node:yield from pages(item)
 nav=list(pages(config['navigation']))
 check(len(nav)==len(set(nav)),'Duplicate navigation route')
+api_tab=next(tab for tab in config['navigation']['tabs'] if tab['tab']=='API reference')
+product_groups=api_tab['groups'][1]['pages']
+check(product_groups==json.loads((ROOT/'maintenance/api-navigation.json').read_text()),'Generated API navigation drift')
+for product in product_groups:
+    check(isinstance(product,dict) and product.get('expanded') is False,'API products must start collapsed')
+    for resource in product['pages']:
+        check(isinstance(resource,dict) and resource.get('expanded') is False,'API resources must start collapsed')
+        check(len(resource['pages'])<=10,'Split oversized API resource group: '+resource['group'])
 for route in nav:check((ROOT/(route+'.mdx')).is_file(),'Missing navigation route: '+route)
 check(config['api']['playground']['display']=='simple','API playground must remain non-interactive')
 for redirect in config.get('redirects',[]):

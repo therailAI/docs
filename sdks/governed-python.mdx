@@ -1,0 +1,81 @@
+---
+title: "Govern an action with Python"
+description: "Use Rail.from_profile and an effect callback to run a protected action through the development runtime."
+---
+
+The `rail_sdk.govern` helper coordinates action submission, authorization, worker dispatch, and signed result reporting. Your effect callback runs only after dispatch is permitted.
+
+Install the [supplied Python SDK](/sdks/python), then configure a [shared profile](/cli/profiles). The helper needs agent and enrolled worker credentials, signing material, and a matching runtime. A customer API bearer token alone is insufficient. Keep production role boundaries consistent with your deployment design.
+
+## Run a simulated action
+
+Use the action definition and resources from the [local development template](/cli/local-development). Set `RAIL_OPERATION_ID` to an operation identifier allocated and durably saved for this intent before calling Rail.
+
+This callback simulates a result; it makes no supplier or payment-provider call.
+
+```python
+import os
+from rail_sdk.govern import Rail, Permit, Outcome, EffectError
+
+operation = os.environ["RAIL_OPERATION_ID"]
+
+def simulate_purchase_order(permit: Permit) -> Outcome:
+    return Outcome(
+        effect="executed",
+        output={"simulation": True, "effect_key": permit.effect_key},
+        reference=f"sim_{permit.execution_id}",
+    )
+
+rail = Rail.from_profile("dev")
+try:
+    result = rail.govern(
+        "procurement.purchase_order.create",
+        input={"supplier_id": "SUP-ACME", "amount": "250.00"},
+        resource={"namespace": "suppliers", "type": "vendor", "id": "SUP-ACME"},
+        purpose="procurement",
+        operation=operation,
+        auto_complete=False,
+        effect=simulate_purchase_order,
+    )
+    print(result.to_dict())
+except EffectError as error:
+    print("Reconcile this execution:", error.result.execution_id)
+    raise
+finally:
+    rail.close()
+```
+
+Persist the result's execution, journey, and receipt identifiers with your operation record. Inspect `denied`, `state`, and `completed`. Returning without an exception does not establish completion. With `auto_complete=False`, an executed action can remain `verification_pending` until the verification workflow supplies the required dispositions.
+
+## Connect your target adapter
+
+Use `permit.effect_key` with your target's idempotency mechanism. Retain `permit.execution_id` and the provider reference, and enforce `permit.fence` where supported. Return an explicit `Outcome` with output matching your action contract:
+
+| `effect` | Meaning |
+| --- | --- |
+| `"executed"` | The target confirms the effect occurred |
+| `"rejected"` | The target definitively refused the effect |
+| `"indeterminate"` | Whether the effect occurred is unresolved |
+
+Returning `None` defaults to an executed outcome in this helper. Always return an explicit outcome, and do not translate a timeout or lost acknowledgement into a definite rejection.
+
+## Continue after approval
+
+After the required approval is satisfied, use the stored execution ID and the same callback. This example reuses `simulate_purchase_order` from above:
+
+```python
+rail = Rail.from_profile("dev")
+try:
+    resumed = rail.resume(
+        os.environ["RAIL_EXECUTION_ID"],
+        effect=simulate_purchase_order,
+        auto_complete=False,
+    )
+    print(resumed.to_dict())
+finally:
+    rail.close()
+```
+
+`wait_for_approval=True` waits for a vote within the call; `timeout` is in seconds. A timeout is not permission to start the same intent again.
+
+When a callback raises, the helper attempts to report an indeterminate result and raises `EffectError` with the execution result after successful reporting. Authentication, transport, or reporting failures can raise other errors. Keep your operation record even when no result object is returned, and follow [recovery](/sdks/recovery).

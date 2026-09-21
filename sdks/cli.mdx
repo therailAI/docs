@@ -1,29 +1,39 @@
 ---
-title: "Evidence verification CLI"
-description: "Inspect exported journeys and verify them against an independently confirmed trust anchor."
+title: "Rail CLI"
+description: "Set up a local project, govern commands, inspect executions, and export verifiable evidence."
 ---
 
-Obtain the Rail CLI binary or build instructions for your operating system and architecture from your operator. Match the verifier version to the bundle profile. This page does not provide an unverified universal installer or assume a public binary release.
+Use `rail` to work through the execution lifecycle from your terminal. The development CLI supports local provisioning, shared identity profiles, governed shell commands, approvals, and evidence verification.
 
-## Check the tool
+## Get the CLI
+
+Obtain a versioned binary for your operating system and architecture, or a matching source workspace and build instructions, from your Rail operator. A public binary release or universal installer is not established by these docs.
 
 ```bash
 rail version
 ```
 
-## Inspect and verify a bundle
+Offline bundle verification needs the binary, a supported bundle, and a confirmed trust anchor. Connected commands also need a provisioned environment and profile. `rail dev up` requires the full supplied development workspace; the binary alone does not contain the services.
 
-```bash
-rail bundle inspect journey.bundle.json
-rail verify journey.bundle.json --trust-file trust.json --json
-```
+<CardGroup cols={2}>
+  <Card title="Local development" icon="terminal" href="/cli/local-development">Initialize a project and run a simulated protected effect.</Card>
+  <Card title="Profiles and identity" icon="key" href="/cli/profiles">Connect the CLI and SDKs to the same environment.</Card>
+  <Card title="Govern a command" icon="shield-check" href="/cli/govern">Pass permitted work to a shell adapter and handle its outcome.</Card>
+  <Card title="Approvals and inspection" icon="magnifying-glass" href="/cli/approvals-and-inspection">Inspect decisions, record votes, and resume pending work.</Card>
+  <Card title="Export and verify" icon="fingerprint" href="/cli/evidence">Build a journey bundle and verify it offline.</Card>
+</CardGroup>
 
-Confirm the trust anchor independently before relying on verification. Inspect the report's actual result and diagnostics; do not treat a screenshot or a supplied report as a fresh local verification run.
+## Command families
 
-A historical grant can be expired or stale at verification time while its original signed records remain intact. The verification report must not be interpreted as current permission to execute.
+| Command | Purpose |
+| --- | --- |
+| `rail init`, `rail dev` | Create a project specification and manage the development stack |
+| `rail login`, `rail whoami`, `rail logout` | Select and inspect a profile |
+| `rail govern`, `rail govern resume` | Run an effect through authorization and dispatch gates |
+| `rail grants`, `rail delegations`, `rail tokens` | Work with bounded authority and capability tokens |
+| `rail executions`, `rail approvals` | Inspect execution state and act through an enrolled approver |
+| `rail receipts`, `rail policy` | Inspect evidence and policy pins |
+| `rail journey export` | Export connected evidence for a grant journey |
+| `rail bundle inspect`, `rail verify` | Inspect and verify supported bundles offline |
 
-## Scope of this guide
-
-The development CLI also has local environment, governed-call, and administrative commands. Those require a provisioned profile, role-specific credentials, and a matching runtime. They are not a substitute for the public customer API contract or a self-service hosted environment.
-
-See [recorded workflows](/examples/recorded-workflows) and [evidence verification](/guides/verify-evidence).
+Command availability and access depend on the supplied version and the profile's roles. A successful login does not grant authority to perform a protected action.

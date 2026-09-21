@@ -2,7 +2,7 @@
 
 Public Mintlify documentation for **the authorization and clearing layer for autonomous agents**.
 
-The site covers the 0.1.1 customer HTTP contract, integration patterns, development SDK usage, and recorded reference workflows. Contract coverage does not imply that every operation is deployed or publicly hosted.
+The site covers the 0.1.1 customer HTTP contract, integration patterns, the development CLI and SDKs, and recorded reference workflows. The CLI & SDKs tab includes local setup, profiles, governed effect callbacks, approvals, recovery, and evidence export. Contract coverage does not imply that every operation is deployed or publicly hosted.
 
 ## Preview and validate
 
@@ -28,7 +28,7 @@ python3 maintenance/build_reference.py /path/to/rail.openapi.json /path/to/produ
 
 The generator preserves customer request and response constraints, parameters, security requirements, and status codes. It removes source-disclosure annotations and inherited fixture examples, rewrites the public introduction, and generates 127 endpoint pages. It never imports runtime or internal service specifications. `maintenance/contract-baseline.json` records the source and published hashes.
 
-After changing operation grouping, copy the generated groups in `maintenance/api-navigation.json` into the API tab in `docs.json`, then run all validation commands. Follow [Mintlify's OpenAPI setup](https://www.mintlify.com/docs/api-playground/openapi-setup) for configuration changes.
+Resource labels live in `maintenance/reference_navigation.py`. The generator produces collapsed product groups with collapsed resource groups. After regeneration, copy `maintenance/api-navigation.json` into the `pages` array of **Browse by product** in the API tab of `docs.json`, then run all validation commands. Preserve the HTTP conventions group. Only nested groups collapse in Mintlify; do not move product groups to the top level. Validation checks coverage, grouping drift, collapsed defaults, and resource group size. See [Mintlify navigation](https://www.mintlify.com/docs/organize/navigation) and [OpenAPI setup](https://www.mintlify.com/docs/api-playground/openapi-setup).
 
 ## Publishing
 

@@ -1,0 +1,61 @@
+---
+title: "Local development"
+description: "Initialize a Rail project and run a simulated purchase-order workflow."
+---
+
+This walkthrough uses the supplied development workspace and the CLI's `payments` template. The effect script emits a simulated result; it does not create a real purchase order or move money.
+
+## Prerequisites
+
+Your operator must supply the matching CLI, service workspace, and local stack configuration. The stack uses Python 3, the workspace's Go toolchain, PostgreSQL, and `psql`. Follow the workspace setup instructions for database access and service prerequisites before starting it. Keep this stack separate from production databases.
+
+Set `RAIL_WORKSPACE` to the absolute path of the supplied workspace containing `rail-infra` and the service checkouts. It is distinct from the application directory you create below.
+
+## Initialize the project
+
+```bash
+export RAIL_WORKSPACE=/path/to/supplied-workspace
+mkdir rail-example
+cd rail-example
+rail init --name rail-example --template payments
+```
+
+Initialization writes `rail.yaml`, creates example scripts, and adds `.rail/` to the project's ignore file. Inspect `rail.yaml` before provisioning. The template declares approved supplier resources, a purchase-order action, value limits, and an approval threshold.
+
+## Start the development environment
+
+```bash
+rail dev up --profile dev
+rail dev status
+rail whoami --profile dev --json
+```
+
+`dev up` provisions the development target and action paths, saves the `dev` profile as the default, and attempts to create an initial grant for the agent within the configured ceiling. Check the output for provisioning or grant errors. This command can restart the local stack if it is running without the development tenant.
+
+## Run the simulated effect
+
+Run this once against the initial grant:
+
+```bash
+rail govern procurement.purchase_order.create \
+  --profile dev \
+  --input '{"supplier_id":"SUP-ACME","amount":"250.00"}' \
+  --resource suppliers:vendor:SUP-ACME \
+  --purpose procurement \
+  --json \
+  -- ./examples/effect.sh
+```
+
+Inspect the returned execution, journey, state, and receipt identifiers. The shell command runs only after dispatch is permitted. Local verifier credentials can let the helper also submit completion dispositions; that local completion is not independent third-party verification or confirmed financial settlement.
+
+An authority grant may already have consumed this resource/action pair. Repeating a business action requires suitable new authority; a different operation ID alone does not restore it. See [governed commands](/cli/govern) before experimenting with repeats.
+
+## Stop the stack
+
+```bash
+rail dev down
+```
+
+`rail dev reset` and `rail dev up --fresh` rebuild local stack state, including dropping stack databases. Use them only when intentionally discarding development data; they are not routine recovery commands.
+
+Continue with [approvals and inspection](/cli/approvals-and-inspection) or [export the journey](/cli/evidence).

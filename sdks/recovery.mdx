@@ -1,0 +1,43 @@
+---
+title: "Results, approvals, and recovery"
+description: "Handle the governed helper's lifecycle without duplicating a protected effect."
+---
+
+The CLI and governed SDK helpers coordinate a multi-step workflow. They can return pending states, report a denial, or raise an error after some steps have already succeeded. A command exit or resolved function call is only one signal.
+
+## Interpret the result
+
+| Observed result | What to do |
+| --- | --- |
+| `awaiting_approval` | Save the execution and approval IDs; request the required review, then resume the same execution |
+| Denial or a stopped dispatch | Inspect basis codes and evidence; resolve the cause before considering a new action |
+| `verification_pending` with a recorded result | Complete the verification workflow; do not call the target again |
+| `completed` | Execution completion gates passed; evaluate any separate result-release or settlement gates |
+| Indeterminate delivery or a transport error after dispatch | Inspect Rail and the provider using the saved operation and effect key; reconcile before retrying |
+
+The SDKs return `state`, `denied`, `completed`, receipt identifiers, and the execution/journey IDs. Field spelling follows each language: `executionId` in TypeScript, `execution_id` in Python. Errors can occur before those fields are returned; keep an application operation record from the start.
+
+## Preserve identity before making the call
+
+1. Allocate and persist an operation identifier for the business intent.
+2. Pass it as CLI `--operation`, TypeScript `operation`, or Python `operation`.
+3. Save the execution ID as soon as available. In the effect callback, save the permit's effect key before contacting your provider.
+4. Save provider references and confirmed outcomes. When acknowledgement is lost, look up that same effect before deciding how to recover.
+
+The helper generates a fresh operation identity when you omit one. Calling `govern` again with default arguments is therefore not a safe retry strategy. Likewise, a new authority grant must never be used to hide uncertainty about an earlier effect.
+
+## Resume within its supported scope
+
+Use `resume` for an existing execution awaiting approval or needing completion after its result was recorded. The SDK helpers detect a recorded result in `verification_pending` or `completed` and skip the effect callback in that branch.
+
+This behavior is not a general exactly-once guarantee for an external provider. If the process died after the provider acted but before Rail recorded the result, recovery still requires inspecting and reconciling that effect. See [uncertainty and reconciliation](/guides/recovery).
+
+## Keep verification separate
+
+The development SDK helpers can submit completion dispositions when the profile includes a verifier. Disable this with TypeScript `autoComplete: false`, Python `auto_complete=False`, or CLI `--no-complete` when a separate verification workflow is responsible.
+
+Completion does not prove independent evaluation or settlement. Keep production approver, worker, and verifier boundaries aligned with your deployment policy.
+
+## Distinguish request retries from orchestration
+
+The low-level customer clients do not automatically retry mutations. The governed helpers poll lifecycle state and can retry a dispatch claim while its reservation is still becoming available. That internal waiting does not make arbitrary caller retries safe. Retain stable identity and obey the [HTTP idempotency rules](/api-reference/idempotency).

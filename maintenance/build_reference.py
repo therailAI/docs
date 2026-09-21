@@ -6,6 +6,7 @@ import hashlib
 import json
 import re
 from pathlib import Path
+from reference_navigation import product_group
 
 ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
@@ -61,8 +62,8 @@ for title, slug, operations in groups:
         if method != 'GET': content += '\nSupply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).\n'
         if operation['consequential']: content += '\nThis is a consequential operation. Credentials and OAuth scope alone do not authorize the effect; applicable authority and policy must also permit it.\n'
         page.write_text(content)
-        pages.append(route)
-    navigation.append({'group': title, 'pages': pages})
+        pages.append((route, path))
+    navigation.append(product_group(title, pages))
 assert len(seen) == 127
 (ROOT/'maintenance/api-navigation.json').write_text(json.dumps(navigation,indent=2)+'\n')
 manifest = {'contract_version':spec['info']['version'],'source_sha256':hashlib.sha256(source_bytes).hexdigest(),'published_sha256':hashlib.sha256((ROOT/'api-reference/openapi.json').read_bytes()).hexdigest(),'customer_operations':len(seen),'runtime_operations':0,'internal_operations':0,'transformations':['Remove source-disclosure annotations and private source links','Omit fixture examples; retain request/response schemas, parameters, OAuth requirements and statuses','Replace top-level introduction and annotate deployment qualification']}

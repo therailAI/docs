@@ -1,0 +1,53 @@
+---
+title: "Profiles and identity"
+description: "Use the same provisioned environment from the CLI, TypeScript, and Python."
+---
+
+A profile describes the environment, tenant, project, service locations, and enrolled identities. It references the credential material needed for its roles. Obtain a descriptor from the environment operator; do not copy another project's credentials.
+
+## Connect a supplied environment
+
+```bash
+rail login --descriptor /path/to/project.rail.json --profile staging --default=false
+rail whoami --profile staging --json
+```
+
+The descriptor uses the `rail-product/1` format. Login imports the profile and checks agent authentication. Omit `--default=false` to make the imported profile your default. `rail dev up` already saves a local development profile, so a second login is unnecessary for that workflow.
+
+`whoami` reports redacted configuration and, when available, authentication results. Inspect its authentication fields; a configuration display alone is not proof that every role can connect or act.
+
+## Select a profile
+
+Resolution follows this order:
+
+1. The explicit CLI `--profile` or SDK profile name.
+2. The `RAIL_PROFILE` environment variable.
+3. The default in the profile configuration.
+
+The default configuration location is `~/.config/rail/config.json`. Set `RAIL_CONFIG` to use another file. The TypeScript and Python profile helpers share this configuration format and selection order.
+
+```bash
+export RAIL_PROFILE=staging
+rail whoami --json
+```
+
+## Match roles to the operation
+
+| Workflow | Provisioned access needed |
+| --- | --- |
+| Customer API calls | Workload identity, scopes, and tenant/project access |
+| Governed helper callback | Agent and enrolled worker configuration, including signing and sender-binding material |
+| Approval vote | An eligible approver identity |
+| Create authority | A governor or appropriately authorized operator |
+| Submit completion dispositions | An authorized verifier |
+| Export a journey | An auditor or operator able to read the required evidence |
+
+The local development profile can include several roles to demonstrate the lifecycle. Keep those responsibilities separated according to your production deployment design. A profile does not widen a grant or bypass policy.
+
+## Remove local configuration
+
+```bash
+rail logout --profile staging
+```
+
+Logout removes the saved profile. It does not revoke grants, invalidate issued tokens, or delete the referenced credential files. Use the operator's identity lifecycle process for revocation and credential removal. Keep descriptors, credential files, and local profile configuration out of source control.

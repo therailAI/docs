@@ -1,0 +1,57 @@
+---
+title: "Approvals and inspection"
+description: "Inspect execution state and evidence, vote through an eligible approver, and resume the same execution."
+---
+
+Use actual IDs returned by your environment for the variables below. Commands use the selected profile; add `--profile NAME` when switching environments.
+
+## Inspect authority and execution
+
+```bash
+rail grants list --json
+rail policy pins
+rail executions list --state awaiting_approval --json
+rail executions get "${RAIL_EXECUTION_ID:?Set the execution ID}" --json
+rail executions result "${RAIL_EXECUTION_ID:?Set the execution ID}" --json
+```
+
+The result may not exist before the effect has reported its outcome. `rail executions watch ID` polls for state changes until a terminal state; interrupt it when you no longer need to watch.
+
+## Review and vote
+
+```bash
+rail approvals list --execution "${RAIL_EXECUTION_ID:?Set the execution ID}" --json
+rail approvals get "${RAIL_APPROVAL_ID:?Set the approval ID}" --json
+```
+
+Review the action, authority, scope, and reason before voting. The local development profile can provide the `approver1` identity used here:
+
+```bash
+rail approvals vote "${RAIL_APPROVAL_ID:?Set the approval ID}" \
+  --decision approve \
+  --comment "Reviewed the requested scope and amount" \
+  --as approver1
+```
+
+Use `--decision reject` when refusing the request. The CLI reads the current approval ETag before submitting a vote. A concurrent change can still cause the vote to fail; inspect the latest approval before deciding again. Eligibility and separation-of-duty policy still apply.
+
+## Resume the approved execution
+
+For an execution that returned `awaiting_approval`, continue with the same effect command after the required approval is satisfied:
+
+```bash
+rail govern resume "${RAIL_EXECUTION_ID:?Set the execution ID}" \
+  --no-complete --json -- ./examples/effect.sh
+```
+
+Resume continues the existing execution and rechecks the applicable gates. A vote does not guarantee dispatch. Do not start a new governed action just because the first call returned pending.
+
+## Inspect evidence
+
+```bash
+rail receipts list --execution "${RAIL_EXECUTION_ID:?Set the execution ID}" --json
+rail receipts get "${RAIL_RECEIPT_ID:?Set the receipt ID}" --json
+rail receipts proof "${RAIL_RECEIPT_ID:?Set the receipt ID}" --json
+```
+
+Receipt access is scoped to the configured identity. A receipt is evidence of a decision or outcome, not permission for another effect. For a portable package, [export the journey](/cli/evidence).

@@ -1,0 +1,57 @@
+---
+title: "Govern a shell command"
+description: "Run your adapter only after authorization and a permitted dispatch, then report its actual outcome."
+---
+
+`rail govern` wraps a shell command as a protected effect. It needs a [provisioned profile](/cli/profiles), an action definition, suitable authority, and an enrolled worker/target. Arguments before `--` configure Rail; arguments after it invoke your command.
+
+## Submit an action
+
+This example assumes the [local template](/cli/local-development). Set `RAIL_OPERATION_ID` to an operation identifier allocated and durably saved by your application for this intent.
+
+```bash
+rail govern procurement.purchase_order.create \
+  --profile dev \
+  --input '{"supplier_id":"SUP-ACME","amount":"250.00"}' \
+  --resource suppliers:vendor:SUP-ACME \
+  --purpose procurement \
+  --operation "${RAIL_OPERATION_ID:?Set a persisted operation identifier}" \
+  --no-complete \
+  --json \
+  -- ./examples/effect.sh
+```
+
+The example script simulates an effect. `--no-complete` leaves completion to the verification workflow. Inspect the resulting state; execution and verification are separate gates.
+
+| Option | Behavior |
+| --- | --- |
+| `--input JSON` or `--input @file.json` | Input matching the action's schema |
+| `--grant`, `--delegation` | Explicit authority chain; otherwise the helper selects an active agent grant |
+| `--operation` | Stable operation identity; omission generates a fresh one |
+| `--key` | Idempotency seed; by default derived from the operation identity |
+| `--wait-approval` | Wait for a vote instead of returning with an approval pending |
+| `--wait 90s` | Authorization/completion wait duration |
+| `--no-complete` | Do not submit verifier completion dispositions |
+| `--journal /path/to/journal.jsonl` | Append returned execution information to a journal |
+
+For an intentionally new local journey, `--own-authority` asks the configured governor to issue a scoped, one-use grant. It requires that role's authorization. Do not use it to retry an uncertain effect or circumvent a refusal. Changing an operation ID does not replenish consumed authority.
+
+## Implement the effect command
+
+The child receives `RAIL_EXECUTION_ID`, `RAIL_JOURNEY_ID`, `RAIL_CLAIM_ID`, `RAIL_EFFECT_KEY`, `RAIL_FENCE`, and `RAIL_TARGET_ID` in its environment. Use the effect key with your target's idempotency mechanism. Apply fencing where supported; passing a fence value alone does not enforce it at the target.
+
+Write one JSON result to stdout and diagnostics to stderr. A string `reference` field becomes the external reference. Report the real provider outcome:
+
+| Child exit code | Recorded effect |
+| --- | --- |
+| `0` | Executed |
+| `2` | Rejected by the target |
+| Other exit, signal, or launch failure | Indeterminate; the command error is surfaced |
+
+A timeout or lost acknowledgement is not evidence that no effect occurred. Preserve the operation identity, target reference, and effect key for [recovery](/sdks/recovery). Always supply the intended command: omitting it can record a no-op as an executed step.
+
+## Interpret the CLI result
+
+`rail govern` exits `3` for a returned denial and `1` for an error. Exit `0` does not necessarily mean completion: the result can still be awaiting approval or verification. Read the JSON state, basis codes, receipt IDs, and completion flag in automation.
+
+Continue an approved execution with `rail govern resume`, as shown in [approvals and inspection](/cli/approvals-and-inspection).

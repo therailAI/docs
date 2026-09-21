@@ -1,0 +1,40 @@
+---
+title: "Export and verify evidence"
+description: "Export a grant journey and verify its bundle against independently confirmed trust information."
+---
+
+## Export the journey
+
+Set `RAIL_JOURNEY_ID` to the grant journey ID returned by the governed call. Export needs a profile with an auditor or operator able to read the connected evidence.
+
+```bash
+rail journey export "${RAIL_JOURNEY_ID:?Set the journey ID}" \
+  --out ./evidence --wait 120s
+```
+
+The export writes:
+
+| File | Contents |
+| --- | --- |
+| `journey.bundle.json` | Connected journey evidence |
+| `trust.json` | Trust information for the verifier |
+| `TRUST-CARD.txt` | Fingerprints, governance root, and policy pin |
+| `verify.json` | Report from the export's immediate verification run |
+
+The command also verifies the generated bundle and reports its result. A failed report needs investigation; the presence of output files alone does not indicate successful verification.
+
+## Inspect and verify offline
+
+Confirm the signing-key fingerprint and governance-root information through a channel independent of the bundle supplier. A trust file downloaded alongside a bundle is not independently established trust.
+
+```bash
+rail bundle inspect ./evidence/journey.bundle.json
+rail verify ./evidence/journey.bundle.json \
+  --trust-file ./evidence/trust.json --json
+```
+
+These commands do not require an authenticated profile. Match the verifier version to the bundle profile, and inspect the actual report and diagnostics. Do not substitute a screenshot or the supplied `verify.json` for your own verification run.
+
+An old grant can be expired or stale at verification time while its original signed records remain intact. Verification of historical evidence does not establish current authority, independent truth of every external assertion, or confirmed settlement.
+
+See [evidence verification](/guides/verify-evidence) and the [recorded workflows](/examples/recorded-workflows) for the relevant evidence boundaries.
