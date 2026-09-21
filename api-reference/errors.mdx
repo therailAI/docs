@@ -1,259 +1,33 @@
 ---
-title: "Rail API Error Codes, Rate Limits, and Troubleshooting"
-sidebarTitle: "Errors"
-description: "Understand Rail API error responses, HTTP status codes, domain error codes, rate limits, and how to resolve the most common integration issues."
+title: "Errors and recovery"
+description: "Interpret HTTP problems, durable denial, and external-effect uncertainty."
 ---
 
-Rail returns structured error responses for every non-successful request so that your code can handle failures programmatically rather than parsing human-readable messages. This page covers the error response format, every HTTP status code Rail uses, the full domain error code catalog, rate limiting behavior, and step-by-step resolution guidance for the most common errors you'll encounter.
+Rail uses RFC 9457 problem details. A problem includes `type`, `title`, `status`, `code`, and `request_id`. It can also identify an execution, denial receipt, or field-level errors.
 
-## Error Response Format
+| Status | Next step |
+| --- | --- |
+| `400` | Correct request syntax, cursor, or another invalid parameter |
+| `401` | Check token validity, issuer, audience, and configured authentication |
+| `403` | Check enrollment, required scopes, project/object access, and domain authority |
+| `404` | Check the authorized resource identifier; do not infer cross-tenant existence |
+| `409` | Inspect the typed problem: duplicate content, pending work, or unresolved effects need different handling |
+| `412`, `428` | Re-read the resource or supply the required concurrency precondition |
+| `413` | Reduce the payload or use the supported object-upload flow |
+| `422` | Correct schema or semantic constraints |
+| `429` | Respect bounded backoff and `Retry-After`; preserve operation identity |
+| `500`, `503` | Inspect whether submission or an external effect may have occurred before recovery |
 
-All error responses follow a consistent JSON structure, regardless of the HTTP status code:
+Not every endpoint returns every status. Its reference page lists the actual contract responses.
 
-```json
-{
-  "error": {
-    "code": "INVALID_APPLICATION_STATUS",
-    "message": "Application must be in READY_FOR_SUBMISSION status before submitting.",
-    "details": {
-      "current_status": "INCOMPLETE",
-      "required_status": "READY_FOR_SUBMISSION"
-    }
-  }
-}
-```
+## A denial can arrive after HTTP acceptance
 
-<ResponseField name="error.code" type="string">
-  Machine-readable error code. Use this field in your error-handling logic — not `error.message`, which may change.
-</ResponseField>
+Execution submission returns `202` for asynchronous processing. Later governance denial is visible through the execution state, basis codes, and receipts. Do not treat `202` as approval or completion.
 
-<ResponseField name="error.message" type="string">
-  Human-readable description of the error. Useful for logging and debugging.
-</ResponseField>
+A domain denial can have a durable denial receipt when a canonical action exists. An authentication failure before canonicalization does not claim an action receipt. A failure to durably commit evidence must not be described as a committed denial.
 
-<ResponseField name="error.details" type="object">
-  Optional object containing additional context about the error, such as the current vs. required state. The shape of this object varies by error code.
-</ResponseField>
+## An uncertain effect needs reconciliation
 
-## HTTP Status Codes
+`UNRESOLVED_EXTERNAL_EFFECT` means that repetition or substitution cannot yet be established as safe. Preserve the original identity and use the [recovery flow](/guides/recovery).
 
-| Status | Meaning | Retryable? |
-|--------|---------|------------|
-| `200 OK` | Request succeeded | N/A |
-| `201 Created` | Resource created successfully | N/A |
-| `400 Bad Request` | Invalid request body or query parameters | No — fix the request first |
-| `401 Unauthorized` | Missing, invalid, or expired Bearer token | No — refresh the token first |
-| `403 Forbidden` | Valid token but insufficient OAuth scopes | No — re-issue token with required scopes |
-| `404 Not Found` | Resource does not exist | No — verify the ID |
-| `409 Conflict` | Resource already exists or state conflict | No — resolve the conflict |
-| `422 Unprocessable Entity` | Business rule violation | No — resolve the domain issue |
-| `429 Too Many Requests` | Rate limit exceeded | Yes — after `X-RateLimit-Reset` |
-| `500 Internal Server Error` | Unexpected server-side error | Yes — with exponential backoff |
-
-<Note>
-  `5xx` errors indicate a problem on Rail's side and are safe to retry using exponential backoff. `4xx` errors indicate a problem with your request — retrying without changing the request will produce the same error.
-</Note>
-
-## Domain Error Code Reference
-
-| Error Code | HTTP Status | Description |
-|------------|-------------|-------------|
-| `INVALID_CREDENTIALS` | `401` | The `clientId` or `clientSecret` used to request a token is incorrect |
-| `TOKEN_EXPIRED` | `401` | The Bearer token has passed its `expires_in` time — request a new one |
-| `INSUFFICIENT_SCOPES` | `403` | The token does not include the OAuth scope required by this endpoint |
-| `INVALID_APPLICATION_STATUS` | `422` | The application is not in the required status for this operation |
-| `CUSTOMER_NOT_ACTIVE` | `422` | The customer must be in `ACTIVE` status to perform this operation |
-| `ACCOUNT_NOT_OPEN` | `422` | The account must be in `OPEN` status to initiate transactions |
-| `INSUFFICIENT_FUNDS` | `422` | The source account does not have enough balance to cover the transaction |
-| `COUNTERPARTY_NOT_APPROVED` | `422` | The counterparty has not yet been verified and approved |
-| `DUPLICATE_IDEMPOTENCY_KEY` | `409` | The same idempotency key was submitted with a different request body |
-| `AUTO_RFI_REQUIRED` | `422` | The withdrawal requires a supporting document upload before it can proceed |
-| `RATE_LIMIT_EXCEEDED` | `429` | The client has exceeded the allowed request rate — see rate limits below |
-
-## Rate Limiting
-
-Rail enforces per-client rate limits to ensure platform stability for all integrations.
-
-| Window | Limit |
-|--------|-------|
-| Per minute | 100 requests |
-| Per hour | 1,000 requests |
-
-When a request is rate-limited, Rail returns `429 Too Many Requests` with these response headers:
-
-| Header | Description |
-|--------|-------------|
-| `X-RateLimit-Remaining` | Number of requests remaining in the current window |
-| `X-RateLimit-Reset` | Unix timestamp at which the current window resets |
-
-**Retry after a rate limit:**
-
-```javascript
-async function fetchWithRateLimitRetry(url, options, maxRetries = 5) {
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    const response = await fetch(url, options);
-
-    if (response.status !== 429) {
-      return response;
-    }
-
-    const resetAt = parseInt(response.headers.get('X-RateLimit-Reset'), 10);
-    const nowSeconds = Math.floor(Date.now() / 1000);
-    const waitMs = Math.max((resetAt - nowSeconds) * 1000 + 100, 1000);
-
-    console.warn(`Rate limited. Retrying in ${waitMs}ms (attempt ${attempt + 1}/${maxRetries})`);
-    await new Promise(resolve => setTimeout(resolve, waitMs));
-  }
-
-  throw new Error('Exceeded maximum retries after rate limiting');
-}
-```
-
-<Tip>
-  Monitor the `X-RateLimit-Remaining` header proactively and slow down your request rate before it hits zero. This avoids hard stops in time-sensitive operations like bulk data imports.
-</Tip>
-
-## Common Errors and How to Resolve Them
-
-<AccordionGroup>
-  <Accordion title="401 Unauthorized — TOKEN_EXPIRED">
-    **What it means:** Your Bearer token has expired. Tokens are valid for 43,200 seconds (12 hours) from the time they are issued.
-
-    **How to resolve:**
-    1. Request a new token from the auth endpoint using your `clientId` and `clientSecret`.
-    2. Update your in-memory token store and retry the failed request with the new token.
-    3. Implement proactive token renewal — check whether the token will expire within the next 5 minutes before each API call and renew it in advance.
-
-    See [Authentication](api-reference/authentication) for the full token renewal pattern.
-  </Accordion>
-
-  <Accordion title="403 Forbidden — INSUFFICIENT_SCOPES">
-    **What it means:** Your token is valid but does not include the OAuth scope required by the endpoint you called. For example, calling `POST /v1/withdrawals` requires the `withdrawals:write` scope.
-
-    **How to resolve:**
-    1. Identify the required scope for the endpoint from the [Authentication scopes table](api-reference/authentication#available-scopes).
-    2. Re-request a token and include the missing scope in the `scope` parameter.
-    3. Retry the original request with the new token.
-
-    Note that you cannot add scopes to an existing token — you must request a new one.
-  </Accordion>
-
-  <Accordion title="422 Unprocessable Entity — INVALID_APPLICATION_STATUS">
-    **What it means:** You attempted an operation on an application that requires a specific status the application hasn't reached yet. For example, you cannot submit an application that is still `INCOMPLETE`.
-
-    **How to resolve:**
-    1. Fetch the application record (`GET /v1/applications/{id}`) and inspect the `status` field.
-    2. Check the `error.details` object in the error response — it includes `current_status` and `required_status`.
-    3. Complete the prerequisite steps to advance the application to the required status.
-
-    See [Customer Onboarding](guides/customer-onboarding) for the full application lifecycle.
-  </Accordion>
-
-  <Accordion title="422 Unprocessable Entity — CUSTOMER_NOT_ACTIVE">
-    **What it means:** The customer record associated with the operation is not in `ACTIVE` status. Customers may be in `PENDING`, `SUSPENDED`, or `CLOSED` states.
-
-    **How to resolve:**
-    1. Fetch the customer record (`GET /v1/customers/{id}`) and inspect the `status` field.
-    2. If status is `PENDING`, the customer's KYC verification may still be in progress — wait for a `customer.activated` webhook event.
-    3. If status is `SUSPENDED`, contact Rail support to understand the reason before attempting to reactivate.
-  </Accordion>
-
-  <Accordion title="422 Unprocessable Entity — ACCOUNT_NOT_OPEN">
-    **What it means:** The account you specified for a transaction is not in `OPEN` status. Accounts may be `PENDING`, `FROZEN`, or `CLOSED`.
-
-    **How to resolve:**
-    1. Fetch the account record (`GET /v1/accounts/{id}`) and inspect the `status` field.
-    2. A `FROZEN` account cannot transact until the freeze is lifted — contact Rail support.
-    3. A `CLOSED` account is permanently inactive — you'll need to open a new account if appropriate.
-  </Accordion>
-
-  <Accordion title="422 Unprocessable Entity — INSUFFICIENT_FUNDS">
-    **What it means:** The source account does not have a balance sufficient to cover the requested transaction amount, including any applicable fees.
-
-    **How to resolve:**
-    1. Fetch the current account balance (`GET /v1/accounts/{id}`) before initiating large transactions.
-    2. Verify that you are accounting for fees when calculating the available amount.
-    3. Deposit additional funds if necessary before retrying the transaction.
-  </Accordion>
-
-  <Accordion title="422 Unprocessable Entity — COUNTERPARTY_NOT_APPROVED">
-    **What it means:** The counterparty (external bank account or wallet) you specified has not yet been verified and approved by Rail.
-
-    **How to resolve:**
-    1. Fetch the counterparty record (`GET /v1/counterparties/{id}`) and inspect the `status` field.
-    2. If status is `PENDING`, the verification process is still underway — wait for the `counterparty.approved` webhook event.
-    3. If status is `REJECTED`, the counterparty cannot be used — review the reason and submit a new counterparty if appropriate.
-
-    See [Counterparties](concepts/counterparties) for the full verification flow.
-  </Accordion>
-
-  <Accordion title="422 Unprocessable Entity — AUTO_RFI_REQUIRED">
-    **What it means:** The withdrawal has been flagged as requiring additional documentation before it can be processed. This is typically triggered by compliance rules based on transaction amount, destination, or customer profile.
-
-    **How to resolve:**
-    1. Upload the requested documents using the RFI (Request for Information) endpoint referenced in the `error.details` object.
-    2. Once documents are uploaded, Rail will resume processing the withdrawal automatically.
-    3. You'll receive a `withdrawal.completed` or `withdrawal.failed` webhook event with the final outcome.
-  </Accordion>
-
-  <Accordion title="409 Conflict — DUPLICATE_IDEMPOTENCY_KEY">
-    **What it means:** You sent a request with an `Idempotency-Key` that was previously used, but with a different request body. Rail cannot determine which payload you intended to use.
-
-    **How to resolve:**
-    1. Generate a fresh UUID v4 for the new operation.
-    2. Retry the request with the new key.
-    3. If you believe this is a false positive, check whether the request body has changed unexpectedly (e.g., timestamps or serialization differences).
-
-    See [Idempotency](api-reference/idempotency) for key generation patterns.
-  </Accordion>
-</AccordionGroup>
-
-## Handling Errors in Code
-
-Structure your error handling to branch on the HTTP status code first, then on the domain error code for fine-grained control:
-
-```javascript
-async function handleRailResponse(response) {
-  if (response.ok) {
-    return response.json();
-  }
-
-  const errorBody = await response.json().catch(() => ({}));
-  const errorCode = errorBody?.error?.code;
-  const status = response.status;
-
-  switch (status) {
-    case 401:
-      if (errorCode === 'TOKEN_EXPIRED') {
-        // Refresh token and retry
-        await tokenManager.refresh();
-        throw new RetryableError('Token refreshed, retry request');
-      }
-      throw new AuthenticationError(errorCode, errorBody.error?.message);
-
-    case 403:
-      throw new InsufficientScopesError(errorCode, errorBody.error?.message);
-
-    case 409:
-      if (errorCode === 'DUPLICATE_IDEMPOTENCY_KEY') {
-        throw new IdempotencyConflictError(errorBody.error?.message);
-      }
-      throw new ConflictError(errorCode, errorBody.error?.message);
-
-    case 422:
-      throw new BusinessRuleError(errorCode, errorBody.error?.message, errorBody.error?.details);
-
-    case 429: {
-      const resetAt = parseInt(response.headers.get('X-RateLimit-Reset'), 10);
-      throw new RateLimitError(resetAt);
-    }
-
-    case 500:
-      // Safe to retry with backoff
-      throw new ServerError(errorBody.error?.message);
-
-    default:
-      throw new ApiError(status, errorCode, errorBody.error?.message);
-  }
-}
-```
+Log request IDs and the minimum necessary diagnostic fields. Do not expose credentials, protected inputs, internal policy details, or cross-tenant information in user-facing errors.

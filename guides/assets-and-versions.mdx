@@ -1,0 +1,22 @@
+---
+title: "Assets and version eligibility"
+description: "Pin definitions and keep evidence applicable to the configuration that runs."
+---
+
+Assets represent reusable definitions or artifacts. Versions identify the exact action, schema, policy, terms, or artifact that a workflow uses.
+
+## Publish and pin
+
+Use [`createAsset`](/api-reference/endpoints/create-asset) and [`createAssetVersion`](/api-reference/endpoints/create-asset-version) under registry permissions. Use version transitions according to lifecycle policy. Published version content is not edited in place.
+
+Reference an exact `asset_id` and `version` in an action's `definition`. Do the same for policy and other versioned references where required. A friendly name or a floating “latest” label is insufficient to identify what was evaluated.
+
+## Keep evidence tied to the evaluated version
+
+Evaluation evidence applies to a particular configuration and context. If its digest changes, the earlier evidence may no longer satisfy the execution gate. This indicates that the evidence is inapplicable; it does not prove the new version unsafe.
+
+## Promotion is governed
+
+[`promoteRecord`](/api-reference/endpoints/promote-record) creates a new registry identity under applicable authority and evidence. A complete verification result does not independently authorize promotion.
+
+[Inspect the model assurance recording](https://the-rail-site.vercel.app/use-cases/model-assurance/). Its exported bundle supplies denial evidence for a changed configuration; evaluation inputs are fixture-grade signals.

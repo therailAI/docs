@@ -1,11 +1,12 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "luma",
-  "name": "Rail",
+  "name": "The Rail",
+  "description": "The authorization and clearing layer for autonomous agents. Public developer guides and customer API reference.",
   "colors": {
-    "primary": "#ef7025",
-    "light": "#eec9bc",
-    "dark": "#4fa1ab"
+    "primary": "#1456EF",
+    "light": "#8FB4FF",
+    "dark": "#1456EF"
   },
   "favicon": "/favicon.svg",
   "logo": {
@@ -15,105 +16,389 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:support@layer2financial.com"
+        "label": "Website",
+        "href": "https://the-rail-site.vercel.app/"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/therailAI/docs"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Get Sandbox Access",
-      "href": "https://rail.io/contact-us"
+      "label": "Explore the evidence",
+      "href": "https://rail-proof-bench-preview.vercel.app/"
     }
   },
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
+        "tab": "Developer guides",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Start building",
             "pages": [
               "introduction",
               "quickstart",
-              "get-started/authentication",
-              "get-started/sandbox"
+              "get-started/environment",
+              "get-started/authentication"
             ]
           },
           {
-            "group": "Core Concepts",
+            "group": "Core concepts",
             "pages": [
               "concepts/overview",
-              "concepts/customers",
-              "concepts/accounts",
-              "concepts/assets",
-              "concepts/counterparties",
-              "concepts/money-movement"
+              "concepts/authority",
+              "concepts/execution",
+              "concepts/evidence",
+              "concepts/clearing"
             ]
           },
           {
-            "group": "Integration Guides",
+            "group": "Integration guides",
             "pages": [
-              "guides/customer-onboarding",
-              "guides/account-management",
-              "guides/deposits",
-              "guides/withdrawals",
-              "guides/transfers-exchanges",
-              "guides/payments-collections"
+              "guides/governed-execution",
+              "guides/grants-and-delegation",
+              "guides/approvals",
+              "guides/recovery",
+              "guides/assets-and-versions",
+              "guides/reuse-and-rights",
+              "guides/clearing-and-settlement",
+              "guides/verify-evidence"
             ]
           },
           {
-            "group": "Use Cases",
-            "pages": [
-              "use-cases/wallet-as-a-service",
-              "use-cases/crypto-onramp",
-              "use-cases/crypto-offramp"
-            ]
-          },
-          {
-            "group": "Webhooks & Events",
+            "group": "Events",
             "pages": [
               "webhooks/overview",
               "webhooks/events"
+            ]
+          },
+          {
+            "group": "SDKs and tools",
+            "pages": [
+              "sdks/overview",
+              "sdks/typescript",
+              "sdks/python",
+              "sdks/cli"
+            ]
+          },
+          {
+            "group": "Reference examples",
+            "pages": [
+              "examples/recorded-workflows"
             ]
           }
         ]
       },
       {
-        "tab": "API Reference",
+        "tab": "API reference",
         "groups": [
           {
-            "group": "Reference",
+            "group": "HTTP conventions",
             "pages": [
               "api-reference/overview",
-              "api-reference/authentication",
-              "api-reference/request-signing",
               "api-reference/idempotency",
               "api-reference/pagination",
               "api-reference/errors"
             ]
           },
           {
-            "group": "Endpoints",
+            "group": "Governed Execution",
             "pages": [
-              "api-reference/applications",
-              "api-reference/customers",
-              "api-reference/accounts",
-              "api-reference/counterparties",
-              "api-reference/deposits",
-              "api-reference/withdrawals",
-              "api-reference/transfers",
-              "api-reference/exchanges",
-              "api-reference/payments",
-              "api-reference/webhooks"
+              "api-reference/endpoints/get-operation",
+              "api-reference/endpoints/create-action",
+              "api-reference/endpoints/get-action",
+              "api-reference/endpoints/evaluate-action",
+              "api-reference/endpoints/get-evaluation",
+              "api-reference/endpoints/list-executions",
+              "api-reference/endpoints/create-execution",
+              "api-reference/endpoints/get-execution",
+              "api-reference/endpoints/list-execution-authorizations",
+              "api-reference/endpoints/get-execution-result",
+              "api-reference/endpoints/request-execution-cancellation",
+              "api-reference/endpoints/reconcile-execution",
+              "api-reference/endpoints/list-approvals",
+              "api-reference/endpoints/get-approval",
+              "api-reference/endpoints/vote-on-approval"
+            ]
+          },
+          {
+            "group": "Agent Authority",
+            "pages": [
+              "api-reference/endpoints/list-principals",
+              "api-reference/endpoints/create-principal",
+              "api-reference/endpoints/get-principal",
+              "api-reference/endpoints/list-authority-grants",
+              "api-reference/endpoints/create-authority-grant",
+              "api-reference/endpoints/get-authority-grant",
+              "api-reference/endpoints/revoke-authority-grant",
+              "api-reference/endpoints/list-delegations",
+              "api-reference/endpoints/create-delegation",
+              "api-reference/endpoints/get-delegation",
+              "api-reference/endpoints/revoke-delegation",
+              "api-reference/endpoints/create-capability-token",
+              "api-reference/endpoints/list-reservations",
+              "api-reference/endpoints/create-reservation",
+              "api-reference/endpoints/get-reservation",
+              "api-reference/endpoints/request-reservation-release"
+            ]
+          },
+          {
+            "group": "Evidence & Verification",
+            "pages": [
+              "api-reference/endpoints/list-receipts",
+              "api-reference/endpoints/get-receipt",
+              "api-reference/endpoints/get-receipt-inclusion-proof",
+              "api-reference/endpoints/get-verification-keys",
+              "api-reference/endpoints/verify-receipt",
+              "api-reference/endpoints/get-verification",
+              "api-reference/endpoints/create-verification-disposition",
+              "api-reference/endpoints/create-projection",
+              "api-reference/endpoints/get-projection",
+              "api-reference/endpoints/decide-operative-effect",
+              "api-reference/endpoints/get-effect-decision",
+              "api-reference/endpoints/invalidate-dependencies",
+              "api-reference/endpoints/get-invalidation",
+              "api-reference/endpoints/get-checkpoint",
+              "api-reference/endpoints/request-twin-retention-change",
+              "api-reference/endpoints/list-events",
+              "api-reference/endpoints/list-webhooks",
+              "api-reference/endpoints/create-webhook",
+              "api-reference/endpoints/get-webhook",
+              "api-reference/endpoints/update-webhook",
+              "api-reference/endpoints/rotate-webhook-secret",
+              "api-reference/endpoints/list-webhook-deliveries",
+              "api-reference/endpoints/replay-webhook-delivery"
+            ]
+          },
+          {
+            "group": "Assets & Lifecycle",
+            "pages": [
+              "api-reference/endpoints/list-assets",
+              "api-reference/endpoints/create-asset",
+              "api-reference/endpoints/get-asset",
+              "api-reference/endpoints/list-asset-versions",
+              "api-reference/endpoints/create-asset-version",
+              "api-reference/endpoints/get-asset-version",
+              "api-reference/endpoints/transition-asset-version",
+              "api-reference/endpoints/promote-record",
+              "api-reference/endpoints/list-process-cases",
+              "api-reference/endpoints/create-process-case",
+              "api-reference/endpoints/get-process-case",
+              "api-reference/endpoints/close-process-case"
+            ]
+          },
+          {
+            "group": "Lineage & Rights",
+            "pages": [
+              "api-reference/endpoints/create-contribution",
+              "api-reference/endpoints/create-outcome",
+              "api-reference/endpoints/create-provenance-graph",
+              "api-reference/endpoints/create-rights-record",
+              "api-reference/endpoints/compute-allocation",
+              "api-reference/endpoints/update-beneficiary",
+              "api-reference/endpoints/revoke-rights",
+              "api-reference/endpoints/request-selective-disclosure",
+              "api-reference/endpoints/list-lots",
+              "api-reference/endpoints/create-lot",
+              "api-reference/endpoints/get-lot",
+              "api-reference/endpoints/transform-lots"
+            ]
+          },
+          {
+            "group": "Settlement",
+            "pages": [
+              "api-reference/endpoints/list-realizations",
+              "api-reference/endpoints/create-realization",
+              "api-reference/endpoints/get-realization",
+              "api-reference/endpoints/get-realization-witness",
+              "api-reference/endpoints/list-escrow-accounts",
+              "api-reference/endpoints/get-escrow-account",
+              "api-reference/endpoints/list-settlements",
+              "api-reference/endpoints/create-settlement",
+              "api-reference/endpoints/get-settlement",
+              "api-reference/endpoints/release-settlement",
+              "api-reference/endpoints/return-held-value",
+              "api-reference/endpoints/remediate-realization",
+              "api-reference/endpoints/list-disputes",
+              "api-reference/endpoints/create-dispute",
+              "api-reference/endpoints/get-dispute"
+            ]
+          },
+          {
+            "group": "Shared platform",
+            "pages": [
+              "api-reference/endpoints/get-context",
+              "api-reference/endpoints/list-projects",
+              "api-reference/endpoints/create-project",
+              "api-reference/endpoints/get-project",
+              "api-reference/endpoints/create-object-upload",
+              "api-reference/endpoints/complete-object-upload",
+              "api-reference/endpoints/get-stored-object"
+            ]
+          },
+          {
+            "group": "Advanced routing and edge",
+            "pages": [
+              "api-reference/endpoints/list-targets",
+              "api-reference/endpoints/create-target",
+              "api-reference/endpoints/get-target",
+              "api-reference/endpoints/suspend-target",
+              "api-reference/endpoints/list-adapters",
+              "api-reference/endpoints/create-adapter",
+              "api-reference/endpoints/get-adapter",
+              "api-reference/endpoints/create-challenge",
+              "api-reference/endpoints/submit-attestation",
+              "api-reference/endpoints/get-attestation",
+              "api-reference/endpoints/submit-resource-measurement",
+              "api-reference/endpoints/get-measurement",
+              "api-reference/endpoints/create-resource-estimate",
+              "api-reference/endpoints/get-estimate",
+              "api-reference/endpoints/compare-resource-evidence",
+              "api-reference/endpoints/get-energy-comparison",
+              "api-reference/endpoints/list-edge-nodes",
+              "api-reference/endpoints/create-edge-node",
+              "api-reference/endpoints/get-edge-node",
+              "api-reference/endpoints/create-edge-allocation",
+              "api-reference/endpoints/get-edge-allocation",
+              "api-reference/endpoints/synchronize-edge",
+              "api-reference/endpoints/get-edge-sync",
+              "api-reference/endpoints/evaluate-coverage",
+              "api-reference/endpoints/get-coverage",
+              "api-reference/endpoints/evaluate-campaign",
+              "api-reference/endpoints/get-campaign"
             ]
           }
         ]
       }
     ]
   },
+  "api": {
+    "playground": {
+      "display": "simple"
+    },
+    "examples": {
+      "languages": [
+        "bash",
+        "typescript",
+        "python"
+      ]
+    }
+  },
   "footer": {
     "socials": {
-      "x": "https://x.com/tryrail"
+      "github": "https://github.com/therailAI/docs"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/api-reference/accounts",
+      "destination": "/api-reference/overview"
+    },
+    {
+      "source": "/api-reference/applications",
+      "destination": "/api-reference/overview"
+    },
+    {
+      "source": "/api-reference/authentication",
+      "destination": "/get-started/authentication"
+    },
+    {
+      "source": "/api-reference/counterparties",
+      "destination": "/api-reference/overview"
+    },
+    {
+      "source": "/api-reference/customers",
+      "destination": "/api-reference/overview"
+    },
+    {
+      "source": "/api-reference/deposits",
+      "destination": "/api-reference/overview"
+    },
+    {
+      "source": "/api-reference/exchanges",
+      "destination": "/api-reference/overview"
+    },
+    {
+      "source": "/api-reference/payments",
+      "destination": "/api-reference/overview"
+    },
+    {
+      "source": "/api-reference/request-signing",
+      "destination": "/get-started/authentication"
+    },
+    {
+      "source": "/api-reference/transfers",
+      "destination": "/api-reference/overview"
+    },
+    {
+      "source": "/api-reference/webhooks",
+      "destination": "/webhooks/overview"
+    },
+    {
+      "source": "/api-reference/withdrawals",
+      "destination": "/api-reference/overview"
+    },
+    {
+      "source": "/concepts/accounts",
+      "destination": "/concepts/overview"
+    },
+    {
+      "source": "/concepts/assets",
+      "destination": "/concepts/overview"
+    },
+    {
+      "source": "/concepts/counterparties",
+      "destination": "/concepts/overview"
+    },
+    {
+      "source": "/concepts/customers",
+      "destination": "/concepts/overview"
+    },
+    {
+      "source": "/concepts/money-movement",
+      "destination": "/concepts/overview"
+    },
+    {
+      "source": "/get-started/sandbox",
+      "destination": "/get-started/environment"
+    },
+    {
+      "source": "/guides/account-management",
+      "destination": "/guides/governed-execution"
+    },
+    {
+      "source": "/guides/customer-onboarding",
+      "destination": "/guides/governed-execution"
+    },
+    {
+      "source": "/guides/deposits",
+      "destination": "/guides/governed-execution"
+    },
+    {
+      "source": "/guides/payments-collections",
+      "destination": "/guides/governed-execution"
+    },
+    {
+      "source": "/guides/transfers-exchanges",
+      "destination": "/guides/governed-execution"
+    },
+    {
+      "source": "/guides/withdrawals",
+      "destination": "/guides/governed-execution"
+    },
+    {
+      "source": "/use-cases/crypto-offramp",
+      "destination": "/examples/recorded-workflows"
+    },
+    {
+      "source": "/use-cases/crypto-onramp",
+      "destination": "/examples/recorded-workflows"
+    },
+    {
+      "source": "/use-cases/wallet-as-a-service",
+      "destination": "/examples/recorded-workflows"
+    }
+  ]
 }

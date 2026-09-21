@@ -1,0 +1,59 @@
+---
+title: "TypeScript SDK"
+description: "Call Rail with the development TypeScript client."
+---
+
+## Install from a supplied checkout
+
+Use Node.js 22 and a matching SDK source checkout supplied by your operator. In that checkout:
+
+```bash
+npm ci
+npm run build
+```
+
+From your application, install the built checkout by its local path. Replace the example path with the location you received:
+
+```bash
+npm install /path/to/rail-sdk-typescript
+```
+
+This is a source-install workflow, not a claim of public npm publication.
+
+## Read your context
+
+```typescript
+import { RailClient, RailError } from '@rail/sdk';
+
+const baseURL = process.env.RAIL_BASE_URL;
+const token = process.env.RAIL_ACCESS_TOKEN;
+if (!baseURL || !token) throw new Error('Configure the Rail endpoint and token');
+
+const client = new RailClient(baseURL, () => token);
+try {
+  const { data } = await client.call('getContext', undefined);
+  console.log(data.principal_id, data.project_ids);
+} catch (error) {
+  if (error instanceof RailError) console.error('Rail HTTP status:', error.status);
+  throw error;
+}
+```
+
+For long-running applications, supply an access-token callback that refreshes tokens using your identity provider. Do not embed a token in source code.
+
+## Product methods and options
+
+```typescript
+const executionId = process.env.RAIL_EXECUTION_ID;
+if (!executionId) throw new Error('Set the execution to inspect');
+const { data, etag, location } = await client.execution.getExecution(undefined, {
+  path: { execution_id: executionId },
+});
+console.log(data.state, data.external_effect);
+```
+
+Mutations accept `idempotencyKey`; concurrency-controlled operations accept `ifMatch`. Use `headers` for operation-defined headers such as `Rail-Capability`. A capability-bound request also requires the appropriate certificate-bound transport; the header alone is insufficient.
+
+The SDK validates successful response shape. A malformed success response is a contract error, not usable evidence. Handle it through your recovery and observability policy.
+
+The examples do not automatically retry. See [idempotency](/api-reference/idempotency).

@@ -1,0 +1,24 @@
+---
+title: "Reuse, lineage, and rights"
+description: "Connect exact artifact participation to rights and allocation evidence."
+---
+
+A reuse workflow must identify the artifact version that actually participated, not merely the version selected in a plan.
+
+## Record participation
+
+Use contribution and outcome operations to capture the applicable evidence. Build a provenance graph with explicit roles and relationships. Correlation identifiers can help join a business workflow, but they do not become causal evidence by themselves.
+
+## Evaluate rights
+
+Rights records identify the applicable terms and constraints. A referenced rights record is not permission to ignore its scope, expiry, or revocation. Recheck applicable rights before a protected downstream effect or release.
+
+## Compute allocation
+
+[`computeAllocation`](/api-reference/endpoints/compute-allocation) evaluates the selected method and evidence. Participation can validly result in zero allocation. Positive shares, negative contribution records, residuals, and payable terms must not be conflated.
+
+## Carry the evidence into clearing
+
+Use the verified lineage, rights, and allocation inputs in the [realization and settlement flow](/guides/clearing-and-settlement). A rights dispute can hold release after the work has executed.
+
+[Inspect governed reuse](https://the-rail-site.vercel.app/use-cases/governed-reuse/) for a fictional SAP-to-X12 transformation example. The recording does not establish a certified SAP connector or customer deployment.

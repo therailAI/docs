@@ -1,0 +1,9 @@
+# Public developer documentation rebuild
+
+Replace the unrelated payments-provider documentation with The Rail's authorization and clearing developer documentation. The source baseline is customer contract 0.1.1 and the inspected development SDKs; contract coverage is distinct from deployment readiness. Do not publish internal/runtime specs, patent source references, credentials, private source links, or invented public hosts/package releases.
+
+Information architecture: start here and provisioned-environment quickstart; authority/action/evidence/clearing concepts; integration guides; TypeScript/Python SDKs and verification CLI; recorded workflow examples; full customer API reference grouped by six products, shared operations, and advanced routing/edge. Document authentication, idempotency, errors, concurrency, uncertainty, pagination, and webhooks.
+
+Use native Mintlify MDX and current docs.json with Rail blue/navy branding. Derive endpoint reference pages and bundled public schemas from the customer contract. Remove source-disclosure annotations and incorrect reused response examples; preserve request/response constraints and annotate illustrative examples. Disable interactive API calls because no public shared sandbox is established. Replace every old content route with relevant content or a migration redirect so unrelated pages do not remain searchable.
+
+Validation: Mintlify validate and broken-links; local checks for navigation/redirect targets, schema references and exact operation coverage, source/secret leakage, contract shape preservation, example conformance, and SDK sample compatibility. Publish the checked result to the user-requested docs repository, using a branch/PR if protection requires it. Verify the final GitHub content and report Mintlify deployment status only if observed.

@@ -1,0 +1,24 @@
+---
+title: "Authority and delegation"
+description: "Bound permission to actor, purpose, scope, time, and governing conditions."
+---
+
+A grant identifies the principal and the conditions under which it may act. Scope can constrain action classes, resources, purpose, audience, data classes, regions, validity windows, delegation depth, and permitted use.
+
+A child grant or delegation can only narrow existing authority. Delegation does not erase the parent chain or turn a technically reachable resource into an authorized one.
+
+## Approval is not authority expansion
+
+Human approval applies to the exact action and policy context presented for review. Reaching quorum triggers fresh evaluation. It does not override policy or revive revoked authority.
+
+## Revocation is prospective
+
+After revocation, later protected effects must re-evaluate the relevant authority. Earlier evidence remains unchanged. Stopping an agent process and ending its authority are different operations.
+
+## Exclusive use and reservations
+
+A reservation binds a permitted use to a holder and scope. Expiry or a crashed process does not automatically make that authority available again when an external effect may have occurred. Reconciliation must establish whether release or consumption is justified.
+
+At-most-one effective reservation does not guarantee universal exactly-once behavior in an external system. Your adapter and provider must supply their own effect-idempotency and reconciliation behavior.
+
+[Integrate grants and delegations](/guides/grants-and-delegation).

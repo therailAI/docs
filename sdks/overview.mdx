@@ -1,0 +1,29 @@
+---
+title: "SDKs and CLI"
+description: "Use the customer contract from TypeScript, Python, or the verification CLI."
+---
+
+The TypeScript and Python clients expose the same customer operation catalog. Product namespaces group operations without changing request schemas, response schemas, or authority requirements.
+
+| Namespace | Product |
+| --- | --- |
+| `execution` | Governed Execution |
+| `authority` | Agent Authority |
+| `evidence` | Evidence & Verification |
+| `assets` | Assets & Lifecycle |
+| `lineage` | Lineage & Rights |
+| `settlement` | Settlement |
+
+Shared and advanced operations are available through the generic `call` method. TypeScript uses camelCase operation names; Python product methods use snake_case. The generic Python `call` accepts the contract's camelCase operation ID.
+
+## Distribution status
+
+These guides describe development SDK version 0.2.0 against customer contract 0.1.1. The inspected TypeScript package is private. Obtain a versioned source checkout or distribution from your Rail operator; do not assume `npm install @rail/sdk` or `pip install rail-sdk` resolves to a supported public release.
+
+The examples use Node.js 22 or Python 3.12+, respectively. Supply environment credentials separately.
+
+## Client behavior
+
+Both clients validate request and successful-response shape and require explicit idempotency keys for mutations. They perform one request without automatic mutation retries. They return data and response metadata; the metadata is useful for ETags and asynchronous resource locations.
+
+[TypeScript](/sdks/typescript) · [Python](/sdks/python) · [Verification CLI](/sdks/cli).

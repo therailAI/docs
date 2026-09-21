@@ -1,0 +1,63 @@
+---
+title: "Python SDK"
+description: "Call Rail with the development Python client."
+---
+
+## Install from a supplied checkout
+
+Use Python 3.12+ and a matching source checkout supplied by your operator. Replace the path with the checkout you received:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install /path/to/rail-sdk-python
+```
+
+This is a source-install workflow; public PyPI publication is not established here.
+
+## Read your context
+
+```python
+import os
+from rail_sdk import RailClient, RailError
+
+client = RailClient(
+    os.environ["RAIL_BASE_URL"],
+    lambda: os.environ["RAIL_ACCESS_TOKEN"],
+)
+try:
+    data, headers = client.call("getContext")
+    print(data["principal_id"], data["project_ids"])
+except RailError as error:
+    print("Rail HTTP status:", error.status)
+    raise
+finally:
+    client.close()
+```
+
+For a long-running process, use a token callback that refreshes credentials through your configured identity provider. The static environment-token example is a minimal connection check.
+
+## Product methods and options
+
+```python
+import os
+from rail_sdk import RailClient
+
+client = RailClient(
+    os.environ["RAIL_BASE_URL"],
+    lambda: os.environ["RAIL_ACCESS_TOKEN"],
+)
+try:
+    data, headers = client.execution.get_execution(
+        path={"execution_id": os.environ["RAIL_EXECUTION_ID"]}
+    )
+    print(data["state"], data["external_effect"])
+    etag = headers.get("etag")
+finally:
+    client.close()
+```
+
+Mutations require `idempotency_key`. Pass the latest strong ETag in `if_match` when required. To send operation-defined headers such as `Rail-Capability`, use the generic `client.call(..., headers={...})`; the current Python product methods do not expose that option. Sender-bound capabilities also require the corresponding certificate-bound transport.
+
+If you supply an `httpx.Client`, you retain responsibility for its lifecycle. The Rail client closes only a transport it created itself.
+
+Requests and successful responses are schema-checked. There are no automatic mutation retries. Preserve operation identity and [reconcile uncertain effects](/guides/recovery).

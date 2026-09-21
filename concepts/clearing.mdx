@@ -1,0 +1,26 @@
+---
+title: "Clearing and settlement"
+description: "Determine whether value may be released, then track the actual settlement outcome."
+---
+
+**Clearing** describes the decision about whether value may be released under applicable terms, rights, authority, and evidence. **Settlement** is the API product that represents realizations, payable terms, release requests, returns, remediations, and disputes.
+
+These are related to execution, but they are not the same decision. An earlier approved action may have executed while its payout is later held.
+
+## Keep accounting and confirmation distinct
+
+A realization accounts for genuinely available value under governing terms. A settlement selects validated payable terms. A release request evaluates current conditions and reserves the applicable balance for transfer.
+
+Provider confirmation establishes the amount actually released. `release_pending`, `partially_released`, and `reconciliation_required` must not be presented as fully paid.
+
+## Rights and contribution matter
+
+Participation evidence identifies what contributed. Allocation determines its treatment under the selected method and terms; participation does not guarantee a positive payout. Missing rights or a dispute can prevent release.
+
+## Preserve exact value
+
+Use the contract's exact decimal-string amounts, currency, and scale. Net allocations, fees, taxes, held residual, and returnable value must reconcile to the same gross value without double counting. Fees or taxes need explicit governing rules.
+
+A historical witness remains a historical calculation. Later releases, returns, or disputes produce linked records instead of rewriting it.
+
+[Implement clearing and settlement](/guides/clearing-and-settlement).

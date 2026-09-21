@@ -1,0 +1,25 @@
+{
+  "status": "local-checks-passed",
+  "pages": 155,
+  "customer_operations": 127,
+  "legacy_redirects": 27,
+  "mint_cli": "4.2.502",
+  "checks": [
+    "Mintlify build validation",
+    "Mintlify broken links",
+    "Navigation and local links",
+    "Exact customer endpoint coverage",
+    "Customer contract constraints, parameters, scopes and statuses preserved",
+    "No internal/runtime endpoints or source-disclosure annotations",
+    "Five JSON examples validated against contract schemas",
+    "Shell example syntax",
+    "TypeScript examples compile against development SDK",
+    "Python examples execute against schema-valid mock responses, including transport closure"
+  ],
+  "limits": [
+    "No live authenticated API environment was exercised",
+    "SDK examples were checked against supplied development source, not public package releases",
+    "No browser visual inspection performed"
+  ],
+  "published_openapi_sha256": "512b1a70250d015677c94f9378c52dcc2de16d0adb71054bd6a9aa826b194105"
+}

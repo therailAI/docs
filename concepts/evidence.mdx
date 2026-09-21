@@ -1,0 +1,28 @@
+---
+title: "Evidence and verification"
+description: "Distinguish records, scoped verification, and authorization for an effect."
+---
+
+Rail evidence is append-only. A record preserves an assertion or decision; it is not a reusable grant of authority.
+
+| Layer | What it answers |
+| --- | --- |
+| Receipt and signature | Which bytes were committed and signed? |
+| Inclusion proof and checkpoint | Is the record included in the asserted ledger history? |
+| Verification disposition | What is asserted for a subject, scope, and verification dimension? |
+| Projection | What does the applicable evidence establish for a fixed evaluation snapshot? |
+| Effect decision | May one named operative effect proceed under current conditions? |
+
+A complete projection does not automatically authorize result release, retries, downstream execution, or settlement. Those effects have separate gates.
+
+## Causal links and correlations
+
+Causal parents identify required dependencies under explicit roles and policy. Correlations help find related work. A correlation is not a causal proof, and timestamp order does not create a global causal ordering.
+
+## What cryptography does not establish
+
+A valid signature establishes integrity under a trusted key. It does not establish the truth of every external assertion, prove current authority, or qualify an integration for production.
+
+Trust anchors must be established independently. Downloading a bundle and its accompanying key from the same untrusted location is not independent trust establishment.
+
+[Verify an evidence bundle](/guides/verify-evidence).

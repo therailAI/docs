@@ -1,0 +1,26 @@
+---
+title: "Grants and delegation"
+description: "Issue bounded authority and preserve constraints across agent handoffs."
+---
+
+## Provision a grant
+
+Use [`createAuthorityGrant`](/api-reference/endpoints/create-authority-grant) with a subject, bounded scope, governing policy references, and basis evidence. The issuer is derived from the authenticated caller. Root authority requires the appropriate governance role; a workload cannot create arbitrary authority for itself.
+
+Pin policy versions. Choose narrow action classes and resources, explicit purposes and audiences, a validity window, and only the delegation depth and uses needed for the workflow.
+
+## Delegate a subset
+
+Use [`createDelegation`](/api-reference/endpoints/create-delegation) with the parent grant, receiving subject, and attenuated scope. For a deeper hop, supply the parent delegation. Rail checks the parent relationship, issuer control, cumulative bounds, and applicable cross-tenant authority.
+
+The receiving agent uses its own enrolled identity. Passing another agent's bearer token is not delegation.
+
+## Mint a capability when required
+
+[`createCapabilityToken`](/api-reference/endpoints/create-capability-token) produces a sender-bound action credential under the applicable authority. Bind it to the intended action and operation identity. A capability does not replace OAuth and cannot outlive or widen its governing authority.
+
+## Revoke and verify refusal
+
+Use [`revokeAuthorityGrant`](/api-reference/endpoints/revoke-authority-grant) or [`revokeDelegation`](/api-reference/endpoints/revoke-delegation) as an authorized revoker. Confirm that subsequent protected actions are refused. Historical receipts remain available for inspection.
+
+For a concrete reference, inspect the [multi-agent delegation recording](https://the-rail-site.vercel.app/use-cases/multi-agent-delegation/). It demonstrates selected behavior in a reference environment, not your platform's integration.

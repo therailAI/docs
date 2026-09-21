@@ -1,0 +1,35 @@
+---
+title: "Verify evidence independently"
+description: "Inspect records without confusing integrity with authority or external truth."
+---
+
+## Read the evidence
+
+An execution exposes receipt IDs. Use [`getReceipt`](/api-reference/endpoints/get-receipt), its inclusion proof, verification keys, and checkpoints as applicable to the verification profile. Sensitive object access remains subject to current authorization.
+
+The customer API also exposes receipt-verification requests, verification dispositions, projections, and effect decisions. Each has a different role; see [the evidence model](/concepts/evidence).
+
+## Inspect a recorded journey
+
+Open one of the [six recorded workflows](/examples/recorded-workflows). The workbench displays a bundle and a **supplied verifier report**. Viewing that report is not running a verifier in your browser.
+
+Download the evidence bundle and inspect it with the Rail CLI supplied for your platform:
+
+```bash
+rail bundle inspect journey.bundle.json
+rail verify journey.bundle.json --trust-file trust.json --json
+```
+
+Obtain and confirm the trust anchor through an independent trusted channel before relying on the result. An accompanying `trust.json` is useful input, but its location alongside the bundle does not itself establish trust.
+
+## Interpret the result
+
+Check signature and commitment validation, causal linkage, and the applicable verification profile. Current-time authority can be stale even when the historical signed record remains intact. Do not reinterpret historical validity as permission for new execution.
+
+A cryptographic check cannot establish that every external claim is true, that a provider actually moved live money, or that the deployment is production-ready.
+
+## Keep verification separate from release
+
+A complete scoped projection does not authorize every effect. Result release, registry promotion, retry, and settlement each require their applicable authority and current decision.
+
+See [CLI usage](/sdks/cli) for obtaining and using a matching verifier.

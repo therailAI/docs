@@ -1,0 +1,31 @@
+---
+title: "Execution and uncertainty"
+description: "Interpret execution state without confusing acceptance, completion, and settlement."
+---
+
+`POST /v1/executions` accepts work for governed processing. HTTP `202` means the submission was accepted; it does not mean the action ran or that value was released.
+
+| States | How to respond |
+| --- | --- |
+| `accepted`, `evaluating` | Continue observing the execution |
+| `awaiting_approval` | Present the exact approval request to eligible human approvers |
+| `authorized`, `queued` | Wait for the protected dispatch path; do not invoke the effect yourself |
+| `dispatching`, `running` | Track delivery and external-effect evidence |
+| `verification_pending` | Wait for the required evidence evaluation |
+| `completed` | Completion scope was permitted; result release and settlement remain separate |
+| `denied` | Inspect basis codes and denial receipts; do not retry as if this were a transport error |
+| `quarantined` | Resolve the controlling authority or evidence condition |
+| `reconciliation_required` | Investigate the possible effect before retry or substitution |
+| `failed`, `cancelled` | Inspect `external_effect`; neither label alone proves no effect occurred |
+
+## Read all three views
+
+Use `state`, `delivery_state`, and `external_effect` together. `external_effect` is one of `not_possible`, `possible_unresolved`, `confirmed_occurred`, or `confirmed_not_occurred`.
+
+An unresolved effect remains controlling even if you generate a new request ID, operation ID, target, or adapter. Substituting another route is not a safe recovery strategy until reconciliation establishes what happened.
+
+## Result release
+
+Read the result through `GET /v1/executions/{execution_id}/result`. Current result-release conditions apply. A completed execution is not permission to bypass that gate or automatically initiate settlement.
+
+[Submit an execution](/guides/governed-execution) and [recover safely](/guides/recovery).

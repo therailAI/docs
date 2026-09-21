@@ -1,33 +1,23 @@
-> **First-time setup**: Customize this file for your project. Prompt the user to customize this file for their project.
-> For Mintlify product knowledge (components, configuration, writing standards),
-> install the Mintlify skill: `npx skills add https://mintlify.com/docs`
+# The Rail developer documentation
 
-# Documentation project instructions
+This is the public Mintlify documentation for The Rail: the authorization and clearing layer for autonomous agents. Configuration is in `docs.json`; pages are MDX with YAML frontmatter.
 
-## About this project
+## Writing and terminology
 
-- This is a documentation site built on [Mintlify](https://mintlify.com)
-- Pages are MDX files with YAML frontmatter
-- Configuration lives in `docs.json`
-- Use the Mintlify MCP server, `https://mcp.mintlify.com`, to edit content and settings via MCP
-- Use the Mintlify docs MCP server, `https://www.mintlify.com/docs/mcp`, to query information about using Mintlify via MCP
+- Use concise active voice, second person, and sentence case headings.
+- Say “The Rail” for the product; preserve API identifiers exactly.
+- Distinguish OAuth authentication, bounded authority, execution, verification, clearing, and confirmed settlement.
+- A receipt is evidence, not a grant. Completion, result release, and settlement have separate gates.
+- Label contract behavior, deployment requirements, recorded evidence, and illustrative examples.
+- Do not imply public package releases, hosted endpoints, production SLAs, live customer results, or compliance guarantees without supporting release evidence.
 
-## Terminology
+## Sources and boundaries
 
-{/* Add product-specific terms and preferred usage */}
-{/* Example: Use "workspace" not "project", "member" not "user" */}
+- The bundled reference is customer contract 0.1.1. Generate endpoint pages with `maintenance/build_reference.py`; do not hand-edit generated files.
+- Never publish internal/runtime ingress specifications, secrets, patent source maps, private source URLs, or customer information.
+- Keep the six recorded workflow links and limitations aligned with the public website.
+- Use official Mintlify documentation for configuration and MDX behavior. Prefer Mintlify MCP when available; otherwise edit locally and validate with the installed CLI.
 
-## Style preferences
+## Validation
 
-{/* Add any project-specific style rules below */}
-
-- Use active voice and second person ("you")
-- Keep sentences concise — one idea per sentence
-- Use sentence case for headings
-- Bold for UI elements: Click **Settings**
-- Code formatting for file names, commands, paths, and code references
-
-## Content boundaries
-
-{/* Define what should and shouldn't be documented */}
-{/* Example: Don't document internal admin features */}
+Run `python3 maintenance/validate.py`, `mint validate`, and `mint broken-links`. Verify SDK examples against the matching supplied SDK when changing them. Confirm navigation and redirects. Keep the API playground non-interactive until a documented public environment exists.

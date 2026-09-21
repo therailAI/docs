@@ -1,0 +1,30 @@
+---
+title: "Recover without repeating an uncertain effect"
+description: "Handle timeouts, cancellation, denials, and reconciliation."
+---
+
+A network timeout describes your observation of a request. It does not prove that the request or external effect failed.
+
+## Before you retry
+
+Persist the request's HTTP idempotency key, `operation_instance_id`, action ID, execution ID when known, and relevant business-resource references. Reuse the same HTTP key only to recover the same request. Do not generate a new business-operation ID to get around an unresolved effect.
+
+## Inspect the execution
+
+Read `state`, `delivery_state`, `external_effect`, basis codes, and receipts. A `failed` state can still have `possible_unresolved` external effect. Do not switch targets or adapters until reconciliation establishes whether repetition is safe.
+
+## Reconcile using evidence
+
+Use [`reconcileExecution`](/api-reference/endpoints/reconcile-execution) through an authorized recovery workflow. Supply the evidence required by the contract and deployment policy. Reconciliation does not create permission to accept an unsupported claim of success or no effect.
+
+Provider lookups and adapter records should establish what happened to the original business effect. Retain reservations and effect locks while uncertainty remains.
+
+## Cancellation and compensation
+
+A cancellation request is not confirmation that no effect occurred. Observe the resulting state and evidence. Compensation is a new linked governed action with its own authority, not a reuse of the original permission.
+
+## Denial and service failure
+
+A governance denial is terminal for that request. A later legitimate attempt needs fresh evaluation, and any unresolved-effect restriction still applies. If durable decision storage is unavailable, the system should fail closed rather than claim a committed denial or dispatch an effect.
+
+See [HTTP errors](/api-reference/errors) and [idempotency](/api-reference/idempotency).

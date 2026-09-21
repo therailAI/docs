@@ -1,0 +1,40 @@
+---
+title: "Clear and settle value"
+description: "Separate available value, payable terms, release eligibility, and provider confirmation."
+---
+
+## 1. Establish the realization
+
+A realization accounts for available value under explicit governing terms and evidence. The request cannot invent a custody balance or treat an unverified contribution as an entitlement.
+
+Use [`createRealization`](/api-reference/endpoints/create-realization) with the required provenance, allocation, evidence, and terms for your environment. Inspect its witness and held value before selecting payable terms.
+
+## 2. Create a settlement
+
+[`createSettlement`](/api-reference/endpoints/create-settlement) selects whole validated payable terms from one realization. Term identifiers must be unique and must not already have a conflicting spending reservation.
+
+```json
+{
+  "realization_id": "rea_demo0001",
+  "term_ids": ["a_contributor", "b_contributor"],
+  "purpose": "Release verified allocations under approved terms."
+}
+```
+
+The IDs and terms are illustrative. Use actual authorized terms from your realization. Creating the settlement does not release funds.
+
+## 3. Request release
+
+[`releaseSettlement`](/api-reference/endpoints/release-settlement) evaluates current rights, evidence, policy, and authority. It reserves the applicable remaining balance for transfer. Approval of the earlier execution does not replace this check.
+
+## 4. Track confirmed value
+
+Read the settlement's `state`, `confirmed_amount`, `pending_amount`, provider references, and receipts. Present pending and confirmed amounts separately. Partial confirmation releases only the proven amount; unresolved amounts stay controlled until reconciliation.
+
+## 5. Handle returns and disputes
+
+Returns may spend only proven, unencumbered held value. Disputes and remediations create linked evidence. Do not overwrite historical beneficiaries, witnesses, or receipts to reflect a later outcome.
+
+Use exact decimal strings. For example, USD 250.00 is `{"currency":"USD","scale":2,"amount":"250.00"}`. Never use floating-point arithmetic to reconcile terms.
+
+<Note>The procurement and reuse recordings use test or stub payment infrastructure. Production provider integration, custody, and settlement operations must be qualified separately.</Note>

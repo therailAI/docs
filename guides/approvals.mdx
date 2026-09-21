@@ -1,0 +1,22 @@
+---
+title: "Human approvals"
+description: "Bind human review to the exact action and re-evaluate before execution."
+---
+
+Rail creates approval requests when policy requires them. Your application displays the proposed action and its governing context to eligible human approvers.
+
+1. Read the approval using [`getApproval`](/api-reference/endpoints/get-approval).
+2. Preserve the strong `ETag` response header.
+3. Authenticate the human with the configured interactive flow and required assurance.
+4. Submit [`voteOnApproval`](/api-reference/endpoints/vote-on-approval) with `Idempotency-Key` and `If-Match`.
+5. Observe the execution after quorum. Fresh evaluation still applies.
+
+```json
+{"decision": "approve", "comment": "Reviewed the exact proposed action."}
+```
+
+The server determines approver eligibility, identity, and quorum. The voter cannot choose their own group or count multiple effective votes as different people. Client-credentials tokens cannot cast human votes.
+
+If the vote fails with `412`, re-read the approval and review the current state before deciding whether to submit again. `428` means the required precondition was missing. Do not silently replay a stale approval with a new ETag.
+
+Changing the action, policy version, or governing conditions can require fresh approval. Approval does not expand authority or override revocation.

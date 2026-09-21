@@ -1,0 +1,75 @@
+---
+title: "Submit a governed action"
+description: "Normalize an intent, submit it under authority, and observe the result."
+---
+
+## Prerequisites
+
+Your operator must provision an enrolled principal, project, published action definition, its schema and policies, an eligible binding and target, and applicable authority. You need `execution:write` to submit and `execution:read` to inspect. See [authentication](/get-started/authentication) for capability-bound transport requirements.
+
+## 1. Normalize the intent
+
+Create `action.json` using a definition and resource that actually exist in your environment. This fixture demonstrates the request shape; its IDs do not refer to provisioned objects.
+
+```json
+{
+  "project_id": "prj_demo0001",
+  "definition": {"asset_id": "reg_supportresolve0001", "version": "1.0.0"},
+  "purpose": "Resolve a customer support case under approved service policy.",
+  "resource": {"namespace": "crm", "type": "support_case", "id": "CASE-1042"},
+  "input": {"case_id": "CASE-1042", "resolution_code": "replacement_approved", "customer_notification": true},
+  "source_surface": "api"
+}
+```
+
+```bash
+: "${RAIL_BASE_URL:?Set your endpoint}"
+: "${RAIL_ACCESS_TOKEN:?Supply your access token}"
+: "${RAIL_ACTION_KEY:?Set a persisted 16-128 character idempotency key}"
+curl --fail-with-body --silent --show-error \
+  "${RAIL_BASE_URL%/}/v1/actions" \
+  --header "Authorization: Bearer ${RAIL_ACCESS_TOKEN}" \
+  --header "Idempotency-Key: ${RAIL_ACTION_KEY}" \
+  --header 'Content-Type: application/json' \
+  --data-binary @action.json
+```
+
+Persist the returned action `id`. An action is a normalized intent, not permission to invoke the target.
+
+## 2. Optionally simulate
+
+Use `POST /v1/evaluations` to inspect advisory eligibility. Simulation cannot dispatch or issue reusable execution authority. Conditions can change before execution.
+
+## 3. Submit under authority
+
+Create `execution.json` with the returned action ID, your applicable grant, and a stable `operation_instance_id` for this business effect.
+
+```json
+{
+  "action_id": "act_demo0001",
+  "operation_instance_id": "opi_demo0001",
+  "grant_id": "grt_demo0001"
+}
+```
+
+```bash
+: "${RAIL_EXECUTION_KEY:?Set a distinct persisted idempotency key}"
+curl --fail-with-body --silent --show-error \
+  "${RAIL_BASE_URL%/}/v1/executions" \
+  --header "Authorization: Bearer ${RAIL_ACCESS_TOKEN}" \
+  --header "Idempotency-Key: ${RAIL_EXECUTION_KEY}" \
+  --header 'Content-Type: application/json' \
+  --data-binary @execution.json
+```
+
+This example applies when policy does not require a capability. If it does, obtain a capability for this action and operation, add `Rail-Capability`, and use the required sender-bound transport. Follow your deployment's certificate profile; do not weaken binding to make this sample run.
+
+## 4. Observe, approve, and recover
+
+Persist the execution ID. Poll [`getExecution`](/api-reference/endpoints/get-execution) or consume [events](/webhooks/overview). Handle `awaiting_approval` through the [approval flow](/guides/approvals). Inspect denial receipts when refused. Treat uncertain delivery through [reconciliation](/guides/recovery).
+
+## 5. Retrieve the result and evidence
+
+Request the result through [`getExecutionResult`](/api-reference/endpoints/get-execution-result). Inspect linked receipts separately. Completion does not automatically authorize another action or settlement.
+
+Use the [idempotency guide](/api-reference/idempotency) before adding retries.

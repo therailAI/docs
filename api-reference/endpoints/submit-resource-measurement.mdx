@@ -1,0 +1,13 @@
+---
+title: "Record device-local resource evidence"
+description: "POST /v1/resource-measurements \u2014 The Rail customer contract 0.1.1."
+openapi: "/api-reference/openapi.json POST /v1/resource-measurements"
+---
+
+<Note>Contract 0.1.1. Confirm that this operation is enabled in your deployment. Example hosts are placeholders; this page does not send API requests.</Note>
+
+**Required OAuth scope:** `routing:measure`. Tenant, object, and domain authorization also apply.
+
+Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
+
+This is a consequential operation. Credentials and OAuth scope alone do not authorize the effect; applicable authority and policy must also permit it.

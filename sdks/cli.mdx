@@ -1,0 +1,29 @@
+---
+title: "Evidence verification CLI"
+description: "Inspect exported journeys and verify them against an independently confirmed trust anchor."
+---
+
+Obtain the Rail CLI binary or build instructions for your operating system and architecture from your operator. Match the verifier version to the bundle profile. This page does not provide an unverified universal installer or assume a public binary release.
+
+## Check the tool
+
+```bash
+rail version
+```
+
+## Inspect and verify a bundle
+
+```bash
+rail bundle inspect journey.bundle.json
+rail verify journey.bundle.json --trust-file trust.json --json
+```
+
+Confirm the trust anchor independently before relying on verification. Inspect the report's actual result and diagnostics; do not treat a screenshot or a supplied report as a fresh local verification run.
+
+A historical grant can be expired or stale at verification time while its original signed records remain intact. The verification report must not be interpreted as current permission to execute.
+
+## Scope of this guide
+
+The development CLI also has local environment, governed-call, and administrative commands. Those require a provisioned profile, role-specific credentials, and a matching runtime. They are not a substitute for the public customer API contract or a self-service hosted environment.
+
+See [recorded workflows](/examples/recorded-workflows) and [evidence verification](/guides/verify-evidence).
