@@ -11,3 +11,9 @@ openapi: "/api-reference/openapi.json POST /v1/delegations"
 Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
 
 This is a consequential operation. Credentials and OAuth scope alone do not authorize the effect; applicable authority and policy must also permit it.
+
+**Service:** `authority`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).
+
+## Implementation notes
+
+Delegation issuance requires a policy allow with no unresolved obligations. An approval/conditional outcome or an unhandled obligation returns 503 delegation_obligation_handler_unavailable. Do not assume execution's approval workflow applies to issuance.

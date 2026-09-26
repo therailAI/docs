@@ -3,7 +3,7 @@ title: "SDKs and CLI"
 description: "Choose the CLI, a typed customer API client, or a governed execution helper."
 ---
 
-Choose the tool that matches your integration. The CLI and governed SDK helpers share provisioned profiles; the low-level clients also support directly supplied endpoint and token configuration.
+Choose the tool that matches your integration and supplied build. The reviewed repository SDKs expose customer clients; shared profiles and governed helpers belong to the newer local preview. Start with [implementation and release status](/get-started/implementation-status) to identify your baseline.
 
 <CardGroup cols={2}>
   <Card title="Rail CLI" icon="terminal" href="/sdks/cli">Set up a local project, govern shell commands, inspect decisions, and export evidence.</Card>
@@ -14,7 +14,7 @@ Choose the tool that matches your integration. The CLI and governed SDK helpers 
 
 ## Two SDK layers
 
-Use `RailClient` for customer API calls. Use `Rail.fromProfile` in TypeScript or `Rail.from_profile` in Python to coordinate a protected effect through an enrolled worker. The latter requires runtime configuration and role-specific credentials beyond the customer HTTP API.
+Use `RailClient` for customer API calls. In the separately supplied local preview, `Rail.fromProfile` in TypeScript or `Rail.from_profile` in Python coordinates a protected effect through an enrolled worker. Those helper imports are absent from the reviewed repository default branches and require runtime configuration and role-specific credentials beyond the customer HTTP API.
 
 Start a governed call with the [TypeScript example](/sdks/governed-typescript) or [Python example](/sdks/governed-python).
 
@@ -35,12 +35,16 @@ Shared and advanced operations are available through the generic `call` method. 
 
 ## Distribution status
 
-These guides describe TypeScript SDK `0.2.0-dev.0` and Python SDK `0.2.0.dev0` against customer contract 0.1.1. The inspected TypeScript package is private. Obtain a versioned source checkout or distribution from your Rail operator; do not assume `npm install @rail/sdk` or `pip install rail-sdk` resolves to a supported public release. Obtain the matching CLI binary or workspace from the same operator.
+The reviewed repository versions are TypeScript `0.1.0-dev.0` and Python `0.1.0.dev0`, against customer contract 0.1.1. The explicitly marked local-preview guides use TypeScript `0.2.0-dev.0`, Python `0.2.0.dev0`, and the matching newer CLI. These are different source baselines, not interchangeable releases.
+
+The TypeScript package is private, and the repository version's export map blocks a normal package import. Follow the [source-build instructions](/sdks/typescript). Obtain versioned source or a qualified distribution from your operator; do not assume `npm install @rail/sdk` or `pip install rail-sdk` resolves to a supported public release.
 
 The examples use Node.js 22 or Python 3.12+, respectively. Supply environment credentials separately.
 
 ## Client behavior
 
 Both clients validate request and successful-response shape and require explicit idempotency keys for mutations. They perform one request without automatic mutation retries. They return data and response metadata; the metadata is useful for ETags and asynchronous resource locations.
+
+A client uses one configured base URL. Product namespaces organize methods but do not route to different services. Use service-specific clients, or an operator-supplied gateway that covers the requested paths.
 
 [Local development](/cli/local-development) · [Profiles](/cli/profiles) · [Recovery](/sdks/recovery).

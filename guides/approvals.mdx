@@ -3,7 +3,7 @@ title: "Human approvals"
 description: "Bind human review to the exact action and re-evaluate before execution."
 ---
 
-Rail creates approval requests when policy requires them. Your application displays the proposed action and its governing context to eligible human approvers.
+Execution's enrolled approval workflow creates requests when the policy returns its supported approval obligation. Your application displays the proposed action and its governing context to eligible human approvers. Other domains can reject unsupported approval obligations instead; see their endpoint implementation notes.
 
 1. Read the approval using [`getApproval`](/api-reference/endpoints/get-approval).
 2. Preserve the strong `ETag` response header.
@@ -15,7 +15,7 @@ Rail creates approval requests when policy requires them. Your application displ
 {"decision": "approve", "comment": "Reviewed the exact proposed action."}
 ```
 
-The server determines approver eligibility, identity, and quorum. The voter cannot choose their own group or count multiple effective votes as different people. Client-credentials tokens cannot cast human votes.
+The server determines approver eligibility, enrolled identity, and quorum. The voter cannot choose their own group or count multiple effective votes as different people. A principal enrolled as a workload cannot cast a human vote. Your identity provider must enforce the human login and required assurance; the reviewed voting handler checks human enrollment, not the OAuth grant type or MFA claims itself.
 
 If the vote fails with `412`, re-read the approval and review the current state before deciding whether to submit again. `428` means the required precondition was missing. Do not silently replay a stale approval with a new ETag.
 

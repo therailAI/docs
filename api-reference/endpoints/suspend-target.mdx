@@ -11,3 +11,9 @@ openapi: "/api-reference/openapi.json POST /v1/targets/{target_id}/suspensions"
 Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
 
 This is a consequential operation. Credentials and OAuth scope alone do not authorize the effect; applicable authority and policy must also permit it.
+
+**Service:** `routing`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).
+
+## Implementation notes
+
+Routing mutations require the enrolled routing profile and a policy allow without unresolved obligations. Conditional approval requirements and unhandled obligations currently return routing_approval_profile_unavailable or routing_obligation_handler_unavailable (503).

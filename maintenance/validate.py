@@ -10,6 +10,8 @@ ROOT=Path(__file__).resolve().parents[1]
 config=json.loads((ROOT/'docs.json').read_text())
 spec=json.loads((ROOT/'api-reference/openapi.json').read_text())
 manifest=json.loads((ROOT/'maintenance/contract-baseline.json').read_text())
+implementation=json.loads((ROOT/'maintenance/implementation-audit.json').read_text())
+implementation_notes=json.loads((ROOT/'maintenance/implementation-notes.json').read_text())
 errors=[]
 def check(condition,message):
     if not condition: errors.append(message)
@@ -56,9 +58,17 @@ for file in ROOT.rglob('*.mdx'):
     if match:
         _,method,path=match.groups();check(path in spec['paths'] and method.lower() in spec['paths'][path],'Unknown endpoint: '+relative)
         endpoints.add((method.lower(),path))
+        operation=spec['paths'][path][method.lower()]
+        check('**Service:** `'+operation['x-service']+'`' in content,'Missing/wrong endpoint service: '+relative)
+        note=implementation_notes.get(operation['operationId'])
+        if note:check(note in content,'Missing implementation restriction: '+relative)
 ops={(method,path) for path,item in spec['paths'].items() for method in item if method in ['get','post','patch','put','delete']}
 check(endpoints==ops,'Endpoint pages do not cover the exact customer operation set')
 check(len(ops)==127,'Customer operation count changed')
+operation_ids={spec['paths'][path][method]['operationId'] for method,path in ops}
+check(set(implementation_notes)<=operation_ids,'Implementation note names an unknown operation')
+check({x['operation_id'] for x in implementation['operations']}==operation_ids,'Implementation audit coverage drift')
+check(all(b['source_contract_sha256']==manifest['source_sha256'] for b in implementation['baselines'].values()),'Implementation audit contract baseline drift')
 for method,path in ops:
     op=spec['paths'][path][method]
     check(path.startswith('/v1/') and op.get('x-audience')=='customer','Non-customer endpoint: '+path)

@@ -30,6 +30,12 @@ The generator preserves customer request and response constraints, parameters, s
 
 Resource labels live in `maintenance/reference_navigation.py`. The generator produces collapsed product groups with collapsed resource groups. After regeneration, copy `maintenance/api-navigation.json` into the `pages` array of **Browse by product** in the API tab of `docs.json`, then run all validation commands. Preserve the HTTP conventions group. Only nested groups collapse in Mintlify; do not move product groups to the top level. Validation checks coverage, grouping drift, collapsed defaults, and resource group size. See [Mintlify navigation](https://www.mintlify.com/docs/organize/navigation) and [OpenAPI setup](https://www.mintlify.com/docs/api-playground/openapi-setup).
 
+## Reconcile docs with source
+
+The September 26 audit separates the repository default-branch baseline from newer local-preview tooling. `maintenance/implementation-audit.json` records immutable revisions and operation coverage. `maintenance/implementation-notes.json` supplies reviewed restrictions to the endpoint generator; update it rather than editing generated endpoint pages.
+
+To repeat the comparison, obtain authorized snapshots of both workspaces, run `go run maintenance/list_handlers.go --root WORKSPACE` for each, and pass those JSON outputs to `maintenance/audit_implementation.py --main MAIN_WORKSPACE --preview PREVIEW_WORKSPACE --main-handlers MAIN_HANDLERS.json --preview-handlers PREVIEW_HANDLERS.json --date YYYY-MM-DD`. Inspect semantic restrictions separately: route coverage alone does not prove implementation completeness. Run the relevant SDK/service checks and record their scope in the validation report.
+
 ## Publishing
 
 The connected Mintlify GitHub app deploys its configured production branch. A successful GitHub commit is not by itself confirmation of a successful Mintlify build; inspect the deployment check in GitHub or the Mintlify dashboard.

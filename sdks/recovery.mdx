@@ -1,7 +1,9 @@
 ---
-title: "Results, approvals, and recovery"
+title: "Results, approvals, and recovery (preview)"
 description: "Handle the governed helper's lifecycle without duplicating a protected effect."
 ---
+
+<Warning>Local preview only. This guide requires the operator-supplied development build with the CLI/SDK helpers. These commands and helper imports are absent from the repository default branches reviewed on September 26, 2026. See [implementation and release status](/get-started/implementation-status).</Warning>
 
 The CLI and governed SDK helpers coordinate a multi-step workflow. They can return pending states, report a denial, or raise an error after some steps have already succeeded. A command exit or resolved function call is only one signal.
 

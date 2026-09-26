@@ -1,31 +1,25 @@
 ---
 title: "TypeScript SDK"
-description: "Call Rail with the development TypeScript client."
+description: "Build the repository TypeScript client from source and call the customer API."
 ---
 
 ## Install from a supplied checkout
 
-This page covers the customer API client. To execute an effect through the runtime, see [govern an action with TypeScript](/sdks/governed-typescript).
+This page covers repository SDK `0.1.0-dev.0`. The governed helper and custom-header option shown in the [local preview guide](/sdks/governed-typescript) require the separately supplied `0.2.0-dev.0` build. See [implementation status](/get-started/implementation-status).
 
-Use Node.js 22 and a matching SDK source checkout supplied by your operator. In that checkout:
-
-```bash
-npm ci
-npm run build
-```
-
-From your application, install the built checkout by its local path. Replace the example path with the location you received:
+Use Node.js 22 and a matching SDK source checkout supplied by your operator. For these examples, place that checkout at `vendor/rail-sdk-typescript` inside your application. From your application directory:
 
 ```bash
-npm install /path/to/rail-sdk-typescript
+npm ci --prefix vendor/rail-sdk-typescript
+npm run build --prefix vendor/rail-sdk-typescript
 ```
 
-This is a source-install workflow, not a claim of public npm publication.
+The reviewed repository package has an empty export map: installing it and importing `@rail/sdk` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`. Until a corrected distribution is supplied, import the built entry file directly as below. Keep the supplied checkout and its dependencies together. This source-build workaround does not imply public npm publication; the local preview's corrected exports are a separate build.
 
 ## Read your context
 
 ```typescript
-import { RailClient, RailError } from '@rail/sdk';
+import { RailClient, RailError } from './vendor/rail-sdk-typescript/dist/client.js';
 
 const baseURL = process.env.RAIL_BASE_URL;
 const token = process.env.RAIL_ACCESS_TOKEN;
@@ -43,18 +37,23 @@ try {
 
 For long-running applications, supply an access-token callback that refreshes tokens using your identity provider. Do not embed a token in source code.
 
+For this context call, `RAIL_BASE_URL` must route to the platform service. The next example uses `RAIL_EXECUTION_BASE_URL` for the execution service. Both may point to the same address only when your operator supplies a gateway covering both paths. Namespace methods do not choose a different service address automatically.
+
 ## Product methods and options
 
 ```typescript
 const executionId = process.env.RAIL_EXECUTION_ID;
 if (!executionId) throw new Error('Set the execution to inspect');
-const { data, etag, location } = await client.execution.getExecution(undefined, {
+const executionBaseURL = process.env.RAIL_EXECUTION_BASE_URL;
+if (!executionBaseURL) throw new Error('Set the execution service endpoint');
+const executionClient = new RailClient(executionBaseURL, () => token);
+const { data, etag, location } = await executionClient.execution.getExecution(undefined, {
   path: { execution_id: executionId },
 });
 console.log(data.state, data.external_effect);
 ```
 
-Mutations accept `idempotencyKey`; concurrency-controlled operations accept `ifMatch`. Use `headers` for operation-defined headers such as `Rail-Capability`. A capability-bound request also requires the appropriate certificate-bound transport; the header alone is insufficient.
+Mutations accept `idempotencyKey`; concurrency-controlled operations accept `ifMatch`. Repository SDK `0.1.0-dev.0` has no per-call `headers` option. For a capability-bound request, use an operator-qualified custom transport passed as the constructor's third argument, direct authenticated HTTP, or the supplied `0.2.0-dev.0` preview with custom-header support. The transport must also enforce the required certificate binding; adding `Rail-Capability` alone is insufficient.
 
 The SDK validates successful response shape. A malformed success response is a contract error, not usable evidence. Handle it through your recovery and observability policy.
 

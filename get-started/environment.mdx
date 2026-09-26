@@ -10,19 +10,21 @@ This site publishes the **0.1.1 customer HTTP contract**, integration guides, de
 | Surface | Status represented here |
 | --- | --- |
 | Customer OpenAPI | Version 0.1.1 reference, 127 operations |
-| TypeScript and Python SDKs | Inspected development version 0.2.0; installation from a supplied source checkout |
-| Rail CLI | Supplied binary or source workspace; local setup, governed commands, approvals, and evidence tools |
+| TypeScript and Python SDKs | Repository development version 0.1.0; newer local-preview version 0.2.0 has additional helpers |
+| Rail CLI | Repository: offline verification and operator demo tooling. Local preview adds developer setup and governed commands |
 | Recorded workflows | Reference runs with explicit test, stub, fixture, or synthetic inputs |
 | Hosted API endpoint | Provided and qualified per deployment |
 | Production readiness | Must be established for your environment and workflow |
 
 The product catalog groups the customer contract into six products. Grouping an operation does not establish that it is enabled at your gateway or entitled for your project.
 
+The [September 26 implementation audit](/get-started/implementation-status) found registered handlers for all 127 operations and documented narrower behavior where applicable. It also found a gap between repository and local-preview tooling. Identify your supplied revision before using CLI or SDK examples.
+
 ## Request these connection details
 
 For a supplied local workspace, follow the [CLI development walkthrough](/cli/local-development). For an existing environment, configure a [shared profile](/cli/profiles).
 
-- Customer API base URL and supported contract version.
+- Service-specific API base URLs and supported contract version, or a confirmed gateway routing all required operations.
 - Identity provider, token endpoint, expected audience, and allowed grants.
 - Enrolled principal, tenant, project membership, and least-privilege scopes.
 - Published action definitions, schemas, policies, bindings, and target configuration.

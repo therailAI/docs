@@ -9,6 +9,8 @@ Assets represent reusable definitions or artifacts. Versions identify the exact 
 
 Use [`createAsset`](/api-reference/endpoints/create-asset) and [`createAssetVersion`](/api-reference/endpoints/create-asset-version) under registry permissions. Use version transitions according to lifecycle policy. Published version content is not edited in place.
 
+The reviewed registry policy gate requires an allow without unresolved obligations. A conditional approval requirement returns `503 registry_approval_profile_unavailable`; it does not automatically enter the execution approval workflow.
+
 Reference an exact `asset_id` and `version` in an action's `definition`. Do the same for policy and other versioned references where required. A friendly name or a floating “latest” label is insufficient to identify what was evaluated.
 
 ## Keep evidence tied to the evaluated version

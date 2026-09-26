@@ -11,3 +11,9 @@ openapi: "/api-reference/openapi.json POST /v1/authority-grants"
 Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
 
 This is a consequential operation. Credentials and OAuth scope alone do not authorize the effect; applicable authority and policy must also permit it.
+
+**Service:** `authority`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).
+
+## Implementation notes
+
+Grant issuance requires a policy allow with no unresolved obligations. An approval/conditional outcome or an unhandled obligation returns 503 grant_obligation_handler_unavailable; it does not automatically create an approval request.

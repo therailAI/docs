@@ -3,7 +3,7 @@ title: "Rail CLI"
 description: "Set up a local project, govern commands, inspect executions, and export verifiable evidence."
 ---
 
-Use `rail` to work through the execution lifecycle from your terminal. The development CLI supports local provisioning, shared identity profiles, governed shell commands, approvals, and evidence verification.
+The reviewed repository CLI supports offline bundle inspection/verification and operator demo tooling. The newer **local preview** adds project initialization, provisioning, shared profiles, governed shell commands, approvals, and journey export. Those additions are absent from the repository default branch reviewed on September 26, 2026. Identify your supplied build using [implementation and release status](/get-started/implementation-status).
 
 ## Get the CLI
 
@@ -13,7 +13,11 @@ Obtain a versioned binary for your operating system and architecture, or a match
 rail version
 ```
 
-Offline bundle verification needs the binary, a supported bundle, and a confirmed trust anchor. Connected commands also need a provisioned environment and profile. `rail dev up` requires the full supplied development workspace; the binary alone does not contain the services.
+Offline bundle verification needs the binary, a supported bundle, and a confirmed trust anchor. It works without a profile. See [offline verification](/cli/evidence).
+
+## Local preview workflows
+
+The following connected guides require the newer operator-supplied local preview. `rail dev up` also requires the full matching development workspace; the binary alone does not contain the services.
 
 <CardGroup cols={2}>
   <Card title="Local development" icon="terminal" href="/cli/local-development">Initialize a project and run a simulated protected effect.</Card>
@@ -23,17 +27,17 @@ Offline bundle verification needs the binary, a supported bundle, and a confirme
   <Card title="Export and verify" icon="fingerprint" href="/cli/evidence">Build a journey bundle and verify it offline.</Card>
 </CardGroup>
 
-## Command families
+## Command availability
 
-| Command | Purpose |
-| --- | --- |
-| `rail init`, `rail dev` | Create a project specification and manage the development stack |
-| `rail login`, `rail whoami`, `rail logout` | Select and inspect a profile |
-| `rail govern`, `rail govern resume` | Run an effect through authorization and dispatch gates |
-| `rail grants`, `rail delegations`, `rail tokens` | Work with bounded authority and capability tokens |
-| `rail executions`, `rail approvals` | Inspect execution state and act through an enrolled approver |
-| `rail receipts`, `rail policy` | Inspect evidence and policy pins |
-| `rail journey export` | Export connected evidence for a grant journey |
-| `rail bundle inspect`, `rail verify` | Inspect and verify supported bundles offline |
+| Command | Purpose | Baseline |
+| --- | --- | --- |
+| `rail bundle inspect`, `rail verify` | Inspect and verify supported bundles offline | Repository and preview |
+| `rail init`, `rail dev` | Initialize and provision a project | Local preview only |
+| `rail login`, `rail whoami`, `rail logout` | Select and inspect a profile | Local preview only |
+| `rail govern`, `rail govern resume` | Run an effect through authorization and dispatch gates | Local preview only |
+| `rail grants`, `rail delegations`, `rail tokens` | Manage bounded authority | Local preview only |
+| `rail executions`, `rail approvals` | Inspect state and vote as an enrolled approver | Local preview only |
+| `rail receipts`, `rail policy` | Inspect evidence and policy pins | Local preview only |
+| `rail journey export` | Export a grant journey's evidence | Local preview only |
 
 Command availability and access depend on the supplied version and the profile's roles. A successful login does not grant authority to perform a protected action.

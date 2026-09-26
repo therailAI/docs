@@ -48,6 +48,7 @@ groups = [(p['title'], p['id'], p['operations']) for p in catalog['products']]
 groups += [('Shared platform', 'platform', catalog['shared_operations']), ('Advanced routing and edge', 'advanced', catalog['advanced_operations'])]
 navigation = []
 seen = set()
+implementation_notes = json.loads((ROOT/'maintenance/implementation-notes.json').read_text())
 for title, slug, operations in groups:
     pages = []
     for operation in operations:
@@ -61,6 +62,9 @@ for title, slug, operations in groups:
         content = '\n'.join(['---','title: '+json.dumps(operation['summary']), 'description: '+json.dumps(f'{method} {path} — The Rail customer contract 0.1.1.'), 'openapi: '+json.dumps(f'/api-reference/openapi.json {method} {path}'), '---', '', '<Note>Contract 0.1.1. Confirm that this operation is enabled in your deployment. Example hosts are placeholders; this page does not send API requests.</Note>', '', f'**Required OAuth scope:** {scopes}. Tenant, object, and domain authorization also apply.', ''])
         if method != 'GET': content += '\nSupply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).\n'
         if operation['consequential']: content += '\nThis is a consequential operation. Credentials and OAuth scope alone do not authorize the effect; applicable authority and policy must also permit it.\n'
+        content += '\n**Service:** `'+operation['service']+'`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).\n'
+        if oid in implementation_notes:
+            content += '\n## Implementation notes\n\n'+implementation_notes[oid]+'\n'
         page.write_text(content)
         pages.append((route, path))
     navigation.append(product_group(title, pages))

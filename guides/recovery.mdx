@@ -17,6 +17,10 @@ Read `state`, `delivery_state`, `external_effect`, basis codes, and receipts. A 
 
 Use [`reconcileExecution`](/api-reference/endpoints/reconcile-execution) through an authorized recovery workflow. Supply the evidence required by the contract and deployment policy. Reconciliation does not create permission to accept an unsupported claim of success or no effect.
 
+The reviewed implementation accepts `evidence_review` and `compensation_review`. Although the contract enumerates `target_status_query` and `idempotency_state_check`, those reasons currently return `503 reconciliation_profile_unavailable`. Arrange provider status lookup through your qualified adapter/operator workflow and submit the resulting evidence; this endpoint does not perform those lookups for you.
+
+Evidence review applies to `reconciliation_required` or `quarantined` executions. Compensation review requires its separately governed approval and records permission for a new compensation action; it does not execute compensation or release the original effect lock itself.
+
 Provider lookups and adapter records should establish what happened to the original business effect. Retain reservations and effect locks while uncertainty remains.
 
 ## Cancellation and compensation

@@ -9,3 +9,9 @@ openapi: "/api-reference/openapi.json POST /v1/twin-retention-requests"
 **Required OAuth scope:** `evidence:retention`. Tenant, object, and domain authorization also apply.
 
 Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
+
+**Service:** `evidence`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).
+
+## Implementation notes
+
+This request is subject to the retention governance profile. Unhandled policy obligations return 503 retention_obligation_handler_unavailable. It does not bypass the deployment's retention controls.

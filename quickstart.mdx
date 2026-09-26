@@ -13,7 +13,7 @@ There is no shared public sandbox URL or self-service API-key flow established i
 
 ## 2. Set your connection
 
-Set `RAIL_BASE_URL` to your provisioned HTTPS endpoint without a trailing slash or `/v1` suffix. Supply `RAIL_ACCESS_TOKEN` through your secret manager or local environment. Do not put either value in committed examples.
+Set `RAIL_BASE_URL` to your provisioned **platform service** HTTPS endpoint without a trailing slash or `/v1` suffix, or to a gateway confirmed to route `/v1/context`. Reference deployments expose separate service addresses; do not assume this address also serves execution or settlement. Supply `RAIL_ACCESS_TOKEN` through your secret manager or local environment. Do not put either value in committed examples.
 
 ```bash
 : "${RAIL_BASE_URL:?Set your provisioned Rail customer API base URL}"
@@ -25,7 +25,7 @@ curl --fail-with-body --silent --show-error \
   --header 'Accept: application/json'
 ```
 
-Do not add a tenant-selection header. Rail derives the tenant and principal from the authenticated identity and enrollment.
+Do not add a tenant-selection header. Rail derives the tenant and principal from the authenticated identity and enrollment. This minimal request assumes an unbound customer token and a trusted server certificate. For a certificate-bound token, use your operator's CA and client certificate/key configuration for this request too.
 
 ## 3. Check the context
 
@@ -51,6 +51,6 @@ These IDs are illustrative; your environment returns its own values.
   <Card title="Try the SDKs" icon="code" href="/sdks/overview">Use the same customer operations from TypeScript or Python.</Card>
 </CardGroup>
 
-If you receive `401`, check token validity, issuer, and audience. If you receive `403`, check enrollment, scope, and project access. Use [errors and recovery](/api-reference/errors) for the complete response model.
+If you receive `401`, check token validity, issuer, audience, active enrollment, and any certificate binding. If you receive `403`, check effective scopes and domain authorization. A resource hidden by project/object authorization can return `404`. Use [errors and recovery](/api-reference/errors) for the complete response model.
 
 Without environment access, start with the [recorded workflows](/examples/recorded-workflows). Those are inspectable reference evidence, not a live API sandbox.

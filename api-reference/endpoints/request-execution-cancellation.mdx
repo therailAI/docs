@@ -11,3 +11,9 @@ openapi: "/api-reference/openapi.json POST /v1/executions/{execution_id}/cancell
 Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
 
 This is a consequential operation. Credentials and OAuth scope alone do not authorize the effect; applicable authority and policy must also permit it.
+
+**Service:** `execution`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).
+
+## Implementation notes
+
+Cancellation is refused after a dispatch permit has been confirmed. It cannot establish that an uncertain external effect did not occur. Observe the asynchronous operation and release evidence before assuming the reservation is free.

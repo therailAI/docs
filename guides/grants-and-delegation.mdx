@@ -9,6 +9,8 @@ Use [`createAuthorityGrant`](/api-reference/endpoints/create-authority-grant) wi
 
 Pin policy versions. Choose narrow action classes and resources, explicit purposes and audiences, a validity window, and only the delegation depth and uses needed for the workflow.
 
+The reviewed grant and delegation issuance handlers require a policy allow without unresolved obligations. They return an unavailable response for unsupported conditional/approval obligations; they do not automatically create an execution-style approval request.
+
 ## Delegate a subset
 
 Use [`createDelegation`](/api-reference/endpoints/create-delegation) with the parent grant, receiving subject, and attenuated scope. For a deeper hop, supply the parent delegation. Rail checks the parent relationship, issuer control, cumulative bounds, and applicable cross-tenant authority.

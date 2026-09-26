@@ -9,3 +9,9 @@ openapi: "/api-reference/openapi.json POST /v1/approvals/{approval_id}/votes"
 **Required OAuth scope:** `execution:approve`. Tenant, object, and domain authorization also apply.
 
 Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
+
+**Service:** `execution`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).
+
+## Implementation notes
+
+The handler requires an enrolled human principal, eligible approver membership, applicable separation of duties, and the current ETag. Browser login, PKCE, and any MFA or step-up checks are the configured identity provider's responsibility; this endpoint does not implement a login flow.

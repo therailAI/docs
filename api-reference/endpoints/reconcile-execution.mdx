@@ -11,3 +11,9 @@ openapi: "/api-reference/openapi.json POST /v1/executions/{execution_id}/reconci
 Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
 
 This is a consequential operation. Credentials and OAuth scope alone do not authorize the effect; applicable authority and policy must also permit it.
+
+**Service:** `execution`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).
+
+## Implementation notes
+
+The reviewed handler accepts evidence_review and compensation_review. The contract also enumerates target_status_query and idempotency_state_check, but those reasons currently return 503 reconciliation_profile_unavailable. Compensation review requires its separately governed approval; it records permission without executing compensation. An evidence review reopens verification for an execution in reconciliation_required or quarantined.

@@ -1,0 +1,55 @@
+---
+title: "Implementation and release status"
+description: "What the reviewed repositories implement, what requires deployment configuration, and which tools are local preview only."
+---
+
+The documentation was reconciled with repository source on **September 26, 2026**. The audit compared the customer contract, registered service handlers, SDK operation catalogs, authentication, selected implementation restrictions, and the newer local development tools.
+
+## Customer API coverage
+
+All **127 customer operations** have registered handlers across ten services. Their paths, request schemas, and successful-response schemas agree with both SDK catalogs and the published **0.1.1** customer contract. The customer contract did not change between the reviewed repository and local-preview baselines.
+
+This is source coverage, not a claim that every semantic branch, provider integration, or production deployment has passed end-to-end qualification. Endpoint-specific implementation notes identify reviewed restrictions; missing dependencies and governance profiles fail closed.
+
+| Service | Customer operations | Address supplied by your operator |
+| --- | --- | --- |
+| `platform` | 10 | Context, projects, principals, and objects |
+| `execution` | 15 | Actions, executions, approvals, and operations |
+| `registry` | 12 | Assets, versions, and process cases |
+| `authority` | 13 | Grants, delegations, capabilities, and reservations |
+| `evidence` | 15 | Receipts, verification, and effect decisions |
+| `routing` | 16 | Targets, adapters, attestation, and resource evidence |
+| `provenance` | 12 | Contributions, rights, allocations, and lots |
+| `settlement` | 15 | Realizations, escrow, settlements, and disputes |
+| `edge` | 11 | Nodes, allocations, synchronization, and evaluations |
+| `events` | 8 | Event feed and webhook subscriptions |
+
+The six product groups organize the API; they are not six network services. Reference deployments expose service-specific addresses. A single base URL works across products only when your operator provides a gateway that routes those paths. Each endpoint page names its owning service.
+
+## Tooling baselines
+
+The local preview is ahead of the reviewed repository default branches. Check which distribution you received before following a tool guide.
+
+| Surface | Reviewed repository baseline | Newer local preview |
+| --- | --- | --- |
+| TypeScript SDK | `0.1.0-dev.0`: customer client; package export map blocks the normal package import | `0.2.0-dev.0`: package exports, profiles, governed helper, and per-call custom headers |
+| Python SDK | `0.1.0.dev0`: customer client; no per-call custom-header argument | `0.2.0.dev0`: profiles, governed helper, and generic-call custom headers |
+| Rail CLI | Offline bundle inspection/verification and operator demo tooling | Adds project initialization, local provisioning, profiles, governed commands, administration, and journey export |
+| Public package distribution | No supported public npm/PyPI or binary release established by this audit | Operator-supplied local build only |
+
+The [TypeScript guide](/sdks/typescript) uses a direct source-build import to work around the repository package export defect. [Preview CLI guides](/cli/local-development) and governed [TypeScript](/sdks/governed-typescript)/[Python](/sdks/governed-python) guides require the newer supplied build. They are not commands or imports available from the reviewed default branches.
+
+## Implementation restrictions that affect integration
+
+- **Identity:** creating a principal record does not configure an active OIDC enrollment. Token issuer, audience, subject mapping, effective scopes, and project access are operator-managed. Human approval requires a human enrollment; login and step-up flows belong to the configured identity provider.
+- **Reconciliation:** `evidence_review` and `compensation_review` are implemented. The contract's target-status and idempotency-state query reasons currently return an unavailable response. Compensation permission does not execute a compensating effect.
+- **Approvals:** execution supports its enrolled approval workflow. Grant/delegation issuance, registry operations, and routing operations do not automatically gain that workflow when their policy requests an unsupported obligation.
+- **Results:** completion and result release are separate gates. The result endpoint releases an admitted assertion; retrieve application output through the object/artifact flow when applicable.
+- **Webhooks:** HTTPS destinations require operator hostname approval and ownership verification. The Rail has its own signing format; no Svix backend was established by this audit.
+- **Settlement:** a customer request is not provider confirmation. Qualify the custody adapter, funding, and outcome reconciliation for your environment.
+
+## Verification boundaries
+
+The audit checks source registration, contract/schema agreement, and SDK compatibility. Targeted tests cover contract compilation, identity validation, webhook domain behavior, and the repository SDKs. No authenticated production API or real payment provider was exercised. Recorded workflows and local preview examples have their own test/stub limitations.
+
+Use [environment setup](/get-started/environment) for connection prerequisites and the endpoint's implementation notes for restrictions before integrating.

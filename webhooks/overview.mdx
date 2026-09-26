@@ -7,7 +7,9 @@ Rail provides a durable events feed and signed webhook subscriptions. Notificati
 
 ## Create and activate a subscription
 
-Create a subscription for an HTTPS destination and selected event types. It remains `pending_verification` until the ownership challenge succeeds. Store the generated signing secret securely when returned; it is shown once.
+First have your operator approve the destination hostname in the deployment's webhook allowlist. The service rejects an unapproved hostname with `422 webhook_destination_not_allowed`. The outbound sender also enforces public-address checks and disallows redirects; a valid HTTPS URL alone is insufficient.
+
+Create a subscription for that HTTPS destination and selected event types. It remains `pending_verification` until the ownership challenge succeeds. Store the generated signing secret securely when returned; it is shown once. An expired challenge leaves the subscription disabled; create a new subscription to obtain a new challenge. Changing state or rotating the secret cannot bypass ownership verification.
 
 For a challenge, verify the signature using `challenge_id` in the signing input. Return HTTP 200 with the exact challenge in `{"challenge":"received value"}` within ten seconds. Challenges expire after five minutes. Failed or mismatched challenges do not activate the subscription.
 

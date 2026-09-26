@@ -7,6 +7,8 @@ description: "Normalize an intent, submit it under authority, and observe the re
 
 Your operator must provision an enrolled principal, project, published action definition, its schema and policies, an eligible binding and target, and applicable authority. You need `execution:write` to submit and `execution:read` to inspect. See [authentication](/get-started/authentication) for capability-bound transport requirements.
 
+For the commands on this page, set `RAIL_BASE_URL` to the **execution service** address or a gateway confirmed to route these operations. A platform-service address used in the context quickstart does not automatically expose execution routes. The operator must also configure the worker and target adapter; submitting an action does not install or start your own callback.
+
 ## 1. Normalize the intent
 
 Create `action.json` using a definition and resource that actually exist in your environment. This fixture demonstrates the request shape; its IDs do not refer to provisioned objects.
@@ -71,5 +73,7 @@ Persist the execution ID. Poll [`getExecution`](/api-reference/endpoints/get-exe
 ## 5. Retrieve the result and evidence
 
 Request the result through [`getExecutionResult`](/api-reference/endpoints/get-execution-result). Inspect linked receipts separately. Completion does not automatically authorize another action or settlement.
+
+This read performs its own `result_release` check and is restricted to the execution owner with project access. The reviewed handler returns the admitted result assertion in `output`; application output bytes use the object/artifact flow. A completed execution can still have its result withheld.
 
 Use the [idempotency guide](/api-reference/idempotency) before adding retries.

@@ -5,7 +5,7 @@ description: "Call Rail with the development Python client."
 
 ## Install from a supplied checkout
 
-This page covers the customer API client. To execute an effect through the runtime, see [govern an action with Python](/sdks/governed-python).
+This page covers repository SDK `0.1.0.dev0`. The governed helper and generic-call custom-header argument require the separately supplied `0.2.0.dev0` build described in [the local preview guide](/sdks/governed-python). See [implementation status](/get-started/implementation-status).
 
 Use Python 3.12+ and a matching source checkout supplied by your operator. Replace the path with the checkout you received:
 
@@ -38,6 +38,8 @@ finally:
 
 For a long-running process, use a token callback that refreshes credentials through your configured identity provider. The static environment-token example is a minimal connection check.
 
+For this context call, `RAIL_BASE_URL` must route to the platform service. The next example uses `RAIL_EXECUTION_BASE_URL` for the execution service. Both may be the same only when your operator provides a gateway covering both. Product methods do not select a different service address automatically.
+
 ## Product methods and options
 
 ```python
@@ -45,7 +47,7 @@ import os
 from rail_sdk import RailClient
 
 client = RailClient(
-    os.environ["RAIL_BASE_URL"],
+    os.environ["RAIL_EXECUTION_BASE_URL"],
     lambda: os.environ["RAIL_ACCESS_TOKEN"],
 )
 try:
@@ -58,7 +60,7 @@ finally:
     client.close()
 ```
 
-Mutations require `idempotency_key`. Pass the latest strong ETag in `if_match` when required. To send operation-defined headers such as `Rail-Capability`, use the generic `client.call(..., headers={...})`; the current Python product methods do not expose that option. Sender-bound capabilities also require the corresponding certificate-bound transport.
+Mutations require `idempotency_key`. Pass the latest strong ETag in `if_match` when required. Repository SDK `0.1.0.dev0` accepts no per-call `headers` argument on either the generic call or product methods. For a capability-bound request, supply a dedicated operator-qualified `httpx.Client` carrying that operation's capability and certificate-bound transport, use direct authenticated HTTP, or obtain the `0.2.0.dev0` preview that adds generic-call custom headers. Do not attach a capability globally to a client reused across unrelated operations.
 
 If you supply an `httpx.Client`, you retain responsibility for its lifecycle. The Rail client closes only a transport it created itself.
 

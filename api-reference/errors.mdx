@@ -8,8 +8,8 @@ Rail uses RFC 9457 problem details. A problem includes `type`, `title`, `status`
 | Status | Next step |
 | --- | --- |
 | `400` | Correct request syntax, cursor, or another invalid parameter |
-| `401` | Check token validity, issuer, audience, and configured authentication |
-| `403` | Check enrollment, required scopes, project/object access, and domain authority |
+| `401` | Check token validity, issuer, audience, active enrollment, and certificate binding |
+| `403` | Check effective scopes, eligible roles, and domain authority |
 | `404` | Check the authorized resource identifier; do not infer cross-tenant existence |
 | `409` | Inspect the typed problem: duplicate content, pending work, or unresolved effects need different handling |
 | `412`, `428` | Re-read the resource or supply the required concurrency precondition |
@@ -18,7 +18,9 @@ Rail uses RFC 9457 problem details. A problem includes `type`, `title`, `status`
 | `429` | Respect bounded backoff and `Retry-After`; preserve operation identity |
 | `500`, `503` | Inspect whether submission or an external effect may have occurred before recovery |
 
-Not every endpoint returns every status. Its reference page lists the actual contract responses.
+Not every endpoint returns every status. Its reference page lists the contract responses. The shared server can additionally reject a request before the handler, for example with `400` for invalid parameters or `413` for an oversized body. Contract response coverage is not an exhaustive list of every intermediary or transport failure.
+
+`503` can mean a missing governance profile, unsupported obligation, or unavailable integration, as well as transient infrastructure failure. Read the problem type and the endpoint's implementation notes before choosing to retry.
 
 ## A denial can arrive after HTTP acceptance
 

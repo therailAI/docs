@@ -41,7 +41,8 @@
               "introduction",
               "quickstart",
               "get-started/environment",
-              "get-started/authentication"
+              "get-started/authentication",
+              "get-started/implementation-status"
             ]
           },
           {
@@ -95,11 +96,17 @@
             "group": "Rail CLI",
             "pages": [
               "sdks/cli",
-              "cli/local-development",
-              "cli/profiles",
-              "cli/govern",
-              "cli/approvals-and-inspection",
-              "cli/evidence"
+              "cli/evidence",
+              {
+                "group": "Local preview workflows",
+                "expanded": false,
+                "pages": [
+                  "cli/local-development",
+                  "cli/profiles",
+                  "cli/govern",
+                  "cli/approvals-and-inspection"
+                ]
+              }
             ]
           },
           {
@@ -117,7 +124,7 @@
             ]
           },
           {
-            "group": "Execution lifecycle",
+            "group": "Preview execution lifecycle",
             "pages": [
               "sdks/recovery"
             ]

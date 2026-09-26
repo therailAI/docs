@@ -7,3 +7,9 @@ openapi: "/api-reference/openapi.json GET /v1/executions/{execution_id}/result"
 <Note>Contract 0.1.1. Confirm that this operation is enabled in your deployment. Example hosts are placeholders; this page does not send API requests.</Note>
 
 **Required OAuth scope:** `execution:read`. Tenant, object, and domain authorization also apply.
+
+**Service:** `execution`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).
+
+## Implementation notes
+
+The read is restricted to the execution owner with project access and performs the separate result_release check. A completed execution can still have its result withheld. The returned output is the admitted result assertion; application output bytes require the object/artifact flow.

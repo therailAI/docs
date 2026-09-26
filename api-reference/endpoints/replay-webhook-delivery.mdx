@@ -9,3 +9,9 @@ openapi: "/api-reference/openapi.json POST /v1/webhook-subscriptions/{subscripti
 **Required OAuth scope:** `events:write`. Tenant, object, and domain authorization also apply.
 
 Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
+
+**Service:** `events`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).
+
+## Implementation notes
+
+Replay schedules another notification attempt with the same event identity. It never creates another execution or transfer. Receiver deduplication must remain in place.

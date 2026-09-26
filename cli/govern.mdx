@@ -1,7 +1,9 @@
 ---
-title: "Govern a shell command"
+title: "Govern a shell command (preview)"
 description: "Run your adapter only after authorization and a permitted dispatch, then report its actual outcome."
 ---
+
+<Warning>Local preview only. This guide requires the operator-supplied development build with the CLI/SDK helpers. These commands and helper imports are absent from the repository default branches reviewed on September 26, 2026. See [implementation and release status](/get-started/implementation-status).</Warning>
 
 `rail govern` wraps a shell command as a protected effect. It needs a [provisioned profile](/cli/profiles), an action definition, suitable authority, and an enrolled worker/target. Arguments before `--` configure Rail; arguments after it invoke your command.
 

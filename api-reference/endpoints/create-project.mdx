@@ -9,3 +9,9 @@ openapi: "/api-reference/openapi.json POST /v1/projects"
 **Required OAuth scope:** `platform:write`. Tenant, object, and domain authorization also apply.
 
 Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
+
+**Service:** `platform`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).
+
+## Implementation notes
+
+Creating a project does not enroll it into every domain service or install governance profiles. The creator can read the project and see it in context; protected domain operations still require enrolled project access and the appropriate configuration.

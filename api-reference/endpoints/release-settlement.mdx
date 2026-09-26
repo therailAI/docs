@@ -11,3 +11,9 @@ openapi: "/api-reference/openapi.json POST /v1/settlements/{settlement_id}/relea
 Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
 
 This is a consequential operation. Credentials and OAuth scope alone do not authorize the effect; applicable authority and policy must also permit it.
+
+**Service:** `settlement`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).
+
+## Implementation notes
+
+Provider dispatch and confirmed value depend on an enrolled custody adapter and its observations. The customer request does not confirm a transfer. Missing integration or unresolved provider outcomes must remain pending, held, or unavailable as applicable; test/stub demonstrations are not evidence of production settlement.

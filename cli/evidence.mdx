@@ -5,6 +5,8 @@ description: "Export a grant journey and verify its bundle against independently
 
 ## Export the journey
 
+<Warning>`rail journey export` requires the newer local-preview CLI. It is absent from the reviewed repository default branch. With the repository CLI, obtain a supported bundle and independently confirmed trust information from your operator, then use the offline commands below. See [tooling baselines](/get-started/implementation-status).</Warning>
+
 Set `RAIL_JOURNEY_ID` to the grant journey ID returned by the governed call. Export needs a profile with an auditor or operator able to read the connected evidence.
 
 ```bash

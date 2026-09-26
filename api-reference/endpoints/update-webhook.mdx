@@ -9,3 +9,9 @@ openapi: "/api-reference/openapi.json PATCH /v1/webhook-subscriptions/{subscript
 **Required OAuth scope:** `events:write`. Tenant, object, and domain authorization also apply.
 
 Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
+
+**Service:** `events`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).
+
+## Implementation notes
+
+An unverified subscription cannot be activated by setting state to active; it returns 409 ownership_verification_required. The update changes event types and state, not the destination URL. Read the latest ETag before updating.

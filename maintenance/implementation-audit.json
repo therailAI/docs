@@ -1,0 +1,1091 @@
+{
+  "review_date": "2026-09-26",
+  "contract_version": "0.1.1",
+  "method": "Static source and catalog comparison; registration is not end-to-end qualification.",
+  "baselines": {
+    "repository": {
+      "source_contract_sha256": "d6f8455d729d68131d9093489ef5926735c891432b96a42128cb606ef6677cb4",
+      "customer_operations": 127,
+      "sdk_versions": {
+        "typescript": "0.1.0-dev.0",
+        "python": "0.1.0.dev0"
+      },
+      "revisions": {
+        "contract": "8c4dfb9f92300d47b5ad632e9dbea6f4af12cb91",
+        "core": "22611e854e471fded588e9f0ae1860b786172e4d",
+        "rail-authority-api": "0e8e4ec34f692a62cd12e194879970d4af172470",
+        "rail-edge-api": "1166ec4351678f892404a465ffca4af36db1f658",
+        "rail-events-api": "d857f0ef8fa15824773dcae90cf81385d7bcf009",
+        "rail-evidence-api": "8d5651037e39cd8505bc270ebf8c120406f1d335",
+        "rail-execution-api": "4a57c35a87c951a50a8d61040a49b3b0317587f6",
+        "rail-platform-api": "bfad5aa0cf7b61efcfe29acddbbece062825f772",
+        "rail-provenance-api": "cbdbee9387c24c9d48cea07455e6e6954a4ff3f2",
+        "rail-registry-api": "2a90a853b0e9b82a3281d559fa4cbdae17ef2482",
+        "rail-routing-api": "e4457692b9ee2ded0442b09dd6180f1e0fe00080",
+        "rail-settlement-api": "62fdc5fbd1c706a80d90566c999115a1b615f5ae",
+        "typescript": "040c589ff4b0a017ca7e917eaf280a1ec28d64d6",
+        "python": "c9e54fe7f436fdf0210650ddf2d98ab737a1314d"
+      }
+    },
+    "local_preview": {
+      "source_contract_sha256": "d6f8455d729d68131d9093489ef5926735c891432b96a42128cb606ef6677cb4",
+      "customer_operations": 127,
+      "sdk_versions": {
+        "typescript": "0.2.0-dev.0",
+        "python": "0.2.0.dev0"
+      },
+      "revisions": {
+        "contract": "5cba50b6ef7a11322b21c94ba5a8710127b59e70",
+        "core": "748d2f7d4457035edd6e9b1d59800daa4078f756",
+        "rail-authority-api": "304a05a578680744278dcce4548531a0a23b80f3",
+        "rail-edge-api": "1166ec4351678f892404a465ffca4af36db1f658",
+        "rail-events-api": "d857f0ef8fa15824773dcae90cf81385d7bcf009",
+        "rail-evidence-api": "006e8118ae2ddc91f970dd4beee69b2c1002e19b",
+        "rail-execution-api": "41c2111c80ee9a476661bfc709c8127214875d57",
+        "rail-platform-api": "bfad5aa0cf7b61efcfe29acddbbece062825f772",
+        "rail-provenance-api": "cbdbee9387c24c9d48cea07455e6e6954a4ff3f2",
+        "rail-registry-api": "2776805027d96ee1190256dc096a9a5c22628538",
+        "rail-routing-api": "4ed9d3c3d566443956ef95fef19c43ea03ca5b3b",
+        "rail-settlement-api": "62fdc5fbd1c706a80d90566c999115a1b615f5ae",
+        "typescript": "453681030f5cdc394eaefbfaad44d10ffcb5c0bd",
+        "python": "216a49d611b625014705c00c7ec8a28bb8984bf2"
+      }
+    }
+  },
+  "operations": [
+    {
+      "operation_id": "closeProcessCase",
+      "method": "POST",
+      "path": "/v1/process-cases/{case_id}/closure",
+      "service": "registry",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "compareResourceEvidence",
+      "method": "POST",
+      "path": "/v1/energy-comparisons",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "completeObjectUpload",
+      "method": "POST",
+      "path": "/v1/object-uploads/{upload_id}/completion",
+      "service": "platform",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "computeAllocation",
+      "method": "POST",
+      "path": "/v1/allocations",
+      "service": "provenance",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createAction",
+      "method": "POST",
+      "path": "/v1/actions",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createAdapter",
+      "method": "POST",
+      "path": "/v1/adapters",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createAsset",
+      "method": "POST",
+      "path": "/v1/assets",
+      "service": "registry",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createAssetVersion",
+      "method": "POST",
+      "path": "/v1/assets/{asset_id}/versions",
+      "service": "registry",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createAuthorityGrant",
+      "method": "POST",
+      "path": "/v1/authority-grants",
+      "service": "authority",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createCapabilityToken",
+      "method": "POST",
+      "path": "/v1/capability-tokens",
+      "service": "authority",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createChallenge",
+      "method": "POST",
+      "path": "/v1/challenges",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createContribution",
+      "method": "POST",
+      "path": "/v1/contributions",
+      "service": "provenance",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createDelegation",
+      "method": "POST",
+      "path": "/v1/delegations",
+      "service": "authority",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createDispute",
+      "method": "POST",
+      "path": "/v1/disputes",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createEdgeAllocation",
+      "method": "POST",
+      "path": "/v1/edge-allocations",
+      "service": "edge",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createEdgeNode",
+      "method": "POST",
+      "path": "/v1/edge-nodes",
+      "service": "edge",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createExecution",
+      "method": "POST",
+      "path": "/v1/executions",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createLot",
+      "method": "POST",
+      "path": "/v1/lots",
+      "service": "provenance",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createObjectUpload",
+      "method": "POST",
+      "path": "/v1/object-uploads",
+      "service": "platform",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createOutcome",
+      "method": "POST",
+      "path": "/v1/outcomes",
+      "service": "provenance",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createPrincipal",
+      "method": "POST",
+      "path": "/v1/principals",
+      "service": "platform",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createProcessCase",
+      "method": "POST",
+      "path": "/v1/process-cases",
+      "service": "registry",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createProject",
+      "method": "POST",
+      "path": "/v1/projects",
+      "service": "platform",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createProjection",
+      "method": "POST",
+      "path": "/v1/projections",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createProvenanceGraph",
+      "method": "POST",
+      "path": "/v1/provenance-graphs",
+      "service": "provenance",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createRealization",
+      "method": "POST",
+      "path": "/v1/realizations",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createReservation",
+      "method": "POST",
+      "path": "/v1/authority-reservations",
+      "service": "authority",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createResourceEstimate",
+      "method": "POST",
+      "path": "/v1/resource-estimates",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createRightsRecord",
+      "method": "POST",
+      "path": "/v1/rights-records",
+      "service": "provenance",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createSettlement",
+      "method": "POST",
+      "path": "/v1/settlements",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createTarget",
+      "method": "POST",
+      "path": "/v1/targets",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createVerificationDisposition",
+      "method": "POST",
+      "path": "/v1/dispositions",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "createWebhook",
+      "method": "POST",
+      "path": "/v1/webhook-subscriptions",
+      "service": "events",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "decideOperativeEffect",
+      "method": "POST",
+      "path": "/v1/effect-decisions",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "evaluateAction",
+      "method": "POST",
+      "path": "/v1/evaluations",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "evaluateCampaign",
+      "method": "POST",
+      "path": "/v1/campaign-evaluations",
+      "service": "edge",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "evaluateCoverage",
+      "method": "POST",
+      "path": "/v1/coverage-evaluations",
+      "service": "edge",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getAction",
+      "method": "GET",
+      "path": "/v1/actions/{action_id}",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getAdapter",
+      "method": "GET",
+      "path": "/v1/adapters/{adapter_id}",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getApproval",
+      "method": "GET",
+      "path": "/v1/approvals/{approval_id}",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getAsset",
+      "method": "GET",
+      "path": "/v1/assets/{asset_id}",
+      "service": "registry",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getAssetVersion",
+      "method": "GET",
+      "path": "/v1/assets/{asset_id}/versions/{version}",
+      "service": "registry",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getAttestation",
+      "method": "GET",
+      "path": "/v1/attestations/{attestation_id}",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getAuthorityGrant",
+      "method": "GET",
+      "path": "/v1/authority-grants/{grant_id}",
+      "service": "authority",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getCampaign",
+      "method": "GET",
+      "path": "/v1/campaign-evaluations/{campaign_id}",
+      "service": "edge",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getCheckpoint",
+      "method": "GET",
+      "path": "/v1/checkpoints/{checkpoint_id}",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getContext",
+      "method": "GET",
+      "path": "/v1/context",
+      "service": "platform",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getCoverage",
+      "method": "GET",
+      "path": "/v1/coverage-evaluations/{coverage_id}",
+      "service": "edge",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getDelegation",
+      "method": "GET",
+      "path": "/v1/delegations/{delegation_id}",
+      "service": "authority",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getDispute",
+      "method": "GET",
+      "path": "/v1/disputes/{dispute_id}",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getEdgeAllocation",
+      "method": "GET",
+      "path": "/v1/edge-allocations/{allocation_id}",
+      "service": "edge",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getEdgeNode",
+      "method": "GET",
+      "path": "/v1/edge-nodes/{node_id}",
+      "service": "edge",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getEdgeSync",
+      "method": "GET",
+      "path": "/v1/edge-nodes/{node_id}/synchronizations/{sync_id}",
+      "service": "edge",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getEffectDecision",
+      "method": "GET",
+      "path": "/v1/effect-decisions/{decision_id}",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getEnergyComparison",
+      "method": "GET",
+      "path": "/v1/energy-comparisons/{comparison_id}",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getEscrowAccount",
+      "method": "GET",
+      "path": "/v1/escrow-accounts/{account_id}",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getEstimate",
+      "method": "GET",
+      "path": "/v1/resource-estimates/{estimate_id}",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getEvaluation",
+      "method": "GET",
+      "path": "/v1/evaluations/{evaluation_id}",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getExecution",
+      "method": "GET",
+      "path": "/v1/executions/{execution_id}",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getExecutionResult",
+      "method": "GET",
+      "path": "/v1/executions/{execution_id}/result",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getInvalidation",
+      "method": "GET",
+      "path": "/v1/dependency-invalidations/{invalidation_id}",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getLot",
+      "method": "GET",
+      "path": "/v1/lots/{lot_id}",
+      "service": "provenance",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getMeasurement",
+      "method": "GET",
+      "path": "/v1/resource-measurements/{measurement_id}",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getOperation",
+      "method": "GET",
+      "path": "/v1/operations/{operation_id}",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getPrincipal",
+      "method": "GET",
+      "path": "/v1/principals/{principal_id}",
+      "service": "platform",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getProcessCase",
+      "method": "GET",
+      "path": "/v1/process-cases/{case_id}",
+      "service": "registry",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getProject",
+      "method": "GET",
+      "path": "/v1/projects/{project_id}",
+      "service": "platform",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getProjection",
+      "method": "GET",
+      "path": "/v1/projections/{projection_id}",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getRealization",
+      "method": "GET",
+      "path": "/v1/realizations/{realization_id}",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getRealizationWitness",
+      "method": "GET",
+      "path": "/v1/realizations/{realization_id}/witness",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getReceipt",
+      "method": "GET",
+      "path": "/v1/receipts/{receipt_id}",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getReceiptInclusionProof",
+      "method": "GET",
+      "path": "/v1/receipts/{receipt_id}/inclusion-proof",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getReservation",
+      "method": "GET",
+      "path": "/v1/authority-reservations/{reservation_id}",
+      "service": "authority",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getSettlement",
+      "method": "GET",
+      "path": "/v1/settlements/{settlement_id}",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getStoredObject",
+      "method": "GET",
+      "path": "/v1/objects/{object_id}",
+      "service": "platform",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getTarget",
+      "method": "GET",
+      "path": "/v1/targets/{target_id}",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getVerification",
+      "method": "GET",
+      "path": "/v1/receipt-verifications/{verification_id}",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getVerificationKeys",
+      "method": "GET",
+      "path": "/v1/verification-keys",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "getWebhook",
+      "method": "GET",
+      "path": "/v1/webhook-subscriptions/{subscription_id}",
+      "service": "events",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "invalidateDependencies",
+      "method": "POST",
+      "path": "/v1/dependency-invalidations",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listAdapters",
+      "method": "GET",
+      "path": "/v1/adapters",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listApprovals",
+      "method": "GET",
+      "path": "/v1/approvals",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listAssetVersions",
+      "method": "GET",
+      "path": "/v1/assets/{asset_id}/versions",
+      "service": "registry",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listAssets",
+      "method": "GET",
+      "path": "/v1/assets",
+      "service": "registry",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listAuthorityGrants",
+      "method": "GET",
+      "path": "/v1/authority-grants",
+      "service": "authority",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listDelegations",
+      "method": "GET",
+      "path": "/v1/delegations",
+      "service": "authority",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listDisputes",
+      "method": "GET",
+      "path": "/v1/disputes",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listEdgeNodes",
+      "method": "GET",
+      "path": "/v1/edge-nodes",
+      "service": "edge",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listEscrowAccounts",
+      "method": "GET",
+      "path": "/v1/escrow-accounts",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listEvents",
+      "method": "GET",
+      "path": "/v1/events",
+      "service": "events",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listExecutionAuthorizations",
+      "method": "GET",
+      "path": "/v1/executions/{execution_id}/authorizations",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listExecutions",
+      "method": "GET",
+      "path": "/v1/executions",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listLots",
+      "method": "GET",
+      "path": "/v1/lots",
+      "service": "provenance",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listPrincipals",
+      "method": "GET",
+      "path": "/v1/principals",
+      "service": "platform",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listProcessCases",
+      "method": "GET",
+      "path": "/v1/process-cases",
+      "service": "registry",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listProjects",
+      "method": "GET",
+      "path": "/v1/projects",
+      "service": "platform",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listRealizations",
+      "method": "GET",
+      "path": "/v1/realizations",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listReceipts",
+      "method": "GET",
+      "path": "/v1/receipts",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listReservations",
+      "method": "GET",
+      "path": "/v1/authority-reservations",
+      "service": "authority",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listSettlements",
+      "method": "GET",
+      "path": "/v1/settlements",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listTargets",
+      "method": "GET",
+      "path": "/v1/targets",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listWebhookDeliveries",
+      "method": "GET",
+      "path": "/v1/webhook-subscriptions/{subscription_id}/deliveries",
+      "service": "events",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "listWebhooks",
+      "method": "GET",
+      "path": "/v1/webhook-subscriptions",
+      "service": "events",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "promoteRecord",
+      "method": "POST",
+      "path": "/v1/promotions",
+      "service": "registry",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "reconcileExecution",
+      "method": "POST",
+      "path": "/v1/executions/{execution_id}/reconciliations",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "releaseSettlement",
+      "method": "POST",
+      "path": "/v1/settlements/{settlement_id}/release-requests",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "remediateRealization",
+      "method": "POST",
+      "path": "/v1/realizations/{realization_id}/remediations",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "replayWebhookDelivery",
+      "method": "POST",
+      "path": "/v1/webhook-subscriptions/{subscription_id}/deliveries/{delivery_id}/replays",
+      "service": "events",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "requestExecutionCancellation",
+      "method": "POST",
+      "path": "/v1/executions/{execution_id}/cancellation-requests",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "requestReservationRelease",
+      "method": "POST",
+      "path": "/v1/authority-reservations/{reservation_id}/release-requests",
+      "service": "authority",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "requestSelectiveDisclosure",
+      "method": "POST",
+      "path": "/v1/disclosure-requests",
+      "service": "provenance",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "requestTwinRetentionChange",
+      "method": "POST",
+      "path": "/v1/twin-retention-requests",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "returnHeldValue",
+      "method": "POST",
+      "path": "/v1/realizations/{realization_id}/return-requests",
+      "service": "settlement",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "revokeAuthorityGrant",
+      "method": "POST",
+      "path": "/v1/authority-grants/{grant_id}/revocations",
+      "service": "authority",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "revokeDelegation",
+      "method": "POST",
+      "path": "/v1/delegations/{delegation_id}/revocations",
+      "service": "authority",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "revokeRights",
+      "method": "POST",
+      "path": "/v1/rights-records/{rights_id}/revocations",
+      "service": "provenance",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "rotateWebhookSecret",
+      "method": "POST",
+      "path": "/v1/webhook-subscriptions/{subscription_id}/secret-rotations",
+      "service": "events",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "submitAttestation",
+      "method": "POST",
+      "path": "/v1/attestations",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "submitResourceMeasurement",
+      "method": "POST",
+      "path": "/v1/resource-measurements",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "suspendTarget",
+      "method": "POST",
+      "path": "/v1/targets/{target_id}/suspensions",
+      "service": "routing",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "synchronizeEdge",
+      "method": "POST",
+      "path": "/v1/edge-nodes/{node_id}/synchronizations",
+      "service": "edge",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "transformLots",
+      "method": "POST",
+      "path": "/v1/lot-transformations",
+      "service": "provenance",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "transitionAssetVersion",
+      "method": "POST",
+      "path": "/v1/assets/{asset_id}/versions/{version}/transitions",
+      "service": "registry",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "updateBeneficiary",
+      "method": "POST",
+      "path": "/v1/beneficiary-updates",
+      "service": "provenance",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "updateWebhook",
+      "method": "PATCH",
+      "path": "/v1/webhook-subscriptions/{subscription_id}",
+      "service": "events",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "verifyReceipt",
+      "method": "POST",
+      "path": "/v1/receipt-verifications",
+      "service": "evidence",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    },
+    {
+      "operation_id": "voteOnApproval",
+      "method": "POST",
+      "path": "/v1/approvals/{approval_id}/votes",
+      "service": "execution",
+      "repository": "handler registered; both SDK catalogs match",
+      "local_preview": "handler registered; both SDK catalogs match"
+    }
+  ],
+  "services": {
+    "authority": 13,
+    "edge": 11,
+    "events": 8,
+    "evidence": 15,
+    "execution": 15,
+    "platform": 10,
+    "provenance": 12,
+    "registry": 12,
+    "routing": 16,
+    "settlement": 15
+  },
+  "limitations": [
+    "No authenticated production endpoint exercised",
+    "Handler registration and schema agreement do not establish every semantic branch or provider integration",
+    "Customer source contract remains authoritative; implementation restrictions are separate endpoint notes",
+    "Local preview capabilities are not assumed to exist in the reviewed repository baseline"
+  ]
+}

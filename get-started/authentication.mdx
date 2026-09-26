@@ -10,15 +10,25 @@ Authorization: Bearer YOUR_ACCESS_TOKEN
 Accept: application/json
 ```
 
-The identity provider and token endpoint are deployment-specific. Obtain access tokens using your operator's configured flow; the documentation does not supply a universal token URL or client secret.
+The identity provider and token endpoint are deployment-specific. The reviewed service implementation validates signed JWT bearer tokens through OIDC discovery. Obtain a token for the configured customer audience using your operator's flow; this documentation does not supply a universal token URL or client secret. Do not assume an arbitrary opaque token or an unrelated provider's API key will work.
+
+## Obtain credentials
+
+Ask your operator for the issuer, token endpoint, customer audience, enrolled client or human subject, permitted scopes, project memberships, and any client certificate/CA configuration. The identity provider issues tokens; Rail's customer API has no token-issuance or self-service signup endpoint.
+
+`POST /v1/principals` creates a principal record, but does not update active service enrollment or issue credentials. The operator must configure the issuer/subject mapping used by the services. Likewise, a newly created project still needs appropriate domain enrollment and governance configuration before protected actions can run.
 
 ## Workloads and people
 
-Use client credentials for enrolled workloads. Interactive approval votes require a human identity using the deployment's Authorization Code flow with PKCE S256 and any policy-required step-up. A machine token cannot cast a human vote.
+The contract calls for client credentials for enrolled workloads and Authorization Code with PKCE S256 for interactive human access. Configure those flows, and any required MFA or step-up, at the identity provider. The reviewed customer service validates the resulting token and enrollment; it does not provide a browser login/PKCE flow or independently establish step-up from token claims.
+
+Approval voting enforces an enrolled `human` principal, eligible approver membership, separation of duties when configured, and concurrency preconditions. A principal enrolled as a workload cannot cast a human vote. The local preview CLI's descriptor login is configuration import, not an interactive OAuth login.
 
 ## Tenant and project access
 
 Rail derives tenant and principal identity from the validated issuer, audience, subject, and active enrollment. A caller-supplied tenant field or header cannot select another tenant. `project_id` and every referenced object must be authorized independently.
+
+Effective scopes are the intersection of token scopes and scopes allowed by enrollment. Requesting a broader token scope does not expand your enrolled permissions. Missing/inactive enrollment is an authentication failure (`401`); missing effective scope is `403`. Object/project access is often concealed as `404`.
 
 Start with [`GET /v1/context`](/api-reference/endpoints/get-context). Confirm your principal, scopes, and project IDs before sending mutations.
 
@@ -30,7 +40,7 @@ The reference page for each operation lists its required OAuth scopes. For examp
 
 A Rail capability is an action credential, separate from the OAuth access token. When required by the grant or delegation policy, supply it in `Rail-Capability` on execution submission. The capability binds to the action, operation identity, audience, expiry, and authenticated sender.
 
-The customer contract's OAuth security scheme does not remove a capability's mTLS sender-binding requirement. Use the certificate-bound token and transport profile supplied for that environment; a plain bearer-only curl example is not sufficient for a capability-bound execution.
+The customer contract's OAuth security scheme does not remove a capability's mTLS sender-binding requirement. Use the certificate-bound token and transport profile supplied for that environment; a plain bearer-only curl example is not sufficient for a capability-bound execution. The authenticator also requires a verified matching client certificate whenever the OAuth token contains certificate-binding claims, including otherwise ordinary customer reads.
 
 Runtime and internal-service ingress use separate credentials and transport boundaries. They are not part of this public customer reference.
 

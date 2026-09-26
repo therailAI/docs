@@ -1,34 +1,35 @@
 {
   "status": "local-checks-passed",
-  "pages": 163,
+  "pages": 164,
   "customer_operations": 127,
   "legacy_redirects": 27,
   "mint_cli": "4.2.502",
   "checks": [
     "Mintlify build validation",
     "Mintlify broken links",
-    "Navigation and local links",
-    "Exact customer endpoint coverage",
-    "Customer contract constraints, parameters, scopes and statuses preserved",
-    "No internal/runtime endpoints or source-disclosure annotations",
-    "Five JSON examples validated against contract schemas",
-    "Shell example syntax",
-    "TypeScript examples compile against development SDK",
-    "Python examples execute against schema-valid mock responses, including transport closure",
-    "Collapsed product/resource navigation and generated grouping consistency",
-    "Isolated CLI payments-template initialization and simulated effect",
-    "19 CLI/SDK shell examples pass bash syntax checks",
-    "Governed TypeScript examples compile against development SDK",
-    "Governed Python examples execute with the real SDK and replayed transport; completion disabled, resume does not rerun recorded effect, clients close",
-    "SDK governed lifecycle suites: TypeScript 7 tests, Python 11 tests"
+    "Navigation, preserved endpoint routes, local links and public-content boundaries",
+    "All 127 endpoint service labels and 18 implementation restrictions",
+    "Source audit: both baselines register all 127 customer handlers across 10 services",
+    "Source audit: published contract constraints/security preserved and both SDK operation catalogs match",
+    "Repository TypeScript SDK: 17 tests passed",
+    "Repository Python SDK: 14 tests passed",
+    "Go HTTP contract/CORS, identity/fault and webhook domain tests passed",
+    "All 10 service module trees compile; integration tests not executed",
+    "TypeScript direct source-import examples type-check and execute with real SDK and mock transport",
+    "Python examples execute with real SDK and mock transport; correct service routing and transport closure",
+    "All shell documentation examples pass syntax checks",
+    "Repository TypeScript package import failure reproduced; documented workaround verified"
   ],
   "limits": [
-    "No live authenticated API environment was exercised",
-    "SDK examples were checked against supplied development source, not public package releases",
-    "No browser visual inspection performed",
-    "No development stack was started or reset during this update"
+    "No authenticated production API or real payment provider exercised",
+    "No database-backed service integration suite executed",
+    "Static handler/schema coverage does not establish every semantic branch or deployment readiness",
+    "Local preview tools are ahead of reviewed repository default branches; preview samples retain their prior verification baseline",
+    "Underlying TypeScript export-map defect is documented; implementation repos were not changed",
+    "No browser visual inspection performed"
   ],
   "published_openapi_sha256": "512b1a70250d015677c94f9378c52dcc2de16d0adb71054bd6a9aa826b194105",
   "api_product_groups": 8,
-  "api_resource_groups": 30
+  "api_resource_groups": 30,
+  "review_date": "2026-09-26"
 }
