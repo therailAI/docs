@@ -1,25 +1,28 @@
 ---
 title: "TypeScript SDK"
-description: "Build the repository TypeScript client from source and call the customer API."
+description: "Build the TypeScript client from source and call the customer API."
 ---
 
 ## Install from a supplied checkout
 
-This page covers repository SDK `0.1.0-dev.0`. The governed helper and custom-header option shown in the [local preview guide](/sdks/governed-typescript) require the separately supplied `0.2.0-dev.0` build. See [implementation status](/get-started/implementation-status).
+This page covers SDK `0.2.0-dev.0` from the repository `main` branch. The same package provides the [governed helper](/sdks/governed-typescript). See [implementation status](/get-started/implementation-status).
 
-Use Node.js 22 and a matching SDK source checkout supplied by your operator. For these examples, place that checkout at `vendor/rail-sdk-typescript` inside your application. From your application directory:
+Use Node.js 22 and a source checkout of `rail-sdk-typescript`. For these examples, place that checkout at `vendor/rail-sdk-typescript` inside your application. From your application directory:
 
 ```bash
 npm ci --prefix vendor/rail-sdk-typescript
 npm run build --prefix vendor/rail-sdk-typescript
+npm install ./vendor/rail-sdk-typescript
 ```
 
-The reviewed repository package has an empty export map: installing it and importing `@rail/sdk` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`. Until a corrected distribution is supplied, import the built entry file directly as below. Keep the supplied checkout and its dependencies together. This source-build workaround does not imply public npm publication; the local preview's corrected exports are a separate build.
+The package exports `@rail/sdk` (the customer client) and subpaths such as `@rail/sdk/govern` and `@rail/sdk/profile`. It is not published to npm; install it from the checkout as above.
+
+<Note>The older `0.1.0-dev.0` package had an empty export map, so importing `@rail/sdk` failed with `ERR_PACKAGE_PATH_NOT_EXPORTED`. If you were supplied that build, import `./vendor/rail-sdk-typescript/dist/client.js` directly instead.</Note>
 
 ## Read your context
 
 ```typescript
-import { RailClient, RailError } from './vendor/rail-sdk-typescript/dist/client.js';
+import { RailClient, RailError } from '@rail/sdk';
 
 const baseURL = process.env.RAIL_BASE_URL;
 const token = process.env.RAIL_ACCESS_TOKEN;
@@ -53,7 +56,7 @@ const { data, etag, location } = await executionClient.execution.getExecution(un
 console.log(data.state, data.external_effect);
 ```
 
-Mutations accept `idempotencyKey`; concurrency-controlled operations accept `ifMatch`. Repository SDK `0.1.0-dev.0` has no per-call `headers` option. For a capability-bound request, use an operator-qualified custom transport passed as the constructor's third argument, direct authenticated HTTP, or the supplied `0.2.0-dev.0` preview with custom-header support. The transport must also enforce the required certificate binding; adding `Rail-Capability` alone is insufficient.
+Mutations accept `idempotencyKey`; concurrency-controlled operations accept `ifMatch`. Every call also accepts a per-call `headers` option for headers an operation defines, such as `Rail-Capability` on `createExecution`. A capability-bound request also needs a transport that enforces the required certificate binding; adding `Rail-Capability` alone is insufficient. The [governed helper](/sdks/governed-typescript) handles both for you.
 
 The SDK validates successful response shape. A malformed success response is a contract error, not usable evidence. Handle it through your recovery and observability policy.
 

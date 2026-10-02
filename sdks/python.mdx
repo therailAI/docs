@@ -5,9 +5,9 @@ description: "Call Rail with the development Python client."
 
 ## Install from a supplied checkout
 
-This page covers repository SDK `0.1.0.dev0`. The governed helper and generic-call custom-header argument require the separately supplied `0.2.0.dev0` build described in [the local preview guide](/sdks/governed-python). See [implementation status](/get-started/implementation-status).
+This page covers SDK `0.2.0.dev0` from the repository `main` branch. The same package provides the [governed helper](/sdks/governed-python). See [implementation status](/get-started/implementation-status).
 
-Use Python 3.12+ and a matching source checkout supplied by your operator. Replace the path with the checkout you received:
+Use Python 3.12+ and a source checkout of `rail-sdk-python`. Replace the path with your checkout:
 
 ```bash
 python3 -m venv .venv
@@ -60,7 +60,7 @@ finally:
     client.close()
 ```
 
-Mutations require `idempotency_key`. Pass the latest strong ETag in `if_match` when required. Repository SDK `0.1.0.dev0` accepts no per-call `headers` argument on either the generic call or product methods. For a capability-bound request, supply a dedicated operator-qualified `httpx.Client` carrying that operation's capability and certificate-bound transport, use direct authenticated HTTP, or obtain the `0.2.0.dev0` preview that adds generic-call custom headers. Do not attach a capability globally to a client reused across unrelated operations.
+Mutations require `idempotency_key`. Pass the latest strong ETag in `if_match` when required. The generic `call` accepts a per-call `headers` argument for headers an operation defines, such as `Rail-Capability`; product methods do not. A capability-bound request also needs a certificate-bound transport, so supply a dedicated `httpx.Client` for it, or use the [governed helper](/sdks/governed-python), which handles both. Do not attach a capability globally to a client reused across unrelated operations.
 
 If you supply an `httpx.Client`, you retain responsibility for its lifecycle. The Rail client closes only a transport it created itself.
 

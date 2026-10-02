@@ -3,18 +3,20 @@ title: "SDKs and CLI"
 description: "Choose the CLI, a typed customer API client, or a governed execution helper."
 ---
 
-Choose the tool that matches your integration and supplied build. The reviewed repository SDKs expose customer clients; shared profiles and governed helpers belong to the newer local preview. Start with [implementation and release status](/get-started/implementation-status) to identify your baseline.
+Choose the tool that matches your integration. The SDKs on the repository `main` branches include both the customer API client and the governed execution helper; the CLI and the MCP proxy cover shell commands and a model's tool calls. See [implementation and release status](/get-started/implementation-status) for what each build contains.
 
 <CardGroup cols={2}>
   <Card title="Rail CLI" icon="terminal" href="/sdks/cli">Set up a local project, govern shell commands, inspect decisions, and export evidence.</Card>
   <Card title="TypeScript" icon="code" href="/sdks/typescript">Install the development client and make typed customer API calls.</Card>
   <Card title="Python" icon="code" href="/sdks/python">Install the development client and call the same customer contract.</Card>
   <Card title="Governed execution" icon="shield-check" href="/sdks/recovery">Connect effect callbacks to authorization, dispatch, and recovery.</Card>
+  <Card title="MCP proxy" icon="plug" href="/sdks/mcp-proxy">Govern every tool call a model makes through an MCP server.</Card>
+  <Card title="Where the Rail fits" icon="sitemap" href="/guides/where-rail-fits">Pick an integration point next to your agent framework and tools.</Card>
 </CardGroup>
 
 ## Two SDK layers
 
-Use `RailClient` for customer API calls. In the separately supplied local preview, `Rail.fromProfile` in TypeScript or `Rail.from_profile` in Python coordinates a protected effect through an enrolled worker. Those helper imports are absent from the reviewed repository default branches and require runtime configuration and role-specific credentials beyond the customer HTTP API.
+Use `RailClient` for customer API calls. `Rail.fromProfile` in TypeScript or `Rail.from_profile` in Python coordinates a protected effect through an enrolled worker. The governed helper needs runtime configuration and role-specific credentials beyond the customer HTTP API.
 
 Start a governed call with the [TypeScript example](/sdks/governed-typescript) or [Python example](/sdks/governed-python).
 
@@ -35,9 +37,9 @@ Shared and advanced operations are available through the generic `call` method. 
 
 ## Distribution status
 
-The reviewed repository versions are TypeScript `0.1.0-dev.0` and Python `0.1.0.dev0`, against customer contract 0.1.1. The explicitly marked local-preview guides use TypeScript `0.2.0-dev.0`, Python `0.2.0.dev0`, and the matching newer CLI. These are different source baselines, not interchangeable releases.
+The repository `main` branches carry TypeScript `0.2.0-dev.0` and Python `0.2.0.dev0` against customer contract 0.1.1, with the matching CLI and `@rail/mcp` `0.1.0-dev.0`. Earlier `0.1.0` builds had the customer client only; if you were supplied one, the governed guides will not work with it.
 
-The TypeScript package is private, and the repository version's export map blocks a normal package import. Follow the [source-build instructions](/sdks/typescript). Obtain versioned source or a qualified distribution from your operator; do not assume `npm install @rail/sdk` or `pip install rail-sdk` resolves to a supported public release.
+All packages are development versions built from source. They are not published: do not assume `npm install @rail/sdk` or `pip install rail-sdk` resolves to a supported public release. Install from a source checkout as the [TypeScript](/sdks/typescript) and [Python](/sdks/python) guides show.
 
 The examples use Node.js 22 or Python 3.12+, respectively. Supply environment credentials separately.
 

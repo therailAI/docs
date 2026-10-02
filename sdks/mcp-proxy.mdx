@@ -1,0 +1,99 @@
+---
+title: "Govern MCP tool calls"
+description: "Put the Rail between a model's host and an MCP server, so every tool call becomes a governed execution."
+---
+
+<Note>`@rail/mcp` `0.1.0-dev.0` is on the repository `main` branch. Build it from source; it is not published to npm. It needs a [profile](/cli/profiles) for a Rail environment, such as the one `rail dev up` creates. See [implementation and release status](/get-started/implementation-status).</Note>
+
+`rail-mcp` sits between a model's host (a desktop assistant, a code editor, or an agent framework) and an MCP server. Each `tools/call` on a governed tool runs through the same flow as [`rail govern`](/cli/govern): action, capability, authorization or approval, permit, then the upstream call, once, followed by a signed result.
+
+```
+host ──stdio──▶ rail-mcp ──stdio | streamable HTTP──▶ your MCP server
+                   │
+                   └── the Rail: action → capability → authorization
+                       (or approval / denial) → permit → the upstream call,
+                       once → signed result → completion
+```
+
+The upstream call *is* the protected effect. If the Rail denies or holds it, nothing reaches the upstream server.
+
+## Build it
+
+`rail-mcp` depends on the TypeScript SDK by relative path, so check out `rail-sdk-typescript` and `rail-mcp` side by side:
+
+```bash
+npm ci --prefix rail-sdk-typescript && npm run build --prefix rail-sdk-typescript
+npm ci --prefix rail-mcp            # builds rail-mcp via its prepare script
+```
+
+The `rail-mcp` command is `rail-mcp/dist/cli.js`. `rail mcp serve` runs the same proxy from the [Rail CLI](/sdks/cli).
+
+## Map tools to actions
+
+Add an `mcp` section to the project's `rail.yaml`. Each mapped tool names the action it performs and where the resource comes from in the tool's arguments.
+
+```yaml
+mcp:
+  upstream: { command: node, args: [examples/echo-server.mjs] }   # or url: https://…/mcp
+  default: deny
+  tools:
+    - tool: create_purchase_order
+      action: procurement.purchase_order.create
+      resource: { namespace: suppliers, type: vendor, id_from: /supplier_id }
+```
+
+| Field | Meaning |
+| --- | --- |
+| `upstream` | The MCP server to proxy: a `command` with `args` over stdio, or a `url` over streamable HTTP |
+| `default` | What happens to tools you did not map: `deny` marks them unavailable; `allow` forwards them ungoverned |
+| `tools[].action` | The published action class the call is governed as |
+| `tools[].resource` | The resource acted on; `id_from` is a JSON pointer into the tool's arguments |
+
+Use `default: deny` unless you have a reason to forward unmapped tools. A forwarded tool runs with no authority check and leaves no receipt.
+
+## Connect a host
+
+Point the host at `rail-mcp` instead of the MCP server. Most hosts take a configuration like this:
+
+```json
+{
+  "mcpServers": {
+    "erp": {
+      "command": "rail-mcp",
+      "args": ["--config", "/path/to/rail.yaml", "--own-authority"]
+    }
+  }
+}
+```
+
+| Flag | Effect |
+| --- | --- |
+| `--config` | Path to `rail.yaml` (default `rail.yaml`) |
+| `--profile` | Profile to act as; otherwise the default profile |
+| `--upstream`, `--upstream-url` | Override the upstream in `rail.yaml` |
+| `--default deny\|allow` | Override the handling of unmapped tools |
+| `--own-authority` | Development only: the profile's governor issues a one-use grant per call, so each call is its own journey |
+| `--wait-approval` | Wait for an approval vote instead of returning the hold |
+| `--log` | Log decisions to stderr |
+
+In production, the governor issues a grant per journey and the proxy acts under it. A grant spends each resource × action once; see [grants and delegation](/guides/grants-and-delegation).
+
+## What the model sees
+
+| Outcome | Result returned to the host |
+| --- | --- |
+| Listed tools | Governed tools say so in their description; unmapped tools are marked unavailable under `default: deny` |
+| Authorized and executed | The upstream result, plus `_meta.rail` with the execution, journey and receipt ids. The upstream server sees `_meta.rail.execution_id` on the call it serves |
+| Denied | An `isError` result naming the basis codes and the denial receipt. Nothing reached the upstream |
+| Held for approval | An `isError` result naming the approval id; an approver votes with [`rail approvals vote`](/cli/approvals-and-inspection). To have the proxy wait for the vote and then make the call, start it with `--wait-approval` |
+
+## Prove what happened
+
+Export the journey and verify it offline, as with any governed execution:
+
+```bash
+rail journey export <journey_id>
+rail verify .rail/journeys/<journey_id>/journey.bundle.json --trust-file .rail/journeys/<journey_id>/trust.json
+```
+
+The bundle verifies without access to the Rail or your systems. See [verify evidence](/guides/verify-evidence).
