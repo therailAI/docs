@@ -58,6 +58,7 @@
           {
             "group": "Integration guides",
             "pages": [
+              "guides/where-rail-fits",
               "guides/governed-execution",
               "guides/grants-and-delegation",
               "guides/approvals",
@@ -98,7 +99,7 @@
               "sdks/cli",
               "cli/evidence",
               {
-                "group": "Local preview workflows",
+                "group": "Development workflows",
                 "expanded": false,
                 "pages": [
                   "cli/local-development",
@@ -124,7 +125,13 @@
             ]
           },
           {
-            "group": "Preview execution lifecycle",
+            "group": "MCP proxy",
+            "pages": [
+              "sdks/mcp-proxy"
+            ]
+          },
+          {
+            "group": "Execution lifecycle",
             "pages": [
               "sdks/recovery"
             ]

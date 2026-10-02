@@ -3,11 +3,11 @@ title: "Rail CLI"
 description: "Set up a local project, govern commands, inspect executions, and export verifiable evidence."
 ---
 
-The reviewed repository CLI supports offline bundle inspection/verification and operator demo tooling. The newer **local preview** adds project initialization, provisioning, shared profiles, governed shell commands, approvals, and journey export. Those additions are absent from the repository default branch reviewed on September 26, 2026. Identify your supplied build using [implementation and release status](/get-started/implementation-status).
+The CLI on the repository `main` branch covers the full developer workflow: project initialization, local provisioning, shared profiles, governed shell commands, approvals, journey export, offline verification, and the [MCP proxy](/sdks/mcp-proxy). Earlier builds had only offline verification and operator demo tooling; check your build with `rail version` and [implementation and release status](/get-started/implementation-status).
 
 ## Get the CLI
 
-Obtain a versioned binary for your operating system and architecture, or a matching source workspace and build instructions, from your Rail operator. A public binary release or universal installer is not established by these docs.
+Build the CLI from the `rail-go` repository source, or obtain a versioned binary for your operating system and architecture from your Rail operator. There is no public binary release or universal installer yet.
 
 ```bash
 rail version
@@ -15,9 +15,9 @@ rail version
 
 Offline bundle verification needs the binary, a supported bundle, and a confirmed trust anchor. It works without a profile. See [offline verification](/cli/evidence).
 
-## Local preview workflows
+## Development workflows
 
-The following connected guides require the newer operator-supplied local preview. `rail dev up` also requires the full matching development workspace; the binary alone does not contain the services.
+`rail dev up` needs the full development workspace; the binary alone does not contain the services.
 
 <CardGroup cols={2}>
   <Card title="Local development" icon="terminal" href="/cli/local-development">Initialize a project and run a simulated protected effect.</Card>
@@ -29,15 +29,16 @@ The following connected guides require the newer operator-supplied local preview
 
 ## Command availability
 
-| Command | Purpose | Baseline |
-| --- | --- | --- |
-| `rail bundle inspect`, `rail verify` | Inspect and verify supported bundles offline | Repository and preview |
-| `rail init`, `rail dev` | Initialize and provision a project | Local preview only |
-| `rail login`, `rail whoami`, `rail logout` | Select and inspect a profile | Local preview only |
-| `rail govern`, `rail govern resume` | Run an effect through authorization and dispatch gates | Local preview only |
-| `rail grants`, `rail delegations`, `rail tokens` | Manage bounded authority | Local preview only |
-| `rail executions`, `rail approvals` | Inspect state and vote as an enrolled approver | Local preview only |
-| `rail receipts`, `rail policy` | Inspect evidence and policy pins | Local preview only |
-| `rail journey export` | Export a grant journey's evidence | Local preview only |
+| Command | Purpose |
+| --- | --- |
+| `rail bundle inspect`, `rail verify` | Inspect and verify supported bundles offline |
+| `rail init`, `rail dev` | Initialize and provision a project |
+| `rail login`, `rail whoami`, `rail logout` | Select and inspect a profile |
+| `rail govern`, `rail govern resume` | Run an effect through authorization and dispatch gates |
+| `rail grants`, `rail delegations`, `rail tokens` | Manage bounded authority |
+| `rail executions`, `rail approvals` | Inspect state and vote as an enrolled approver |
+| `rail receipts`, `rail policy` | Inspect evidence and policy pins |
+| `rail journey export` | Export a grant journey's evidence |
+| `rail mcp serve` | Run the governing [MCP proxy](/sdks/mcp-proxy) in front of an MCP server |
 
-Command availability and access depend on the supplied version and the profile's roles. A successful login does not grant authority to perform a protected action.
+Command availability depends on your build; access depends on the profile's roles. A successful login does not grant authority to perform a protected action.

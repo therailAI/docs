@@ -1,9 +1,9 @@
 ---
-title: "Govern an action with Python (preview)"
+title: "Govern an action with Python"
 description: "Use Rail.from_profile and an effect callback to run a protected action through the development runtime."
 ---
 
-<Warning>Local preview only. This guide requires the operator-supplied development build with the CLI/SDK helpers. These commands and helper imports are absent from the repository default branches reviewed on September 26, 2026. See [implementation and release status](/get-started/implementation-status).</Warning>
+<Note>These commands and helpers are on the repository `main` branches (TypeScript SDK `0.2.0-dev.0`, Python SDK `0.2.0.dev0`, and the matching CLI). Build them from source; no public package or binary release exists yet. See [implementation and release status](/get-started/implementation-status).</Note>
 
 The `rail_sdk.govern` helper coordinates action submission, authorization, worker dispatch, and signed result reporting. Your effect callback runs only after dispatch is permitted.
 

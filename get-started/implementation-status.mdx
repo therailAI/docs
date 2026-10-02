@@ -1,6 +1,6 @@
 ---
 title: "Implementation and release status"
-description: "What the reviewed repositories implement, what requires deployment configuration, and which tools are local preview only."
+description: "What the repositories implement, what requires deployment configuration, and what each tooling build contains."
 ---
 
 The documentation was reconciled with repository source on **September 26, 2026**. The audit compared the customer contract, registered service handlers, SDK operation catalogs, authentication, selected implementation restrictions, and the newer local development tools.
@@ -28,16 +28,17 @@ The six product groups organize the API; they are not six network services. Refe
 
 ## Tooling baselines
 
-The local preview is ahead of the reviewed repository default branches. Check which distribution you received before following a tool guide.
+The September 26 audit found the developer tooling ahead of the repository default branches and documented it as a separate local preview. As of **October 2, 2026** that tooling is on the repository `main` branches. Older `0.1.0` builds lack it; check which build you have before following a tool guide.
 
-| Surface | Reviewed repository baseline | Newer local preview |
+| Surface | On repository `main` (October 2, 2026) | Older `0.1.0` builds |
 | --- | --- | --- |
-| TypeScript SDK | `0.1.0-dev.0`: customer client; package export map blocks the normal package import | `0.2.0-dev.0`: package exports, profiles, governed helper, and per-call custom headers |
-| Python SDK | `0.1.0.dev0`: customer client; no per-call custom-header argument | `0.2.0.dev0`: profiles, governed helper, and generic-call custom headers |
-| Rail CLI | Offline bundle inspection/verification and operator demo tooling | Adds project initialization, local provisioning, profiles, governed commands, administration, and journey export |
-| Public package distribution | No supported public npm/PyPI or binary release established by this audit | Operator-supplied local build only |
+| TypeScript SDK | `0.2.0-dev.0`: customer client, package exports (`@rail/sdk`, `@rail/sdk/govern`, `@rail/sdk/profile`, …), profiles, governed helper, per-call headers | `0.1.0-dev.0`: customer client; empty export map blocks the normal package import |
+| Python SDK | `0.2.0.dev0`: customer client, profiles, governed helper, generic-call custom headers | `0.1.0.dev0`: customer client only |
+| Rail CLI | Project initialization, local provisioning, profiles, governed commands, administration, journey export, offline verification, MCP proxy | Offline bundle inspection/verification and operator demo tooling |
+| MCP proxy | `@rail/mcp` `0.1.0-dev.0`: governs each `tools/call` to an upstream MCP server | Not present |
+| Public package distribution | None: no public npm, PyPI, or binary release. Build from source | None |
 
-The [TypeScript guide](/sdks/typescript) uses a direct source-build import to work around the repository package export defect. [Preview CLI guides](/cli/local-development) and governed [TypeScript](/sdks/governed-typescript)/[Python](/sdks/governed-python) guides require the newer supplied build. They are not commands or imports available from the reviewed default branches.
+The [CLI guides](/cli/local-development), the governed [TypeScript](/sdks/governed-typescript) and [Python](/sdks/governed-python) guides, and the [MCP proxy guide](/sdks/mcp-proxy) need the `main`-branch builds. The October 2 check covered which tooling is on `main`; it did not repeat the full API audit below.
 
 ## Implementation restrictions that affect integration
 
