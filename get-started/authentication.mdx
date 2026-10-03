@@ -22,7 +22,7 @@ Ask your operator for the issuer, token endpoint, customer audience, enrolled cl
 
 The contract calls for client credentials for enrolled workloads and Authorization Code with PKCE S256 for interactive human access. Configure those flows, and any required MFA or step-up, at the identity provider. The reviewed customer service validates the resulting token and enrollment; it does not provide a browser login/PKCE flow or independently establish step-up from token claims.
 
-Approval voting enforces an enrolled `human` principal, eligible approver membership, separation of duties when configured, and concurrency preconditions. A principal enrolled as a workload cannot cast a human vote. The local preview CLI's descriptor login is configuration import, not an interactive OAuth login.
+Approval voting enforces an enrolled `human` principal, eligible approver membership, separation of duties when configured, and concurrency preconditions. A principal enrolled as a workload cannot cast a human vote. The CLI's descriptor login (`rail login`) is configuration import, not an interactive OAuth login.
 
 ## Tenant and project access
 

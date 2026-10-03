@@ -1,11 +1,11 @@
 ---
-title: "Local development (preview)"
-description: "Initialize a Rail project and run a simulated purchase-order workflow."
+title: "Develop from a workspace"
+description: "Run the Rail from source checkouts with rail dev, for contributors and operators with workspace access."
 ---
 
-<Warning>Local preview only. This guide requires the operator-supplied development build with the CLI/SDK helpers. These commands and helper imports are absent from the repository default branches reviewed on September 26, 2026. See [implementation and release status](/get-started/implementation-status).</Warning>
+<Note>Most developers should use the [local sandbox](/get-started/sandbox) instead: one Docker command, no source checkouts. This page is for people who run the Rail from a source workspace their operator supplies, for example to test service changes.</Note>
 
-This walkthrough uses the supplied development workspace and the CLI's `payments` template. The effect script emits a simulated result; it does not create a real purchase order or move money.
+This walkthrough uses a source workspace and the CLI's `payments` template. The effect script emits a simulated result; it does not create a real purchase order or move money.
 
 ## Prerequisites
 

@@ -1,0 +1,105 @@
+---
+title: "Local sandbox"
+description: "Run the whole Rail on your machine with one command, then call it from curl, the SDKs, the CLI, or this site's API playground."
+---
+
+The sandbox is the complete Rail (all ten services, PostgreSQL, a development identity provider, and a gateway) in one Docker container on your machine. It is for development and evaluation: it uses development keys and simulated effects, and it is not a hosted environment.
+
+## Requirements
+
+- Docker (Docker Desktop on macOS or Windows, or Docker Engine on Linux).
+- The `rail` CLI 0.2.0. See [the CLI](/sdks/cli) for installation.
+- Free loopback ports `8443`, `9400` and `8480`–`8489`. The sandbox publishes them on `127.0.0.1` only, never on your network.
+
+## Start it
+
+From your project directory (or any directory; without a `rail.yaml` the sandbox starts without a project):
+
+```bash
+rail init          # once: writes rail.yaml and examples/effect.sh
+rail sandbox up
+```
+
+`rail sandbox up` starts the container, enrolls your project's `rail.yaml`, saves a `sandbox` profile as your default, and issues a first authority grant to your project's agent. It prints the endpoints:
+
+```text
+[sandbox] up
+  API (gateway)   https://localhost:8443
+  issuer          https://localhost:9400
+  CA              ~/.config/rail/sandbox/rail-sandbox/ca.crt
+```
+
+The first start pulls the image and takes about a minute; later starts reuse your data.
+
+The sandbox sees only `rail.yaml` and the files it references, copied in when you run `up`. Edit `rail.yaml` and run `rail sandbox up` again to re-enroll.
+
+## Make a call
+
+The gateway at `https://localhost:8443` serves every customer API path, so one base URL works for all products. Its certificate comes from the sandbox's own certificate authority; point your client at it:
+
+```bash
+curl --cacert "$(rail sandbox ca)" https://localhost:8443/v1/context \
+  --header "Authorization: Bearer $(rail sandbox token)"
+```
+
+`rail sandbox token` prints a short-lived access token for your project's governor, a principal that can read the project and manage authority. It cannot submit executions; protected actions go through the agent, below.
+
+| Client | Trust the sandbox CA with |
+| --- | --- |
+| curl | `--cacert "$(rail sandbox ca)"` |
+| Node.js | `export NODE_EXTRA_CA_CERTS="$(rail sandbox ca)"` |
+| Python (`httpx`) | `ssl.create_default_context(cafile=...)`; see the [Python SDK](/sdks/python) |
+| Your browser | `rail sandbox trust` (below) |
+
+## Govern an action
+
+Protected actions run as your project's agent, which authenticates with a client certificate. The CLI and the SDKs' governed helpers use the profile `rail sandbox up` saved:
+
+```bash
+rail govern procurement.purchase_order.create \
+  --input '{"supplier_id":"SUP-ACME","amount":"250.00"}' \
+  -- ./examples/effect.sh
+```
+
+The effect command runs only after dispatch is permitted, and its result is signed and verified. The example effect is simulated; it does not place a real order or move money. See [governed commands](/cli/govern) and the [TypeScript](/sdks/governed-typescript) and [Python](/sdks/governed-python) helpers.
+
+Certificate-bound calls go straight to the services' TLS ports (`8480`–`8489`) rather than the gateway, because the gateway cannot pass a client certificate through. The profile already points there; you don't configure it.
+
+## Use the API playground
+
+The API reference on this site can send requests to your sandbox from your browser. Your browser has to trust the sandbox's certificate first:
+
+```bash
+rail sandbox trust
+```
+
+The command shows the certificate and asks before adding it to your user account's trust store: the login keychain on macOS, your user's root store on Windows, or `~/.pki/nssdb` on Linux (used by Chrome and Chromium). Firefox keeps its own store; use another browser for the playground or import the certificate in Firefox's settings.
+
+The sandbox's certificate authority can only vouch for `localhost` and `127.0.0.1`, and only for TLS. Even so, its key sits unencrypted in your Docker volume, so remove the trust when you're done:
+
+```bash
+rail sandbox untrust
+```
+
+Then open any endpoint page, keep the server set to `https://localhost:8443`, and paste the output of `rail sandbox token` as the bearer token. Reads work with the governor's token. Executions and capability tokens need the agent's certificate, so the playground can't send them; use `rail govern` or an SDK.
+
+## Manage it
+
+| Command | What it does |
+| --- | --- |
+| `rail sandbox status` | Container state and endpoints |
+| `rail sandbox logs [-f]` | The services' logs |
+| `rail sandbox down` | Stop the container; your data stays in its Docker volume |
+| `rail sandbox up` | Start again, keeping data, and re-enroll `rail.yaml` |
+| `rail sandbox reset` | Delete all sandbox data and start fresh (new tenant, keys and grants) |
+| `rail sandbox token [USER]` | A token for the governor or another project user |
+| `rail sandbox ca` | Path to the sandbox CA certificate |
+| `rail sandbox trust` / `untrust` | Add or remove the CA in your user trust store |
+
+`-name` runs a second, separately named sandbox; `-image` selects another image tag. `-origins` lets another site's playground call your sandbox, for example `-origins http://localhost:3000` for a local preview of these docs.
+
+## Limits
+
+- **Development only.** Keys, identities and the CA are generated per sandbox and stored unencrypted in its volume. Don't put real credentials or data in it.
+- **Simulated effects.** Payment and custody integrations are stubs. A completed execution in the sandbox is not a real-world effect.
+- **One machine.** Everything listens on loopback. To share an environment with a team, use a deployment your operator provides; see [environment setup](/get-started/environment).

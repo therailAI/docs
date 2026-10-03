@@ -1,27 +1,25 @@
 ---
-title: "Govern an action with TypeScript (preview)"
+title: "Govern an action with TypeScript"
 description: "Use Rail.fromProfile and an effect callback to run a protected action through the development runtime."
 ---
 
-<Warning>Local preview only. This guide requires the operator-supplied development build with the CLI/SDK helpers. These commands and helper imports are absent from the repository default branches reviewed on September 26, 2026. See [implementation and release status](/get-started/implementation-status).</Warning>
+The `@therailai/sdk/govern` helper coordinates action submission, authorization, worker dispatch, and signed result reporting. It invokes your effect callback only after dispatch is permitted.
 
-The `@rail/sdk/govern` helper coordinates action submission, authorization, worker dispatch, and signed result reporting. It invokes your effect callback only after dispatch is permitted.
-
-Install the [supplied TypeScript SDK](/sdks/typescript), then configure a [shared profile](/cli/profiles). This helper needs agent and enrolled worker credentials, signing material, and a matching runtime. A customer API bearer token alone is insufficient. Production deployments must preserve their intended separation of agent, worker, approver, and verifier responsibilities.
+Install the [TypeScript SDK](/sdks/typescript) and start the [local sandbox](/get-started/sandbox) in your project; `rail sandbox up` saves the profile this helper reads. For an operator environment, import its profile with [`rail login`](/cli/profiles). This helper needs agent and enrolled worker credentials, signing material, and a matching runtime. A customer API bearer token alone is insufficient. Production deployments must preserve their intended separation of agent, worker, approver, and verifier responsibilities.
 
 ## Run a simulated action
 
-Use the action definition and resources from the [local development template](/cli/local-development). Set `RAIL_OPERATION_ID` to an operation identifier allocated and durably saved for this intent before calling Rail.
+Use the action and resources from the `rail init` payments template used in the [quickstart](/quickstart). Set `RAIL_OPERATION_ID` to an operation identifier allocated and durably saved for this intent before calling Rail.
 
 The callback below simulates a result. It makes no supplier or payment-provider call.
 
 ```typescript
-import { Rail, type Effect } from '@rail/sdk/govern';
+import { Rail, type Effect } from '@therailai/sdk/govern';
 
 const operation = process.env.RAIL_OPERATION_ID;
 if (!operation) throw new Error('Set a persisted operation identifier');
 
-const rail = Rail.fromProfile('dev');
+const rail = Rail.fromProfile();
 const simulatePurchaseOrder: Effect = async (permit) => ({
   effect: 'executed',
   output: { simulation: true, effect_key: permit.effectKey },

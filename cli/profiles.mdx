@@ -1,20 +1,22 @@
 ---
-title: "Profiles and identity (preview)"
+title: "Profiles and identity"
 description: "Use the same provisioned environment from the CLI, TypeScript, and Python."
 ---
 
-<Warning>Local preview only. This guide requires the operator-supplied development build with the CLI/SDK helpers. These commands and helper imports are absent from the repository default branches reviewed on September 26, 2026. See [implementation and release status](/get-started/implementation-status).</Warning>
-
 A profile describes the environment, tenant, project, service locations, and enrolled identities. It references the credential material needed for its roles. Obtain a descriptor from the environment operator; do not copy another project's credentials.
 
-## Connect a supplied environment
+## The sandbox profile
+
+`rail sandbox up` saves a `sandbox` profile and makes it your default, so the CLI and both SDKs connect to the [local sandbox](/get-started/sandbox) with no further setup. Re-running `up` refreshes it. The profile holds the sandbox's development identities, so it can act in several roles at once; an operator environment separates them.
+
+## Connect an operator environment
 
 ```bash
 rail login --descriptor /path/to/project.rail.json --profile staging --default=false
 rail whoami --profile staging --json
 ```
 
-The descriptor uses the `rail-product/1` format. Login imports the profile and checks agent authentication. Omit `--default=false` to make the imported profile your default. `rail dev up` already saves a local development profile, so a second login is unnecessary for that workflow.
+The descriptor uses the `rail-product/1` format. Login imports the profile and checks agent authentication. Omit `--default=false` to make the imported profile your default. `rail sandbox up` (and `rail dev up` from a workspace) saves its own profile, so no login is needed for local work.
 
 `whoami` reports redacted configuration and, when available, authentication results. Inspect its authentication fields; a configuration display alone is not proof that every role can connect or act.
 
@@ -44,7 +46,7 @@ rail whoami --json
 | Submit completion dispositions | An authorized verifier |
 | Export a journey | An auditor or operator able to read the required evidence |
 
-The local development profile can include several roles to demonstrate the lifecycle. Keep those responsibilities separated according to your production deployment design. A profile does not widen a grant or bypass policy.
+The sandbox and workspace profiles include several roles to demonstrate the lifecycle. Keep those responsibilities separated according to your production deployment design. A profile does not widen a grant or bypass policy.
 
 ## Remove local configuration
 

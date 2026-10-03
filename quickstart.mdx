@@ -1,56 +1,112 @@
 ---
-title: "Make your first Rail call"
-description: "Check your identity and project access in a provisioned Rail environment."
+title: "Quickstart"
+description: "Run the Rail locally, make your first API call, and govern your first action, in about five minutes."
 ---
 
-This quickstart makes a read-only API call. You need `curl`, an operator-provided Rail endpoint, and an OAuth access token with `platform:read`. You do not need payment credentials.
+You'll start a local sandbox, call the API, run a protected action through authorization and dispatch, and verify the evidence offline. You need Docker and the `rail` CLI. You don't need an account, a hosted endpoint, or payment credentials.
 
-## 1. Get an environment
+## 1. Install the CLI
 
-Ask your Rail operator for the customer API base URL, identity-provider configuration, tenant enrollment, project access, and supported contract version. See [environment setup](/get-started/environment).
-
-There is no shared public sandbox URL or self-service API-key flow established in this documentation. Hosts ending in `.invalid` in the downloadable contract are placeholders.
-
-## 2. Set your connection
-
-Set `RAIL_BASE_URL` to your provisioned **platform service** HTTPS endpoint without a trailing slash or `/v1` suffix, or to a gateway confirmed to route `/v1/context`. Reference deployments expose separate service addresses; do not assume this address also serves execution or settlement. Supply `RAIL_ACCESS_TOKEN` through your secret manager or local environment. Do not put either value in committed examples.
+<Tabs>
+  <Tab title="macOS and Linux (Homebrew)">
+    ```bash
+    brew install therailai/tap/rail
+    ```
+  </Tab>
+  <Tab title="Binary download">
+    Download the archive for your platform from [Rail CLI releases](https://github.com/therailAI/rail-cli-releases/releases), check it against `checksums.txt`, and put `rail` on your `PATH`.
+  </Tab>
+</Tabs>
 
 ```bash
-: "${RAIL_BASE_URL:?Set your provisioned Rail customer API base URL}"
-: "${RAIL_ACCESS_TOKEN:?Supply an OAuth access token}"
-
-curl --fail-with-body --silent --show-error \
-  "${RAIL_BASE_URL%/}/v1/context" \
-  --header "Authorization: Bearer ${RAIL_ACCESS_TOKEN}" \
-  --header 'Accept: application/json'
+rail version
 ```
 
-Do not add a tenant-selection header. Rail derives the tenant and principal from the authenticated identity and enrollment. This minimal request assumes an unbound customer token and a trusted server certificate. For a certificate-bound token, use your operator's CA and client certificate/key configuration for this request too.
+## 2. Start the sandbox
 
-## 3. Check the context
+Create a project and start the Rail on your machine:
 
-The response identifies `tenant_id`, `principal_id`, `oauth_subject`, `scopes`, `project_ids`, and `api_version`. Check that the identity and projects match your intended integration. A token with the right scope can still lack access to a referenced object.
+```bash
+mkdir acme-pay && cd acme-pay
+rail init
+rail sandbox up
+```
+
+`rail init` writes `rail.yaml`, which declares one action (`procurement.purchase_order.create`) with an approval threshold, plus an example effect script. `rail sandbox up` starts the sandbox, enrolls the project, saves a profile, and grants your project's agent authority within the declared limits. See [the local sandbox](/get-started/sandbox) for what runs and how to manage it.
+
+## 3. Make your first call
+
+```bash
+curl --cacert "$(rail sandbox ca)" https://localhost:8443/v1/context \
+  --header "Authorization: Bearer $(rail sandbox token)"
+```
+
+The response identifies who you are to the Rail: tenant, principal, OAuth subject, scopes, and projects. The Rail derives all of this from the token; there is no tenant header to set.
 
 ```json
 {
-  "tenant_id": "ten_example0001",
-  "principal_id": "pri_example0001",
-  "oauth_subject": "example-workload",
-  "scopes": ["platform:read"],
-  "project_ids": ["prj_example0001"],
-  "api_version": "v1"
+  "api_version": "v1",
+  "tenant_id": "ten_dev00000000000000001",
+  "principal_id": "pri_7329ec4c9f71a6851bbb92e088fc4c49",
+  "project_ids": ["prj_dev00000000000000001"],
+  "scopes": ["authority:read", "authority:write", "platform:read", "..."],
+  "oauth_subject": "1526b49e-ef4f-45e3-a6b5-289cebe40d10"
 }
 ```
 
-These IDs are illustrative; your environment returns its own values.
+Your IDs differ. This token belongs to the project's governor, which manages authority. It can't run actions itself.
 
-## 4. Choose your next step
+## 4. Govern an action
+
+Your agent places a purchase order. The effect command runs only if the Rail authorizes and dispatches it:
+
+```bash
+rail govern procurement.purchase_order.create \
+  --input '{"supplier_id":"SUP-ACME","amount":"250.00"}' \
+  -- ./examples/effect.sh
+```
+
+```text
+execution   exe_a3aaf8f20e6c86f254fcabb94e2b81b7
+journey     grt_9d771fefd7ada391eb104ba596f8fe2b
+state       completed
+authorized  rec_02416ee734e4970d5b84d92b2d37d099
+dispatch    rec_81a1ab320a347d1765dccadfcb9d70c7
+result      rec_ca91775a1ba5ed58460bd838cf783f18
+verified    rec_3a72f023c60f0d509aba453518002882
+```
+
+Each `rec_` line is a signed receipt: the authorization decision, the dispatch permit, the effect's signed result, and its verification. The example effect is simulated; nothing real happens.
+
+Now ask for more than the policy allows without approval:
+
+```bash
+rail govern procurement.purchase_order.create --own-authority \
+  --input '{"supplier_id":"SUP-ACME","amount":"12000.00"}' \
+  -- ./examples/effect.sh
+```
+
+The execution stops at `awaiting_approval` with `APPROVAL_REQUIRED`, and the effect does not run. [Approvals and inspection](/cli/approvals-and-inspection) shows how an approver votes and how the same execution resumes.
+
+<Note>A grant covers each resource and action once. `--own-authority` gives a call its own one-use grant so you can repeat actions while experimenting. See [governed commands](/cli/govern).</Note>
+
+## 5. Verify the evidence
+
+Export the journey and verify it offline, the way a third party would:
+
+```bash
+rail journey export grt_9d771fefd7ada391eb104ba596f8fe2b
+```
+
+The export writes a bundle and its trust file under `.rail/journeys/`, then verifies them: signatures and inclusion proofs, the authority chain, non-expansion, and capability binding. Anyone with the bundle can repeat the check without access to your Rail. See [export and verify](/cli/evidence).
+
+## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Submit a governed action" icon="arrow-right" href="/guides/governed-execution">Use provisioned definitions, bindings, and authority to perform a protected action.</Card>
-  <Card title="Try the SDKs" icon="code" href="/sdks/overview">Use the same customer operations from TypeScript or Python.</Card>
+  <Card title="Call the API from code" icon="code" href="/sdks/overview">Use the TypeScript or Python SDK against the same sandbox.</Card>
+  <Card title="Try the API playground" icon="play" href="/get-started/sandbox#use-the-api-playground">Send requests to your sandbox from the API reference.</Card>
+  <Card title="Govern from your code" icon="shield-check" href="/sdks/governed-typescript">Wrap your own function as the protected effect.</Card>
+  <Card title="Understand the model" icon="book" href="/concepts/overview">Authority, execution, evidence, and clearing.</Card>
 </CardGroup>
 
-If you receive `401`, check token validity, issuer, audience, active enrollment, and any certificate binding. If you receive `403`, check effective scopes and domain authorization. A resource hidden by project/object authorization can return `404`. Use [errors and recovery](/api-reference/errors) for the complete response model.
-
-Without environment access, start with the [recorded workflows](/examples/recorded-workflows). Those are inspectable reference evidence, not a live API sandbox.
+To connect to an environment your operator runs instead, see [environment setup](/get-started/environment).

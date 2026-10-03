@@ -36,7 +36,10 @@ for product in product_groups:
         check(isinstance(resource,dict) and resource.get('expanded') is False,'API resources must start collapsed')
         check(len(resource['pages'])<=10,'Split oversized API resource group: '+resource['group'])
 for route in nav:check((ROOT/(route+'.mdx')).is_file(),'Missing navigation route: '+route)
-check(config['api']['playground']['display']=='simple','API playground must remain non-interactive')
+# The playground calls the developer's local sandbox straight from the browser (ADR-005):
+# Mintlify's proxy cannot reach localhost, and the sandbox must be the default server.
+check(config['api']['playground'].get('display')=='interactive','API playground must be interactive (local sandbox)')
+check(config['api']['playground'].get('proxy') is False,'API playground must call the sandbox directly (proxy: false)')
 for redirect in config.get('redirects',[]):
     check(redirect['source']!=redirect['destination'],'Redirect cycle')
     check((ROOT/(redirect['destination'].strip('/')+'.mdx')).is_file(),'Missing redirect destination')
@@ -72,7 +75,10 @@ check(all(b['source_contract_sha256']==manifest['source_sha256'] for b in implem
 for method,path in ops:
     op=spec['paths'][path][method]
     check(path.startswith('/v1/') and op.get('x-audience')=='customer','Non-customer endpoint: '+path)
-    check(op.get('security') and all('OAuth2' in req for req in op['security']),'Missing OAuth requirement: '+path)
+    # OAuth2 is the contract requirement; the only alternative allowed is the playground's
+    # Bearer scheme, which carries the same OAuth access token.
+    check(op.get('security') and any('OAuth2' in req for req in op['security']) and all(set(req)<= {'OAuth2'} or req=={'Bearer':[]} for req in op['security']),'Missing OAuth requirement: '+path)
+    check(spec['servers'][0]['url']=='https://localhost:8443','The local sandbox must be the first (default) server')
 
 def refs(value):
     if isinstance(value,dict):
