@@ -9,7 +9,7 @@ This is the public Mintlify documentation for The Rail: the authorization and cl
 - Distinguish OAuth authentication, bounded authority, execution, verification, clearing, and confirmed settlement.
 - A receipt is evidence, not a grant. Completion, result release, and settlement have separate gates.
 - Label contract behavior, deployment requirements, recorded evidence, and illustrative examples.
-- Do not imply public package releases, hosted endpoints, production SLAs, live customer results, or compliance guarantees without supporting release evidence.
+- Do not imply hosted endpoints, production SLAs, live customer results, or compliance guarantees without supporting release evidence. Package names and install commands describe the 0.2.0 release; this site's changes ship with that release.
 
 ## Sources and boundaries
 
@@ -20,4 +20,4 @@ This is the public Mintlify documentation for The Rail: the authorization and cl
 
 ## Validation
 
-Run `python3 maintenance/validate.py`, `mint validate`, and `mint broken-links`. Verify SDK examples against the matching supplied SDK when changing them. Confirm navigation and redirects. Keep the API playground non-interactive until a documented public environment exists.
+Run `python3 maintenance/validate.py`, `mint validate`, and `mint broken-links`. Verify SDK examples against the matching supplied SDK when changing them. Confirm navigation and redirects. The API playground is interactive against the developer's local sandbox (`https://localhost:8443`, `rail sandbox up`) and calls it directly from the browser (`proxy: false`). Do not point it at a hosted environment or route it through Mintlify's proxy.

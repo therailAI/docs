@@ -1,28 +1,29 @@
 ---
 title: "Environment and release status"
-description: "Know what you need to integrate and which evidence supports this release."
+description: "Choose between the local sandbox and an operator environment, and know what to request for production."
 ---
 
-## What is available to read
+## Two ways to run against The Rail
 
-This site publishes the **0.1.1 customer HTTP contract**, integration guides, development SDK usage, and links to six recorded reference journeys. Contract paths use `/v1`; the contract package version and the URL version are different identifiers.
+- **The local sandbox.** One command starts the complete Rail on your machine, with development identities and simulated effects. Use it to learn the API, build an integration, and run tests. See [the local sandbox](/get-started/sandbox) and the [quickstart](/quickstart).
+- **An operator environment.** A Rail deployment your operator runs and qualifies, with your identity provider, real targets, and production controls. The rest of this page covers what to request.
 
-| Surface | Status represented here |
+## What this release provides
+
+| Surface | Status |
 | --- | --- |
-| Customer OpenAPI | Version 0.1.1 reference, 127 operations |
-| TypeScript and Python SDKs | Repository development version 0.1.0; newer local-preview version 0.2.0 has additional helpers |
-| Rail CLI | Repository: offline verification and operator demo tooling. Local preview adds developer setup and governed commands |
+| Customer OpenAPI | Contract 0.1.1, 127 operations |
+| Developer tools | Release 0.2.0: CLI, local sandbox, TypeScript and Python SDKs, MCP proxy. See [implementation and release status](/get-started/implementation-status) |
+| Local sandbox | Your machine only; development keys and simulated effects |
 | Recorded workflows | Reference runs with explicit test, stub, fixture, or synthetic inputs |
 | Hosted API endpoint | Provided and qualified per deployment |
 | Production readiness | Must be established for your environment and workflow |
 
 The product catalog groups the customer contract into six products. Grouping an operation does not establish that it is enabled at your gateway or entitled for your project.
 
-The [September 26 implementation audit](/get-started/implementation-status) found registered handlers for all 127 operations and documented narrower behavior where applicable. It also found a gap between repository and local-preview tooling. Identify your supplied revision before using CLI or SDK examples.
-
 ## Request these connection details
 
-For a supplied local workspace, follow the [CLI development walkthrough](/cli/local-development). For an existing environment, configure a [shared profile](/cli/profiles).
+For an operator environment, import the profile descriptor your operator supplies with [`rail login`](/cli/profiles).
 
 - Service-specific API base URLs and supported contract version, or a confirmed gateway routing all required operations.
 - Identity provider, token endpoint, expected audience, and allowed grants.
@@ -39,4 +40,4 @@ Qualify the complete protected execution path. Confirm how the adapter detects d
 
 Agree on identity lifecycle, signing-key rotation, retention, monitoring, availability, and recovery requirements. The reference demonstrations do not provide a service-level commitment or performance result for your workload.
 
-[Start with a read-only call](/quickstart). For an introduction, use [The Rail website](https://the-rail-site.vercel.app/).
+[Start with the quickstart](/quickstart). For an introduction, use [The Rail website](https://the-rail-site.vercel.app/).

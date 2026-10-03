@@ -1,26 +1,27 @@
 ---
 title: "SDKs and CLI"
-description: "Choose the CLI, a typed customer API client, or a governed execution helper."
+description: "Choose the CLI, a typed customer API client, a governed execution helper, or the MCP proxy."
 ---
 
-Choose the tool that matches your integration and supplied build. The reviewed repository SDKs expose customer clients; shared profiles and governed helpers belong to the newer local preview. Start with [implementation and release status](/get-started/implementation-status) to identify your baseline.
+Every Rail developer tool is versioned together; this documentation covers release **0.2.0**, against customer contract 0.1.1. All of them work against the [local sandbox](/get-started/sandbox) and against an operator environment.
 
 <CardGroup cols={2}>
-  <Card title="Rail CLI" icon="terminal" href="/sdks/cli">Set up a local project, govern shell commands, inspect decisions, and export evidence.</Card>
-  <Card title="TypeScript" icon="code" href="/sdks/typescript">Install the development client and make typed customer API calls.</Card>
-  <Card title="Python" icon="code" href="/sdks/python">Install the development client and call the same customer contract.</Card>
-  <Card title="Governed execution" icon="shield-check" href="/sdks/recovery">Connect effect callbacks to authorization, dispatch, and recovery.</Card>
+  <Card title="Rail CLI" icon="terminal" href="/sdks/cli">Start the sandbox, govern shell commands, administer authority, and export verifiable evidence.</Card>
+  <Card title="TypeScript" icon="code" href="/sdks/typescript">`npm install @therailai/sdk`: typed customer client and the governed helper.</Card>
+  <Card title="Python" icon="code" href="/sdks/python">`pip install therail-sdk`: the same client and helper for Python.</Card>
+  <Card title="Governed execution" icon="shield-check" href="/sdks/governed-typescript">Wrap your own function as a protected effect.</Card>
 </CardGroup>
 
 ## Two SDK layers
 
-Use `RailClient` for customer API calls. In the separately supplied local preview, `Rail.fromProfile` in TypeScript or `Rail.from_profile` in Python coordinates a protected effect through an enrolled worker. Those helper imports are absent from the reviewed repository default branches and require runtime configuration and role-specific credentials beyond the customer HTTP API.
+- **`RailClient`** makes customer API calls with a bearer token: reads, authority management, evidence, assets, settlement. It validates requests and responses against the contract.
+- **The governed helper** (`Rail.fromProfile` in TypeScript, `Rail.from_profile` in Python) runs one protected effect through the whole lifecycle: action, capability, authorization, dispatch, your effect, the signed result, and verification. It needs the agent's and worker's certificate-bound credentials, which a profile supplies; a bearer token alone is not enough.
 
-Start a governed call with the [TypeScript example](/sdks/governed-typescript) or [Python example](/sdks/governed-python).
+Start a governed call with the [TypeScript](/sdks/governed-typescript) or [Python](/sdks/governed-python) guide.
 
 ## Customer API namespaces
 
-The TypeScript and Python clients expose the same customer operation catalog. Product namespaces group operations without changing request schemas, response schemas, or authority requirements.
+Both clients expose the same operation catalog. Product namespaces group operations without changing schemas or authority requirements.
 
 | Namespace | Product |
 | --- | --- |
@@ -31,20 +32,27 @@ The TypeScript and Python clients expose the same customer operation catalog. Pr
 | `lineage` | Lineage & Rights |
 | `settlement` | Settlement |
 
-Shared and advanced operations are available through the generic `call` method. TypeScript uses camelCase operation names; Python product methods use snake_case. The generic Python `call` accepts the contract's camelCase operation ID.
-
-## Distribution status
-
-The reviewed repository versions are TypeScript `0.1.0-dev.0` and Python `0.1.0.dev0`, against customer contract 0.1.1. The explicitly marked local-preview guides use TypeScript `0.2.0-dev.0`, Python `0.2.0.dev0`, and the matching newer CLI. These are different source baselines, not interchangeable releases.
-
-The TypeScript package is private, and the repository version's export map blocks a normal package import. Follow the [source-build instructions](/sdks/typescript). Obtain versioned source or a qualified distribution from your operator; do not assume `npm install @rail/sdk` or `pip install rail-sdk` resolves to a supported public release.
-
-The examples use Node.js 22 or Python 3.12+, respectively. Supply environment credentials separately.
+Shared and advanced operations are available through the generic `call` method with the contract's operation ID.
 
 ## Client behavior
 
-Both clients validate request and successful-response shape and require explicit idempotency keys for mutations. They perform one request without automatic mutation retries. They return data and response metadata; the metadata is useful for ETags and asynchronous resource locations.
+Both clients:
 
-A client uses one configured base URL. Product namespaces organize methods but do not route to different services. Use service-specific clients, or an operator-supplied gateway that covers the requested paths.
+- validate request and response shape against the contract, and reject a response that doesn't match;
+- require an explicit idempotency key on every mutation, and provide `newIdempotencyKey()` / `new_idempotency_key()`;
+- page through lists (`paginate`) and wait for asynchronous operations (`waitForOperation` / `wait_for_operation`);
+- raise a typed error per problem status, all subclasses of `RailError`;
+- retry only `GET` requests answered `429` or `503` with `Retry-After`. **Mutations are never retried automatically.**
 
-[Local development](/cli/local-development) · [Profiles](/cli/profiles) · [Recovery](/sdks/recovery).
+A client uses one base URL. The sandbox gateway routes every customer path; in an operator environment without a gateway, use one client per service address.
+
+## Packages and license
+
+| Package | Registry | Requires |
+| --- | --- | --- |
+| `@therailai/sdk` | npm | Node.js 22.13+ |
+| `therail-sdk` (import `rail_sdk`) | PyPI | Python 3.12+ |
+| `@therailai/mcp` | npm | Node.js 22.13+ |
+| `rail` | Homebrew `therailai/tap`, release binaries | macOS, Linux, Windows |
+
+The SDKs, CLI and MCP proxy are licensed under The Rail Developer Tools License, included with each package. It covers using them to build and run applications that work with The Rail.

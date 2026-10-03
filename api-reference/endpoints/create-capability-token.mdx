@@ -4,11 +4,13 @@ description: "POST /v1/capability-tokens \u2014 The Rail customer contract 0.1.1
 openapi: "/api-reference/openapi.json POST /v1/capability-tokens"
 ---
 
-<Note>Contract 0.1.1. Confirm that this operation is enabled in your deployment. Example hosts are placeholders; this page does not send API requests.</Note>
+<Note>Contract 0.1.1. The playground cannot send this call; see below. For any other environment, confirm that this operation is enabled there; `.invalid` hosts are placeholders.</Note>
 
 **Required OAuth scope:** `authority:token`. Tenant, object, and domain authorization also apply.
 
 Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
+
+This call must come from the certificate-bound agent, so the browser playground cannot complete it. Use [`rail govern`](/cli/govern) or the governed helper in the [TypeScript](/sdks/governed-typescript) or [Python](/sdks/governed-python) SDK.
 
 This is a consequential operation. Credentials and OAuth scope alone do not authorize the effect; applicable authority and policy must also permit it.
 

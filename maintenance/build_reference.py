@@ -9,6 +9,29 @@ from pathlib import Path
 from reference_navigation import product_group
 
 ROOT = Path(__file__).resolve().parents[1]
+SANDBOX_URL = 'https://localhost:8443'
+# Operations the browser cannot complete: they need a certificate-bound token
+# or a capability, which only a client holding the certificate can present.
+CERTIFICATE_BOUND = {'createExecution', 'createCapabilityToken'}
+# The local sandbox's project users and their scopes (`rail sandbox token USER`),
+# in the order the endpoint notes suggest them.
+SANDBOX_USERS = [
+    ('governor', {'authority:write', 'authority:read', 'authority:revoke', 'registry:read', 'registry:write', 'registry:promote', 'routing:read', 'routing:write', 'routing:attest', 'routing:measure', 'routing:estimate', 'provenance:read', 'provenance:write', 'provenance:disclose', 'settlement:read', 'settlement:write', 'settlement:release', 'settlement:remediate', 'edge:read', 'edge:assurance', 'platform:read', 'platform:write', 'evidence:read', 'execution:read'}),
+    ('approver1', {'execution:approve', 'execution:read'}),
+    ('verifier', {'evidence:attest', 'evidence:write', 'evidence:read'}),
+]
+
+
+def sandbox_note(oid, scopes):
+    if oid in CERTIFICATE_BOUND:
+        return None
+    for user, granted in SANDBOX_USERS:
+        if set(scopes) <= granted:
+            command = 'rail sandbox token' if user == 'governor' else f'rail sandbox token {user}'
+            return f'**Try it** against your [local sandbox](/get-started/sandbox): run `rail sandbox up` and `rail sandbox trust`, then paste the output of `{command}` as the bearer token.'
+    if 'execution:write' in scopes:
+        return 'In the [local sandbox](/get-started/sandbox), this scope belongs to the agent, whose calls are certificate-bound: use [`rail govern`](/cli/govern) or an SDK rather than the playground.'
+    return 'The [local sandbox](/get-started/sandbox)\'s default users don\'t hold ' + ', '.join('`' + s + '`' for s in scopes) + ', so the playground gets `403` here.'
 parser = argparse.ArgumentParser()
 parser.add_argument('contract', type=Path)
 parser.add_argument('catalog', type=Path)
@@ -32,15 +55,30 @@ spec = public(source)
 spec['info'] = {
     'title': 'The Rail customer API', 'version': source['info']['version'],
     'summary': 'Authorization and clearing for autonomous agents.',
-    'description': 'Customer contract reference 0.1.1. Deployment support must be confirmed for your environment; this reference is not a public sandbox or a production availability guarantee. Use the endpoint and identity configuration supplied by your operator. All .invalid URLs are non-routable placeholders. Customer calls require OAuth and tenant/object authorization. Capabilities have additional sender-binding requirements. Every protected effect needs current authority. HTTP success does not establish execution, verification, or release of value. Runtime and internal-service APIs are excluded.'}
+    'description': 'Customer contract reference 0.1.1. The first server is the local sandbox (`rail sandbox up`), which the interactive playground can call from your browser after `rail sandbox trust`; it runs on your machine and is not a hosted environment. For any other environment, use the endpoint and identity configuration supplied by your operator; deployment support must be confirmed there. All .invalid URLs are non-routable placeholders. Customer calls require OAuth and tenant/object authorization. Capabilities have additional sender-binding requirements. Every protected effect needs current authority. HTTP success does not establish execution, verification, or release of value. Runtime and internal-service APIs are excluded.'}
 # Keep schema constraints, security and statuses; omit inherited fixture examples,
 # which include historical signatures and generic responses reused across operations.
+# The interactive playground: the local sandbox first, then the
+# operator placeholder. The playground sends the same OAuth access token as a
+# bearer token; Mintlify's playground takes bearer input, not OAuth flows.
+spec['servers'] = [
+    {'url': SANDBOX_URL, 'description': 'Local sandbox (rail sandbox up). Your machine only.'},
+    *[s for s in spec.get('servers', []) if s.get('url') != SANDBOX_URL],
+]
+spec['components']['securitySchemes']['Bearer'] = {
+    'type': 'http', 'scheme': 'bearer',
+    'description': 'The same OAuth access token, sent as a bearer token. For the local sandbox, paste the output of `rail sandbox token`.'}
 for path, item in spec['paths'].items():
     assert path.startswith('/v1/')
     for method, operation in item.items():
         if method not in ('get','post','put','patch','delete'): continue
         assert operation.get('x-audience') == 'customer'
         operation['description'] = 'Contract 0.1.1; confirm support in your deployment. ' + operation.get('description', '')
+        # The bearer alternative carries the same OAuth token and the same scopes
+        # (OpenAPI 3.1 allows scopes on any scheme). Certificate-bound operations
+        # get none: a bearer token alone can never satisfy them.
+        if operation.get('security') and operation['operationId'] not in CERTIFICATE_BOUND and not any('Bearer' in r for r in operation['security']):
+            operation['security'] = operation['security'] + [{'Bearer': list(r['OAuth2'])} for r in operation['security'] if 'OAuth2' in r]
 
 (ROOT/'api-reference').mkdir(exist_ok=True)
 (ROOT/'api-reference/openapi.json').write_text(json.dumps(spec, indent=2, ensure_ascii=False)+'\n')
@@ -59,8 +97,9 @@ for title, slug, operations in groups:
         route = 'api-reference/endpoints/'+re.sub(r'(?<!^)(?=[A-Z])','-',oid).lower()
         page = ROOT/(route+'.mdx'); page.parent.mkdir(parents=True,exist_ok=True)
         scopes = ', '.join('`'+s+'`' for s in operation['scopes'])
-        content = '\n'.join(['---','title: '+json.dumps(operation['summary']), 'description: '+json.dumps(f'{method} {path} — The Rail customer contract 0.1.1.'), 'openapi: '+json.dumps(f'/api-reference/openapi.json {method} {path}'), '---', '', '<Note>Contract 0.1.1. Confirm that this operation is enabled in your deployment. Example hosts are placeholders; this page does not send API requests.</Note>', '', f'**Required OAuth scope:** {scopes}. Tenant, object, and domain authorization also apply.', ''])
+        content = '\n'.join(['---','title: '+json.dumps(operation['summary']), 'description: '+json.dumps(f'{method} {path} — The Rail customer contract 0.1.1.'), 'openapi: '+json.dumps(f'/api-reference/openapi.json {method} {path}'), '---', '', '<Note>Contract 0.1.1. ' + (sandbox_note(oid, operation['scopes']) or 'The playground cannot send this call; see below.') + ' For any other environment, confirm that this operation is enabled there; `.invalid` hosts are placeholders.</Note>', '', f'**Required OAuth scope:** {scopes}. Tenant, object, and domain authorization also apply.', ''])
         if method != 'GET': content += '\nSupply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).\n'
+        if oid in CERTIFICATE_BOUND: content += '\nThis call must come from the certificate-bound agent, so the browser playground cannot complete it. Use [`rail govern`](/cli/govern) or the governed helper in the [TypeScript](/sdks/governed-typescript) or [Python](/sdks/governed-python) SDK.\n'
         if operation['consequential']: content += '\nThis is a consequential operation. Credentials and OAuth scope alone do not authorize the effect; applicable authority and policy must also permit it.\n'
         content += '\n**Service:** `'+operation['service']+'`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).\n'
         if oid in implementation_notes:
@@ -70,6 +109,6 @@ for title, slug, operations in groups:
     navigation.append(product_group(title, pages))
 assert len(seen) == 127
 (ROOT/'maintenance/api-navigation.json').write_text(json.dumps(navigation,indent=2)+'\n')
-manifest = {'contract_version':spec['info']['version'],'source_sha256':hashlib.sha256(source_bytes).hexdigest(),'published_sha256':hashlib.sha256((ROOT/'api-reference/openapi.json').read_bytes()).hexdigest(),'customer_operations':len(seen),'runtime_operations':0,'internal_operations':0,'transformations':['Remove source-disclosure annotations and private source links','Omit fixture examples; retain request/response schemas, parameters, OAuth requirements and statuses','Replace top-level introduction and annotate deployment qualification']}
+manifest = {'contract_version':spec['info']['version'],'source_sha256':hashlib.sha256(source_bytes).hexdigest(),'published_sha256':hashlib.sha256((ROOT/'api-reference/openapi.json').read_bytes()).hexdigest(),'customer_operations':len(seen),'runtime_operations':0,'internal_operations':0,'transformations':['Remove source-disclosure annotations and private source links','Omit fixture examples; retain request/response schemas, parameters, OAuth requirements and statuses','Replace top-level introduction and annotate deployment qualification','Add the local sandbox server and a bearer scheme for the interactive playground']}
 (ROOT/'maintenance/contract-baseline.json').write_text(json.dumps(manifest,indent=2)+'\n')
 print(f'Generated {len(seen)} customer endpoint pages and a bundled public OpenAPI reference.')

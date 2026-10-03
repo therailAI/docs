@@ -1,3 +1,17 @@
+# Documentation update — October 3, 2026 (release 0.2.0)
+
+The September 26 follow-ups are resolved in the repositories' default branches, so the docs now describe one baseline: release 0.2.0, pinned by the release manifest. The implementation audit was re-run (127 operations, ten services, both SDK catalogs agree with contract 0.1.1).
+
+| September 26 follow-up | Resolution | Documentation change |
+| --- | --- | --- |
+| CLI/profile/govern helpers absent from default branches | Merged; `rail sandbox` added | Removed preview qualifications; new [local sandbox](/get-started/sandbox) page and sandbox-based quickstart |
+| TypeScript package export map blocked imports | Packaged as `@therailai/sdk` with a full export map; a packed-tarball test covers ESM, CommonJS and TypeScript consumers | Replaced the source-build workaround with `npm install @therailai/sdk` |
+| Per-call custom headers missing | Present in both SDKs | Documented `headers` options |
+| No single base URL across services | The sandbox gateway routes every customer path at `https://localhost:8443` | Single base URL in sandbox examples; operator environments may still need per-service addresses |
+| API playground non-interactive | Interactive against the local sandbox, browser-direct (`proxy: false`); verified with the Mintlify playground sending `GET /v1/context` | Reference generator adds the sandbox server and a bearer scheme; certificate-bound operations are labelled |
+
+Unchanged restrictions (identity enrollment, reconciliation reasons, approval coverage, results, webhooks, settlement) were rechecked and remain on the status page.
+
 # Documentation rectification — September 26, 2026
 
 The audit compared the public docs with pinned repository default branches and with the newer local preview. Immutable source revisions and a row for every customer operation are in `implementation-audit.json`. Primary integration guidance now follows the repository baseline; local-preview guides remain available with prominent qualification.

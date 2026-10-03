@@ -1,43 +1,52 @@
 ---
 title: "Rail CLI"
-description: "Set up a local project, govern commands, inspect executions, and export verifiable evidence."
+description: "Install the rail CLI, run the local sandbox, govern commands, and export verifiable evidence."
 ---
 
-The reviewed repository CLI supports offline bundle inspection/verification and operator demo tooling. The newer **local preview** adds project initialization, provisioning, shared profiles, governed shell commands, approvals, and journey export. Those additions are absent from the repository default branch reviewed on September 26, 2026. Identify your supplied build using [implementation and release status](/get-started/implementation-status).
+## Install
 
-## Get the CLI
-
-Obtain a versioned binary for your operating system and architecture, or a matching source workspace and build instructions, from your Rail operator. A public binary release or universal installer is not established by these docs.
+<Tabs>
+  <Tab title="macOS and Linux (Homebrew)">
+    ```bash
+    brew install therailai/tap/rail
+    ```
+  </Tab>
+  <Tab title="Binary download">
+    Download the archive for your operating system and architecture (macOS, Linux and Windows; amd64 and arm64) from [Rail CLI releases](https://github.com/therailAI/rail-cli-releases/releases). Check it against the release's `checksums.txt`, then put `rail` on your `PATH`.
+  </Tab>
+</Tabs>
 
 ```bash
-rail version
+rail version          # CLI, API contract and release manifest; -json for scripts
 ```
 
-Offline bundle verification needs the binary, a supported bundle, and a confirmed trust anchor. It works without a profile. See [offline verification](/cli/evidence).
+Offline bundle verification needs only the binary, a bundle, and a trust anchor; it works without a profile. See [export and verify](/cli/evidence).
 
-## Local preview workflows
-
-The following connected guides require the newer operator-supplied local preview. `rail dev up` also requires the full matching development workspace; the binary alone does not contain the services.
+## Guides
 
 <CardGroup cols={2}>
-  <Card title="Local development" icon="terminal" href="/cli/local-development">Initialize a project and run a simulated protected effect.</Card>
-  <Card title="Profiles and identity" icon="key" href="/cli/profiles">Connect the CLI and SDKs to the same environment.</Card>
-  <Card title="Govern a command" icon="shield-check" href="/cli/govern">Pass permitted work to a shell adapter and handle its outcome.</Card>
-  <Card title="Approvals and inspection" icon="magnifying-glass" href="/cli/approvals-and-inspection">Inspect decisions, record votes, and resume pending work.</Card>
+  <Card title="Local sandbox" icon="box" href="/get-started/sandbox">Run the whole Rail in Docker with one command.</Card>
+  <Card title="Profiles and identity" icon="key" href="/cli/profiles">Connect the CLI and SDKs to the sandbox or an operator environment.</Card>
+  <Card title="Govern a command" icon="shield-check" href="/cli/govern">Pass permitted work to a shell command and handle its outcome.</Card>
+  <Card title="Approvals and inspection" icon="magnifying-glass" href="/cli/approvals-and-inspection">Inspect decisions, vote, and resume pending work.</Card>
   <Card title="Export and verify" icon="fingerprint" href="/cli/evidence">Build a journey bundle and verify it offline.</Card>
+  <Card title="Develop from a workspace" icon="terminal" href="/cli/local-development">Run the stack from source checkouts instead of the sandbox image.</Card>
 </CardGroup>
 
-## Command availability
+## Commands
 
-| Command | Purpose | Baseline |
-| --- | --- | --- |
-| `rail bundle inspect`, `rail verify` | Inspect and verify supported bundles offline | Repository and preview |
-| `rail init`, `rail dev` | Initialize and provision a project | Local preview only |
-| `rail login`, `rail whoami`, `rail logout` | Select and inspect a profile | Local preview only |
-| `rail govern`, `rail govern resume` | Run an effect through authorization and dispatch gates | Local preview only |
-| `rail grants`, `rail delegations`, `rail tokens` | Manage bounded authority | Local preview only |
-| `rail executions`, `rail approvals` | Inspect state and vote as an enrolled approver | Local preview only |
-| `rail receipts`, `rail policy` | Inspect evidence and policy pins | Local preview only |
-| `rail journey export` | Export a grant journey's evidence | Local preview only |
+| Command | Purpose |
+| --- | --- |
+| `rail init` | Write a project's `rail.yaml` and an example effect |
+| `rail sandbox up`, `down`, `reset`, `status`, `logs`, `token`, `ca`, `trust`, `untrust` | Run and manage the [local sandbox](/get-started/sandbox) |
+| `rail login`, `rail whoami`, `rail logout` | Select and inspect a profile |
+| `rail govern`, `rail govern resume` | Run an effect through authorization and dispatch |
+| `rail grants`, `rail delegations`, `rail tokens` | Manage bounded authority |
+| `rail executions`, `rail approvals` | Inspect state and vote as an enrolled approver |
+| `rail receipts`, `rail policy` | Inspect evidence and policy pins |
+| `rail journey export` | Export a grant journey's evidence and verify it |
+| `rail bundle inspect`, `rail verify` | Inspect and verify bundles offline |
+| `rail mcp serve` | Run the [MCP proxy](https://www.npmjs.com/package/@therailai/mcp) for a host |
+| `rail dev` | Run the stack from a source workspace |
 
-Command availability and access depend on the supplied version and the profile's roles. A successful login does not grant authority to perform a protected action.
+What a command may do depends on the profile's roles. A successful login does not grant authority to perform a protected action.

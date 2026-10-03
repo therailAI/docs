@@ -4,10 +4,14 @@
     "title": "The Rail customer API",
     "version": "0.1.1",
     "summary": "Authorization and clearing for autonomous agents.",
-    "description": "Customer contract reference 0.1.1. Deployment support must be confirmed for your environment; this reference is not a public sandbox or a production availability guarantee. Use the endpoint and identity configuration supplied by your operator. All .invalid URLs are non-routable placeholders. Customer calls require OAuth and tenant/object authorization. Capabilities have additional sender-binding requirements. Every protected effect needs current authority. HTTP success does not establish execution, verification, or release of value. Runtime and internal-service APIs are excluded."
+    "description": "Customer contract reference 0.1.1. The first server is the local sandbox (`rail sandbox up`), which the interactive playground can call from your browser after `rail sandbox trust`; it runs on your machine and is not a hosted environment. For any other environment, use the endpoint and identity configuration supplied by your operator; deployment support must be confirmed there. All .invalid URLs are non-routable placeholders. Customer calls require OAuth and tenant/object authorization. Capabilities have additional sender-binding requirements. Every protected effect needs current authority. HTTP success does not establish execution, verification, or release of value. Runtime and internal-service APIs are excluded."
   },
   "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
   "servers": [
+    {
+      "url": "https://localhost:8443",
+      "description": "Local sandbox (rail sandbox up). Your machine only."
+    },
     {
       "url": "https://api.rail.invalid",
       "description": "PLACEHOLDER — replace with your deployed endpoint."
@@ -74,6 +78,11 @@
         "security": [
           {
             "OAuth2": [
+              "platform:read"
+            ]
+          },
+          {
+            "Bearer": [
               "platform:read"
             ]
           }
@@ -148,6 +157,11 @@
         "security": [
           {
             "OAuth2": [
+              "platform:read"
+            ]
+          },
+          {
+            "Bearer": [
               "platform:read"
             ]
           }
@@ -226,6 +240,11 @@
         "security": [
           {
             "OAuth2": [
+              "platform:write"
+            ]
+          },
+          {
+            "Bearer": [
               "platform:write"
             ]
           }
@@ -321,6 +340,11 @@
             "OAuth2": [
               "platform:read"
             ]
+          },
+          {
+            "Bearer": [
+              "platform:read"
+            ]
           }
         ],
         "parameters": [
@@ -403,6 +427,11 @@
             "OAuth2": [
               "platform:read"
             ]
+          },
+          {
+            "Bearer": [
+              "platform:read"
+            ]
           }
         ],
         "parameters": [
@@ -479,6 +508,11 @@
         "security": [
           {
             "OAuth2": [
+              "platform:write"
+            ]
+          },
+          {
+            "Bearer": [
               "platform:write"
             ]
           }
@@ -575,6 +609,11 @@
             "OAuth2": [
               "platform:read"
             ]
+          },
+          {
+            "Bearer": [
+              "platform:read"
+            ]
           }
         ],
         "parameters": [
@@ -655,6 +694,11 @@
         "security": [
           {
             "OAuth2": [
+              "platform:write"
+            ]
+          },
+          {
+            "Bearer": [
               "platform:write"
             ]
           }
@@ -748,6 +792,11 @@
         "security": [
           {
             "OAuth2": [
+              "platform:write"
+            ]
+          },
+          {
+            "Bearer": [
               "platform:write"
             ]
           }
@@ -851,6 +900,11 @@
             "OAuth2": [
               "platform:read"
             ]
+          },
+          {
+            "Bearer": [
+              "platform:read"
+            ]
           }
         ],
         "parameters": [
@@ -931,6 +985,11 @@
         "security": [
           {
             "OAuth2": [
+              "execution:read"
+            ]
+          },
+          {
+            "Bearer": [
               "execution:read"
             ]
           }
@@ -1015,6 +1074,11 @@
             "OAuth2": [
               "registry:read"
             ]
+          },
+          {
+            "Bearer": [
+              "registry:read"
+            ]
           }
         ],
         "parameters": [
@@ -1091,6 +1155,11 @@
         "security": [
           {
             "OAuth2": [
+              "registry:write"
+            ]
+          },
+          {
+            "Bearer": [
               "registry:write"
             ]
           }
@@ -1186,6 +1255,11 @@
             "OAuth2": [
               "registry:read"
             ]
+          },
+          {
+            "Bearer": [
+              "registry:read"
+            ]
           }
         ],
         "parameters": [
@@ -1266,6 +1340,11 @@
         "security": [
           {
             "OAuth2": [
+              "registry:read"
+            ]
+          },
+          {
+            "Bearer": [
               "registry:read"
             ]
           }
@@ -1352,6 +1431,11 @@
         "security": [
           {
             "OAuth2": [
+              "registry:write"
+            ]
+          },
+          {
+            "Bearer": [
               "registry:write"
             ]
           }
@@ -1455,6 +1539,11 @@
             "OAuth2": [
               "registry:read"
             ]
+          },
+          {
+            "Bearer": [
+              "registry:read"
+            ]
           }
         ],
         "parameters": [
@@ -1543,6 +1632,11 @@
         "security": [
           {
             "OAuth2": [
+              "registry:write"
+            ]
+          },
+          {
+            "Bearer": [
               "registry:write"
             ]
           }
@@ -1666,6 +1760,11 @@
             "OAuth2": [
               "registry:promote"
             ]
+          },
+          {
+            "Bearer": [
+              "registry:promote"
+            ]
           }
         ],
         "parameters": [
@@ -1762,6 +1861,11 @@
             "OAuth2": [
               "registry:read"
             ]
+          },
+          {
+            "Bearer": [
+              "registry:read"
+            ]
           }
         ],
         "parameters": [
@@ -1838,6 +1942,11 @@
         "security": [
           {
             "OAuth2": [
+              "registry:write"
+            ]
+          },
+          {
+            "Bearer": [
               "registry:write"
             ]
           }
@@ -1933,6 +2042,11 @@
             "OAuth2": [
               "registry:read"
             ]
+          },
+          {
+            "Bearer": [
+              "registry:read"
+            ]
           }
         ],
         "parameters": [
@@ -2013,6 +2127,11 @@
         "security": [
           {
             "OAuth2": [
+              "registry:write"
+            ]
+          },
+          {
+            "Bearer": [
               "registry:write"
             ]
           }
@@ -2128,6 +2247,11 @@
             "OAuth2": [
               "authority:read"
             ]
+          },
+          {
+            "Bearer": [
+              "authority:read"
+            ]
           }
         ],
         "parameters": [
@@ -2204,6 +2328,11 @@
         "security": [
           {
             "OAuth2": [
+              "authority:write"
+            ]
+          },
+          {
+            "Bearer": [
               "authority:write"
             ]
           }
@@ -2300,6 +2429,11 @@
             "OAuth2": [
               "authority:read"
             ]
+          },
+          {
+            "Bearer": [
+              "authority:read"
+            ]
           }
         ],
         "parameters": [
@@ -2380,6 +2514,11 @@
         "security": [
           {
             "OAuth2": [
+              "authority:revoke"
+            ]
+          },
+          {
+            "Bearer": [
               "authority:revoke"
             ]
           }
@@ -2484,6 +2623,11 @@
             "OAuth2": [
               "authority:read"
             ]
+          },
+          {
+            "Bearer": [
+              "authority:read"
+            ]
           }
         ],
         "parameters": [
@@ -2560,6 +2704,11 @@
         "security": [
           {
             "OAuth2": [
+              "authority:write"
+            ]
+          },
+          {
+            "Bearer": [
               "authority:write"
             ]
           }
@@ -2656,6 +2805,11 @@
             "OAuth2": [
               "authority:read"
             ]
+          },
+          {
+            "Bearer": [
+              "authority:read"
+            ]
           }
         ],
         "parameters": [
@@ -2736,6 +2890,11 @@
         "security": [
           {
             "OAuth2": [
+              "authority:revoke"
+            ]
+          },
+          {
+            "Bearer": [
               "authority:revoke"
             ]
           }
@@ -2934,6 +3093,11 @@
             "OAuth2": [
               "authority:read"
             ]
+          },
+          {
+            "Bearer": [
+              "authority:read"
+            ]
           }
         ],
         "parameters": [
@@ -3010,6 +3174,11 @@
         "security": [
           {
             "OAuth2": [
+              "authority:write"
+            ]
+          },
+          {
+            "Bearer": [
               "authority:write"
             ]
           }
@@ -3106,6 +3275,11 @@
             "OAuth2": [
               "authority:read"
             ]
+          },
+          {
+            "Bearer": [
+              "authority:read"
+            ]
           }
         ],
         "parameters": [
@@ -3186,6 +3360,11 @@
         "security": [
           {
             "OAuth2": [
+              "authority:write"
+            ]
+          },
+          {
+            "Bearer": [
               "authority:write"
             ]
           }
@@ -3293,6 +3472,11 @@
             "OAuth2": [
               "execution:write"
             ]
+          },
+          {
+            "Bearer": [
+              "execution:write"
+            ]
           }
         ],
         "parameters": [
@@ -3386,6 +3570,11 @@
             "OAuth2": [
               "execution:read"
             ]
+          },
+          {
+            "Bearer": [
+              "execution:read"
+            ]
           }
         ],
         "parameters": [
@@ -3466,6 +3655,11 @@
         "security": [
           {
             "OAuth2": [
+              "execution:write"
+            ]
+          },
+          {
+            "Bearer": [
               "execution:write"
             ]
           }
@@ -3561,6 +3755,11 @@
             "OAuth2": [
               "execution:read"
             ]
+          },
+          {
+            "Bearer": [
+              "execution:read"
+            ]
           }
         ],
         "parameters": [
@@ -3641,6 +3840,11 @@
         "security": [
           {
             "OAuth2": [
+              "execution:read"
+            ]
+          },
+          {
+            "Bearer": [
               "execution:read"
             ]
           }
@@ -3845,6 +4049,11 @@
             "OAuth2": [
               "execution:read"
             ]
+          },
+          {
+            "Bearer": [
+              "execution:read"
+            ]
           }
         ],
         "parameters": [
@@ -3925,6 +4134,11 @@
         "security": [
           {
             "OAuth2": [
+              "execution:read"
+            ]
+          },
+          {
+            "Bearer": [
               "execution:read"
             ]
           }
@@ -4015,6 +4229,11 @@
             "OAuth2": [
               "execution:read"
             ]
+          },
+          {
+            "Bearer": [
+              "execution:read"
+            ]
           }
         ],
         "parameters": [
@@ -4096,6 +4315,11 @@
         "security": [
           {
             "OAuth2": [
+              "execution:write"
+            ]
+          },
+          {
+            "Bearer": [
               "execution:write"
             ]
           }
@@ -4203,6 +4427,11 @@
             "OAuth2": [
               "execution:write"
             ]
+          },
+          {
+            "Bearer": [
+              "execution:write"
+            ]
           }
         ],
         "parameters": [
@@ -4308,6 +4537,11 @@
             "OAuth2": [
               "execution:read"
             ]
+          },
+          {
+            "Bearer": [
+              "execution:read"
+            ]
           }
         ],
         "parameters": [
@@ -4410,6 +4644,11 @@
             "OAuth2": [
               "execution:read"
             ]
+          },
+          {
+            "Bearer": [
+              "execution:read"
+            ]
           }
         ],
         "parameters": [
@@ -4490,6 +4729,11 @@
         "security": [
           {
             "OAuth2": [
+              "execution:approve"
+            ]
+          },
+          {
+            "Bearer": [
               "execution:approve"
             ]
           }
@@ -4600,6 +4844,11 @@
         "security": [
           {
             "OAuth2": [
+              "evidence:read"
+            ]
+          },
+          {
+            "Bearer": [
               "evidence:read"
             ]
           }
@@ -4721,6 +4970,11 @@
             "OAuth2": [
               "evidence:read"
             ]
+          },
+          {
+            "Bearer": [
+              "evidence:read"
+            ]
           }
         ],
         "parameters": [
@@ -4801,6 +5055,11 @@
         "security": [
           {
             "OAuth2": [
+              "evidence:read"
+            ]
+          },
+          {
+            "Bearer": [
               "evidence:read"
             ]
           }
@@ -4885,6 +5144,11 @@
             "OAuth2": [
               "evidence:read"
             ]
+          },
+          {
+            "Bearer": [
+              "evidence:read"
+            ]
           }
         ],
         "parameters": [
@@ -4957,6 +5221,11 @@
         "security": [
           {
             "OAuth2": [
+              "evidence:write"
+            ]
+          },
+          {
+            "Bearer": [
               "evidence:write"
             ]
           }
@@ -5052,6 +5321,11 @@
             "OAuth2": [
               "evidence:read"
             ]
+          },
+          {
+            "Bearer": [
+              "evidence:read"
+            ]
           }
         ],
         "parameters": [
@@ -5132,6 +5406,11 @@
         "security": [
           {
             "OAuth2": [
+              "evidence:attest"
+            ]
+          },
+          {
+            "Bearer": [
               "evidence:attest"
             ]
           }
@@ -5228,6 +5507,11 @@
             "OAuth2": [
               "evidence:write"
             ]
+          },
+          {
+            "Bearer": [
+              "evidence:write"
+            ]
           }
         ],
         "parameters": [
@@ -5321,6 +5605,11 @@
             "OAuth2": [
               "evidence:read"
             ]
+          },
+          {
+            "Bearer": [
+              "evidence:read"
+            ]
           }
         ],
         "parameters": [
@@ -5401,6 +5690,11 @@
         "security": [
           {
             "OAuth2": [
+              "evidence:write"
+            ]
+          },
+          {
+            "Bearer": [
               "evidence:write"
             ]
           }
@@ -5496,6 +5790,11 @@
             "OAuth2": [
               "evidence:read"
             ]
+          },
+          {
+            "Bearer": [
+              "evidence:read"
+            ]
           }
         ],
         "parameters": [
@@ -5576,6 +5875,11 @@
         "security": [
           {
             "OAuth2": [
+              "evidence:invalidate"
+            ]
+          },
+          {
+            "Bearer": [
               "evidence:invalidate"
             ]
           }
@@ -5672,6 +5976,11 @@
             "OAuth2": [
               "evidence:read"
             ]
+          },
+          {
+            "Bearer": [
+              "evidence:read"
+            ]
           }
         ],
         "parameters": [
@@ -5754,6 +6063,11 @@
             "OAuth2": [
               "evidence:read"
             ]
+          },
+          {
+            "Bearer": [
+              "evidence:read"
+            ]
           }
         ],
         "parameters": [
@@ -5834,6 +6148,11 @@
         "security": [
           {
             "OAuth2": [
+              "evidence:retention"
+            ]
+          },
+          {
+            "Bearer": [
               "evidence:retention"
             ]
           }
@@ -5932,6 +6251,11 @@
             "OAuth2": [
               "routing:read"
             ]
+          },
+          {
+            "Bearer": [
+              "routing:read"
+            ]
           }
         ],
         "parameters": [
@@ -6008,6 +6332,11 @@
         "security": [
           {
             "OAuth2": [
+              "routing:write"
+            ]
+          },
+          {
+            "Bearer": [
               "routing:write"
             ]
           }
@@ -6104,6 +6433,11 @@
             "OAuth2": [
               "routing:read"
             ]
+          },
+          {
+            "Bearer": [
+              "routing:read"
+            ]
           }
         ],
         "parameters": [
@@ -6184,6 +6518,11 @@
         "security": [
           {
             "OAuth2": [
+              "routing:write"
+            ]
+          },
+          {
+            "Bearer": [
               "routing:write"
             ]
           }
@@ -6288,6 +6627,11 @@
             "OAuth2": [
               "routing:read"
             ]
+          },
+          {
+            "Bearer": [
+              "routing:read"
+            ]
           }
         ],
         "parameters": [
@@ -6364,6 +6708,11 @@
         "security": [
           {
             "OAuth2": [
+              "routing:write"
+            ]
+          },
+          {
+            "Bearer": [
               "routing:write"
             ]
           }
@@ -6460,6 +6809,11 @@
             "OAuth2": [
               "routing:read"
             ]
+          },
+          {
+            "Bearer": [
+              "routing:read"
+            ]
           }
         ],
         "parameters": [
@@ -6540,6 +6894,11 @@
         "security": [
           {
             "OAuth2": [
+              "routing:write"
+            ]
+          },
+          {
+            "Bearer": [
               "routing:write"
             ]
           }
@@ -6636,6 +6995,11 @@
             "OAuth2": [
               "routing:attest"
             ]
+          },
+          {
+            "Bearer": [
+              "routing:attest"
+            ]
           }
         ],
         "parameters": [
@@ -6730,6 +7094,11 @@
             "OAuth2": [
               "routing:read"
             ]
+          },
+          {
+            "Bearer": [
+              "routing:read"
+            ]
           }
         ],
         "parameters": [
@@ -6810,6 +7179,11 @@
         "security": [
           {
             "OAuth2": [
+              "routing:measure"
+            ]
+          },
+          {
+            "Bearer": [
               "routing:measure"
             ]
           }
@@ -6906,6 +7280,11 @@
             "OAuth2": [
               "routing:read"
             ]
+          },
+          {
+            "Bearer": [
+              "routing:read"
+            ]
           }
         ],
         "parameters": [
@@ -6986,6 +7365,11 @@
         "security": [
           {
             "OAuth2": [
+              "routing:estimate"
+            ]
+          },
+          {
+            "Bearer": [
               "routing:estimate"
             ]
           }
@@ -7082,6 +7466,11 @@
             "OAuth2": [
               "routing:read"
             ]
+          },
+          {
+            "Bearer": [
+              "routing:read"
+            ]
           }
         ],
         "parameters": [
@@ -7162,6 +7551,11 @@
         "security": [
           {
             "OAuth2": [
+              "routing:write"
+            ]
+          },
+          {
+            "Bearer": [
               "routing:write"
             ]
           }
@@ -7257,6 +7651,11 @@
             "OAuth2": [
               "routing:read"
             ]
+          },
+          {
+            "Bearer": [
+              "routing:read"
+            ]
           }
         ],
         "parameters": [
@@ -7337,6 +7736,11 @@
         "security": [
           {
             "OAuth2": [
+              "provenance:write"
+            ]
+          },
+          {
+            "Bearer": [
               "provenance:write"
             ]
           }
@@ -7432,6 +7836,11 @@
             "OAuth2": [
               "provenance:write"
             ]
+          },
+          {
+            "Bearer": [
+              "provenance:write"
+            ]
           }
         ],
         "parameters": [
@@ -7525,6 +7934,11 @@
             "OAuth2": [
               "provenance:write"
             ]
+          },
+          {
+            "Bearer": [
+              "provenance:write"
+            ]
           }
         ],
         "parameters": [
@@ -7616,6 +8030,11 @@
         "security": [
           {
             "OAuth2": [
+              "provenance:write"
+            ]
+          },
+          {
+            "Bearer": [
               "provenance:write"
             ]
           }
@@ -7712,6 +8131,11 @@
             "OAuth2": [
               "provenance:write"
             ]
+          },
+          {
+            "Bearer": [
+              "provenance:write"
+            ]
           }
         ],
         "parameters": [
@@ -7803,6 +8227,11 @@
         "security": [
           {
             "OAuth2": [
+              "provenance:write"
+            ]
+          },
+          {
+            "Bearer": [
               "provenance:write"
             ]
           }
@@ -7897,6 +8326,11 @@
         "security": [
           {
             "OAuth2": [
+              "provenance:write"
+            ]
+          },
+          {
+            "Bearer": [
               "provenance:write"
             ]
           }
@@ -8001,6 +8435,11 @@
             "OAuth2": [
               "provenance:disclose"
             ]
+          },
+          {
+            "Bearer": [
+              "provenance:disclose"
+            ]
           }
         ],
         "parameters": [
@@ -8097,6 +8536,11 @@
             "OAuth2": [
               "provenance:read"
             ]
+          },
+          {
+            "Bearer": [
+              "provenance:read"
+            ]
           }
         ],
         "parameters": [
@@ -8173,6 +8617,11 @@
         "security": [
           {
             "OAuth2": [
+              "provenance:write"
+            ]
+          },
+          {
+            "Bearer": [
               "provenance:write"
             ]
           }
@@ -8268,6 +8717,11 @@
             "OAuth2": [
               "provenance:read"
             ]
+          },
+          {
+            "Bearer": [
+              "provenance:read"
+            ]
           }
         ],
         "parameters": [
@@ -8348,6 +8802,11 @@
         "security": [
           {
             "OAuth2": [
+              "provenance:write"
+            ]
+          },
+          {
+            "Bearer": [
               "provenance:write"
             ]
           }
@@ -8443,6 +8902,11 @@
             "OAuth2": [
               "settlement:read"
             ]
+          },
+          {
+            "Bearer": [
+              "settlement:read"
+            ]
           }
         ],
         "parameters": [
@@ -8519,6 +8983,11 @@
         "security": [
           {
             "OAuth2": [
+              "settlement:write"
+            ]
+          },
+          {
+            "Bearer": [
               "settlement:write"
             ]
           }
@@ -8615,6 +9084,11 @@
             "OAuth2": [
               "settlement:read"
             ]
+          },
+          {
+            "Bearer": [
+              "settlement:read"
+            ]
           }
         ],
         "parameters": [
@@ -8695,6 +9169,11 @@
         "security": [
           {
             "OAuth2": [
+              "settlement:read"
+            ]
+          },
+          {
+            "Bearer": [
               "settlement:read"
             ]
           }
@@ -8779,6 +9258,11 @@
             "OAuth2": [
               "settlement:read"
             ]
+          },
+          {
+            "Bearer": [
+              "settlement:read"
+            ]
           }
         ],
         "parameters": [
@@ -8857,6 +9341,11 @@
         "security": [
           {
             "OAuth2": [
+              "settlement:read"
+            ]
+          },
+          {
+            "Bearer": [
               "settlement:read"
             ]
           }
@@ -8941,6 +9430,11 @@
             "OAuth2": [
               "settlement:read"
             ]
+          },
+          {
+            "Bearer": [
+              "settlement:read"
+            ]
           }
         ],
         "parameters": [
@@ -9017,6 +9511,11 @@
         "security": [
           {
             "OAuth2": [
+              "settlement:write"
+            ]
+          },
+          {
+            "Bearer": [
               "settlement:write"
             ]
           }
@@ -9113,6 +9612,11 @@
             "OAuth2": [
               "settlement:read"
             ]
+          },
+          {
+            "Bearer": [
+              "settlement:read"
+            ]
           }
         ],
         "parameters": [
@@ -9193,6 +9697,11 @@
         "security": [
           {
             "OAuth2": [
+              "settlement:release"
+            ]
+          },
+          {
+            "Bearer": [
               "settlement:release"
             ]
           }
@@ -9309,6 +9818,11 @@
             "OAuth2": [
               "settlement:return"
             ]
+          },
+          {
+            "Bearer": [
+              "settlement:return"
+            ]
           }
         ],
         "parameters": [
@@ -9423,6 +9937,11 @@
             "OAuth2": [
               "settlement:remediate"
             ]
+          },
+          {
+            "Bearer": [
+              "settlement:remediate"
+            ]
           }
         ],
         "parameters": [
@@ -9528,6 +10047,11 @@
             "OAuth2": [
               "settlement:read"
             ]
+          },
+          {
+            "Bearer": [
+              "settlement:read"
+            ]
           }
         ],
         "parameters": [
@@ -9604,6 +10128,11 @@
         "security": [
           {
             "OAuth2": [
+              "settlement:write"
+            ]
+          },
+          {
+            "Bearer": [
               "settlement:write"
             ]
           }
@@ -9699,6 +10228,11 @@
             "OAuth2": [
               "settlement:read"
             ]
+          },
+          {
+            "Bearer": [
+              "settlement:read"
+            ]
           }
         ],
         "parameters": [
@@ -9781,6 +10315,11 @@
             "OAuth2": [
               "edge:read"
             ]
+          },
+          {
+            "Bearer": [
+              "edge:read"
+            ]
           }
         ],
         "parameters": [
@@ -9857,6 +10396,11 @@
         "security": [
           {
             "OAuth2": [
+              "edge:write"
+            ]
+          },
+          {
+            "Bearer": [
               "edge:write"
             ]
           }
@@ -9953,6 +10497,11 @@
             "OAuth2": [
               "edge:read"
             ]
+          },
+          {
+            "Bearer": [
+              "edge:read"
+            ]
           }
         ],
         "parameters": [
@@ -10033,6 +10582,11 @@
         "security": [
           {
             "OAuth2": [
+              "edge:allocate"
+            ]
+          },
+          {
+            "Bearer": [
               "edge:allocate"
             ]
           }
@@ -10129,6 +10683,11 @@
             "OAuth2": [
               "edge:read"
             ]
+          },
+          {
+            "Bearer": [
+              "edge:read"
+            ]
           }
         ],
         "parameters": [
@@ -10209,6 +10768,11 @@
         "security": [
           {
             "OAuth2": [
+              "edge:sync"
+            ]
+          },
+          {
+            "Bearer": [
               "edge:sync"
             ]
           }
@@ -10313,6 +10877,11 @@
             "OAuth2": [
               "edge:read"
             ]
+          },
+          {
+            "Bearer": [
+              "edge:read"
+            ]
           }
         ],
         "parameters": [
@@ -10401,6 +10970,11 @@
         "security": [
           {
             "OAuth2": [
+              "edge:assurance"
+            ]
+          },
+          {
+            "Bearer": [
               "edge:assurance"
             ]
           }
@@ -10497,6 +11071,11 @@
             "OAuth2": [
               "edge:read"
             ]
+          },
+          {
+            "Bearer": [
+              "edge:read"
+            ]
           }
         ],
         "parameters": [
@@ -10577,6 +11156,11 @@
         "security": [
           {
             "OAuth2": [
+              "edge:assurance"
+            ]
+          },
+          {
+            "Bearer": [
               "edge:assurance"
             ]
           }
@@ -10673,6 +11257,11 @@
             "OAuth2": [
               "edge:read"
             ]
+          },
+          {
+            "Bearer": [
+              "edge:read"
+            ]
           }
         ],
         "parameters": [
@@ -10753,6 +11342,11 @@
         "security": [
           {
             "OAuth2": [
+              "events:read"
+            ]
+          },
+          {
+            "Bearer": [
               "events:read"
             ]
           }
@@ -10860,6 +11454,11 @@
             "OAuth2": [
               "events:read"
             ]
+          },
+          {
+            "Bearer": [
+              "events:read"
+            ]
           }
         ],
         "parameters": [
@@ -10936,6 +11535,11 @@
         "security": [
           {
             "OAuth2": [
+              "events:write"
+            ]
+          },
+          {
+            "Bearer": [
               "events:write"
             ]
           }
@@ -11031,6 +11635,11 @@
             "OAuth2": [
               "events:read"
             ]
+          },
+          {
+            "Bearer": [
+              "events:read"
+            ]
           }
         ],
         "parameters": [
@@ -11109,6 +11718,11 @@
         "security": [
           {
             "OAuth2": [
+              "events:write"
+            ]
+          },
+          {
+            "Bearer": [
               "events:write"
             ]
           }
@@ -11218,6 +11832,11 @@
             "OAuth2": [
               "events:manage"
             ]
+          },
+          {
+            "Bearer": [
+              "events:manage"
+            ]
           }
         ],
         "parameters": [
@@ -11319,6 +11938,11 @@
             "OAuth2": [
               "events:read"
             ]
+          },
+          {
+            "Bearer": [
+              "events:read"
+            ]
           }
         ],
         "parameters": [
@@ -11405,6 +12029,11 @@
         "security": [
           {
             "OAuth2": [
+              "events:write"
+            ]
+          },
+          {
+            "Bearer": [
               "events:write"
             ]
           }
@@ -20160,6 +20789,11 @@
             }
           }
         }
+      },
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "The same OAuth access token, sent as a bearer token. For the local sandbox, paste the output of `rail sandbox token`."
       }
     }
   },

@@ -1,5 +1,5 @@
 {
-  "review_date": "2026-09-26",
+  "review_date": "2026-10-03",
   "contract_version": "0.1.1",
   "method": "Static source and catalog comparison; registration is not end-to-end qualification.",
   "baselines": {
@@ -7,48 +7,48 @@
       "source_contract_sha256": "d6f8455d729d68131d9093489ef5926735c891432b96a42128cb606ef6677cb4",
       "customer_operations": 127,
       "sdk_versions": {
-        "typescript": "0.1.0-dev.0",
-        "python": "0.1.0.dev0"
+        "typescript": "0.2.0",
+        "python": "0.2.0"
       },
       "revisions": {
-        "contract": "8c4dfb9f92300d47b5ad632e9dbea6f4af12cb91",
-        "core": "22611e854e471fded588e9f0ae1860b786172e4d",
-        "rail-authority-api": "0e8e4ec34f692a62cd12e194879970d4af172470",
+        "contract": "5cba50b6ef7a11322b21c94ba5a8710127b59e70",
+        "core": "0c75f2ced8f4cbe9d2584b3a2aac05975f9fcb8d",
+        "rail-authority-api": "304a05a578680744278dcce4548531a0a23b80f3",
         "rail-edge-api": "1166ec4351678f892404a465ffca4af36db1f658",
         "rail-events-api": "d857f0ef8fa15824773dcae90cf81385d7bcf009",
-        "rail-evidence-api": "8d5651037e39cd8505bc270ebf8c120406f1d335",
-        "rail-execution-api": "4a57c35a87c951a50a8d61040a49b3b0317587f6",
+        "rail-evidence-api": "006e8118ae2ddc91f970dd4beee69b2c1002e19b",
+        "rail-execution-api": "7447c1f79afc36de5f43cac541edf8c44a26ae33",
         "rail-platform-api": "bfad5aa0cf7b61efcfe29acddbbece062825f772",
         "rail-provenance-api": "cbdbee9387c24c9d48cea07455e6e6954a4ff3f2",
-        "rail-registry-api": "2a90a853b0e9b82a3281d559fa4cbdae17ef2482",
-        "rail-routing-api": "e4457692b9ee2ded0442b09dd6180f1e0fe00080",
+        "rail-registry-api": "2776805027d96ee1190256dc096a9a5c22628538",
+        "rail-routing-api": "4ed9d3c3d566443956ef95fef19c43ea03ca5b3b",
         "rail-settlement-api": "62fdc5fbd1c706a80d90566c999115a1b615f5ae",
-        "typescript": "040c589ff4b0a017ca7e917eaf280a1ec28d64d6",
-        "python": "c9e54fe7f436fdf0210650ddf2d98ab737a1314d"
+        "typescript": "e5c537a0e5f65ed652299bf765ede442933b58f5",
+        "python": "836c5d5e6714dc321b51bea57c10a1cbf12136ba"
       }
     },
     "local_preview": {
       "source_contract_sha256": "d6f8455d729d68131d9093489ef5926735c891432b96a42128cb606ef6677cb4",
       "customer_operations": 127,
       "sdk_versions": {
-        "typescript": "0.2.0-dev.0",
-        "python": "0.2.0.dev0"
+        "typescript": "0.2.0",
+        "python": "0.2.0"
       },
       "revisions": {
         "contract": "5cba50b6ef7a11322b21c94ba5a8710127b59e70",
-        "core": "748d2f7d4457035edd6e9b1d59800daa4078f756",
+        "core": "0c75f2ced8f4cbe9d2584b3a2aac05975f9fcb8d",
         "rail-authority-api": "304a05a578680744278dcce4548531a0a23b80f3",
         "rail-edge-api": "1166ec4351678f892404a465ffca4af36db1f658",
         "rail-events-api": "d857f0ef8fa15824773dcae90cf81385d7bcf009",
         "rail-evidence-api": "006e8118ae2ddc91f970dd4beee69b2c1002e19b",
-        "rail-execution-api": "41c2111c80ee9a476661bfc709c8127214875d57",
+        "rail-execution-api": "7447c1f79afc36de5f43cac541edf8c44a26ae33",
         "rail-platform-api": "bfad5aa0cf7b61efcfe29acddbbece062825f772",
         "rail-provenance-api": "cbdbee9387c24c9d48cea07455e6e6954a4ff3f2",
         "rail-registry-api": "2776805027d96ee1190256dc096a9a5c22628538",
         "rail-routing-api": "4ed9d3c3d566443956ef95fef19c43ea03ca5b3b",
         "rail-settlement-api": "62fdc5fbd1c706a80d90566c999115a1b615f5ae",
-        "typescript": "453681030f5cdc394eaefbfaad44d10ffcb5c0bd",
-        "python": "216a49d611b625014705c00c7ec8a28bb8984bf2"
+        "typescript": "e5c537a0e5f65ed652299bf765ede442933b58f5",
+        "python": "836c5d5e6714dc321b51bea57c10a1cbf12136ba"
       }
     }
   },

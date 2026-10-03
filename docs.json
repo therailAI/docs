@@ -40,6 +40,7 @@
             "pages": [
               "introduction",
               "quickstart",
+              "get-started/sandbox",
               "get-started/environment",
               "get-started/authentication",
               "get-started/implementation-status"
@@ -98,13 +99,13 @@
               "sdks/cli",
               "cli/evidence",
               {
-                "group": "Local preview workflows",
+                "group": "Workflows",
                 "expanded": false,
                 "pages": [
-                  "cli/local-development",
                   "cli/profiles",
                   "cli/govern",
-                  "cli/approvals-and-inspection"
+                  "cli/approvals-and-inspection",
+                  "cli/local-development"
                 ]
               }
             ]
@@ -509,7 +510,8 @@
   },
   "api": {
     "playground": {
-      "display": "simple"
+      "display": "interactive",
+      "proxy": false
     },
     "examples": {
       "languages": [
@@ -592,10 +594,6 @@
     {
       "source": "/concepts/money-movement",
       "destination": "/concepts/overview"
-    },
-    {
-      "source": "/get-started/sandbox",
-      "destination": "/get-started/environment"
     },
     {
       "source": "/guides/account-management",

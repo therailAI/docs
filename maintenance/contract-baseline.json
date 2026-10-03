@@ -1,13 +1,14 @@
 {
   "contract_version": "0.1.1",
   "source_sha256": "d6f8455d729d68131d9093489ef5926735c891432b96a42128cb606ef6677cb4",
-  "published_sha256": "512b1a70250d015677c94f9378c52dcc2de16d0adb71054bd6a9aa826b194105",
+  "published_sha256": "dd923910b46a37a14da3a76d8bda744ba56d976e8391c4adc0a5a243d81bb689",
   "customer_operations": 127,
   "runtime_operations": 0,
   "internal_operations": 0,
   "transformations": [
     "Remove source-disclosure annotations and private source links",
     "Omit fixture examples; retain request/response schemas, parameters, OAuth requirements and statuses",
-    "Replace top-level introduction and annotate deployment qualification"
+    "Replace top-level introduction and annotate deployment qualification",
+    "Add the local sandbox server and a bearer scheme for the interactive playground"
   ]
 }

@@ -16,7 +16,13 @@ mint broken-links
 mint dev
 ```
 
-The current validation environment uses Mint CLI 4.2.502. `docs.json` defines navigation and branding. Guides are MDX files. `api-reference/openapi.json` is the self-contained public customer reference; the browser playground is intentionally non-interactive because no shared public sandbox is specified.
+To try the API playground in a local preview, start the sandbox with the preview's origin allowed:
+
+```bash
+rail sandbox up -origins http://localhost:3000
+```
+
+The current validation environment uses Mint CLI 4.2.502. `docs.json` defines navigation and branding. Guides are MDX files. `api-reference/openapi.json` is the self-contained public customer reference; its first server is the local sandbox (`https://localhost:8443`), which the interactive playground calls directly from the reader's browser (`proxy: false`); there is no shared hosted sandbox.
 
 ## Maintain the API reference
 
@@ -32,9 +38,9 @@ Resource labels live in `maintenance/reference_navigation.py`. The generator pro
 
 ## Reconcile docs with source
 
-The September 26 audit separates the repository default-branch baseline from newer local-preview tooling. `maintenance/implementation-audit.json` records immutable revisions and operation coverage. `maintenance/implementation-notes.json` supplies reviewed restrictions to the endpoint generator; update it rather than editing generated endpoint pages.
+The October 3 audit (release 0.2.0) compares one baseline: the repositories' default branches, pinned by the release manifest. `maintenance/implementation-audit.json` records immutable revisions and operation coverage. `maintenance/implementation-notes.json` supplies reviewed restrictions to the endpoint generator; update it rather than editing generated endpoint pages.
 
-To repeat the comparison, obtain authorized snapshots of both workspaces, run `go run maintenance/list_handlers.go --root WORKSPACE` for each, and pass those JSON outputs to `maintenance/audit_implementation.py --main MAIN_WORKSPACE --preview PREVIEW_WORKSPACE --main-handlers MAIN_HANDLERS.json --preview-handlers PREVIEW_HANDLERS.json --date YYYY-MM-DD`. Inspect semantic restrictions separately: route coverage alone does not prove implementation completeness. Run the relevant SDK/service checks and record their scope in the validation report.
+To repeat the comparison, obtain an authorized workspace snapshot (pass it as both `--main` and `--preview` when there is one baseline), run `go run maintenance/list_handlers.go --root WORKSPACE` for each, and pass those JSON outputs to `maintenance/audit_implementation.py --main MAIN_WORKSPACE --preview PREVIEW_WORKSPACE --main-handlers MAIN_HANDLERS.json --preview-handlers PREVIEW_HANDLERS.json --date YYYY-MM-DD`. Inspect semantic restrictions separately: route coverage alone does not prove implementation completeness. Run the relevant SDK/service checks and record their scope in the validation report.
 
 ## Publishing
 

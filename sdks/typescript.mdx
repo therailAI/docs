@@ -1,60 +1,127 @@
 ---
 title: "TypeScript SDK"
-description: "Build the repository TypeScript client from source and call the customer API."
+description: "Install @therailai/sdk and call the customer API with typed, contract-validated requests."
 ---
 
-## Install from a supplied checkout
-
-This page covers repository SDK `0.1.0-dev.0`. The governed helper and custom-header option shown in the [local preview guide](/sdks/governed-typescript) require the separately supplied `0.2.0-dev.0` build. See [implementation status](/get-started/implementation-status).
-
-Use Node.js 22 and a matching SDK source checkout supplied by your operator. For these examples, place that checkout at `vendor/rail-sdk-typescript` inside your application. From your application directory:
+## Install
 
 ```bash
-npm ci --prefix vendor/rail-sdk-typescript
-npm run build --prefix vendor/rail-sdk-typescript
+npm install @therailai/sdk
 ```
 
-The reviewed repository package has an empty export map: installing it and importing `@rail/sdk` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`. Until a corrected distribution is supplied, import the built entry file directly as below. Keep the supplied checkout and its dependencies together. This source-build workaround does not imply public npm publication; the local preview's corrected exports are a separate build.
+Requires Node.js 22.13 or later. The package is ES modules; CommonJS code can `require('@therailai/sdk')` on these Node versions. TypeScript projects need TypeScript 5.8 or later with `moduleResolution` set to `nodenext` or `bundler` (`node20` needs TypeScript 5.9).
 
 ## Read your context
 
+Against the [local sandbox](/get-started/sandbox), trust its CA and take a token from the CLI:
+
+```bash
+export NODE_EXTRA_CA_CERTS="$(rail sandbox ca)"
+export RAIL_TOKEN="$(rail sandbox token)"
+```
+
 ```typescript
-import { RailClient, RailError } from './vendor/rail-sdk-typescript/dist/client.js';
+import { RailClient } from '@therailai/sdk';
 
-const baseURL = process.env.RAIL_BASE_URL;
-const token = process.env.RAIL_ACCESS_TOKEN;
-if (!baseURL || !token) throw new Error('Configure the Rail endpoint and token');
+const rail = new RailClient('https://localhost:8443', () => process.env.RAIL_TOKEN!);
 
-const client = new RailClient(baseURL, () => token);
-try {
-  const { data } = await client.call('getContext', undefined);
-  console.log(data.principal_id, data.project_ids);
-} catch (error) {
-  if (error instanceof RailError) console.error('Rail HTTP status:', error.status);
-  throw error;
+const { data: context } = await rail.call('getContext', undefined);
+console.log('signed in as', context.principal_id, context.project_ids);
+
+for await (const grant of rail.paginate('listAuthorityGrants')) {
+  console.log(grant.id, grant.state);
 }
 ```
 
-For long-running applications, supply an access-token callback that refreshes tokens using your identity provider. Do not embed a token in source code.
+The second argument is a token supplier, called before each request. For a long-running process, return a fresh token from your identity provider; don't embed a token in source code.
 
-For this context call, `RAIL_BASE_URL` must route to the platform service. The next example uses `RAIL_EXECUTION_BASE_URL` for the execution service. Both may point to the same address only when your operator supplies a gateway covering both paths. Namespace methods do not choose a different service address automatically.
+A client uses one base URL. The sandbox gateway routes every customer path, so one client covers all products there. In an operator environment without a gateway, create one client per service address; the namespaces below don't route to different services.
 
-## Product methods and options
+## Product methods
+
+Methods are grouped by product: `execution`, `authority`, `evidence`, `assets`, `lineage` and `settlement`. Every operation is also available through `call` by its contract operation ID.
 
 ```typescript
-const executionId = process.env.RAIL_EXECUTION_ID;
-if (!executionId) throw new Error('Set the execution to inspect');
-const executionBaseURL = process.env.RAIL_EXECUTION_BASE_URL;
-if (!executionBaseURL) throw new Error('Set the execution service endpoint');
-const executionClient = new RailClient(executionBaseURL, () => token);
-const { data, etag, location } = await executionClient.execution.getExecution(undefined, {
+const { data, etag } = await rail.execution.getExecution(undefined, {
   path: { execution_id: executionId },
 });
 console.log(data.state, data.external_effect);
 ```
 
-Mutations accept `idempotencyKey`; concurrency-controlled operations accept `ifMatch`. Repository SDK `0.1.0-dev.0` has no per-call `headers` option. For a capability-bound request, use an operator-qualified custom transport passed as the constructor's third argument, direct authenticated HTTP, or the supplied `0.2.0-dev.0` preview with custom-header support. The transport must also enforce the required certificate binding; adding `Rail-Capability` alone is insufficient.
+| Option | Use |
+| --- | --- |
+| `path`, `query` | Path and query parameters |
+| `idempotencyKey` | Required on every mutation |
+| `ifMatch` | The resource's current ETag, where the operation requires it |
+| `headers` | Extra headers an operation defines, such as `Rail-Capability` |
+| `signal` | Cancel the request |
+| `deadline` | Epoch milliseconds; automatic retries never wait past it |
 
-The SDK validates successful response shape. A malformed success response is a contract error, not usable evidence. Handle it through your recovery and observability policy.
+## Idempotency keys
 
-The examples do not automatically retry. See [idempotency](/api-reference/idempotency).
+Every mutation needs an explicit key. Make a fresh one per decision and reuse it only to retry that same request:
+
+```typescript
+import { newIdempotencyKey } from '@therailai/sdk';
+
+await rail.execution.createAction(body, { idempotencyKey: newIdempotencyKey() });
+```
+
+See [idempotency](/api-reference/idempotency).
+
+## Long-running operations
+
+Some requests return an operation that finishes later. Wait for it:
+
+```typescript
+const operation = await rail.waitForOperation(operationId, { timeoutMs: 120_000 });
+```
+
+The poller backs off from 500 ms to 5 s. It throws `OperationTimeoutError`, carrying the last state seen, when time runs out. `succeeded` means the command finished, not that an effect was permitted; inspect the resource and its gate decision.
+
+## Errors
+
+Every failed request throws a `RailError` with `status`, `code` (such as `POLICY_DENIED`), `requestId` and the full RFC 9457 `problem`. The subclass follows the status:
+
+| Class | Status |
+| --- | --- |
+| `BadRequestError` | 400 |
+| `AuthenticationError` | 401 |
+| `PermissionDeniedError` | 403 |
+| `NotFoundError` | 404 |
+| `ConflictError` | 409 |
+| `UnresolvedExternalEffectError` | 409 with `UNRESOLVED_EXTERNAL_EFFECT`: reconcile before any retry |
+| `PreconditionFailedError` | 412, 428 |
+| `PayloadTooLargeError` | 413 |
+| `UnprocessableError` | 422 |
+| `RateLimitedError` | 429 |
+| `UnavailableError` | 503 |
+| `ServerError` | other 5xx |
+
+A success response that doesn't match the contract throws `ResponseContractError`, also a `RailError`. Don't use such a response as evidence. See [errors and recovery](/api-reference/errors).
+
+## Retries
+
+The client retries only `GET` requests answered `429` or `503` with `Retry-After`, up to three attempts in total, waiting at most 30 seconds. Change this with the fourth constructor argument:
+
+```typescript
+const rail = new RailClient(baseURL, token, fetch, { retry: { maxAttempts: 5, maxDelayMs: 10_000 } });
+```
+
+**Mutations are never retried automatically.** If one fails, find out whether it took effect, then retry it yourself with the same idempotency key.
+
+## Capabilities and certificates
+
+`createExecution` takes a `Rail-Capability` header bound to the agent's client certificate, and a certificate-bound token is valid only over that certificate's TLS connection. Pass a transport that presents the certificate as the constructor's third argument (`mtlsFetch` from `@therailai/sdk/auth`), or let the [governed helper](/sdks/governed-typescript) do all of this for you.
+
+## Entry points
+
+| Import | Contents |
+| --- | --- |
+| `@therailai/sdk` | `RailClient`, product APIs, errors, validation, wire helpers, `verifyWebhook` |
+| `@therailai/sdk/govern` | `Rail`, the [governed call](/sdks/governed-typescript) |
+| `@therailai/sdk/runtime` | `RuntimeClient` for runtime workers |
+| `@therailai/sdk/auth` | mTLS fetch and token suppliers |
+| `@therailai/sdk/profile` | Profiles and product descriptors |
+| `@therailai/sdk/wire` | Commitments, signatures, Merkle proofs |
+| `@therailai/sdk/types` | Contract types |

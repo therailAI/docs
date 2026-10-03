@@ -1,17 +1,15 @@
 ---
-title: "Govern an action with Python (preview)"
+title: "Govern an action with Python"
 description: "Use Rail.from_profile and an effect callback to run a protected action through the development runtime."
 ---
 
-<Warning>Local preview only. This guide requires the operator-supplied development build with the CLI/SDK helpers. These commands and helper imports are absent from the repository default branches reviewed on September 26, 2026. See [implementation and release status](/get-started/implementation-status).</Warning>
-
 The `rail_sdk.govern` helper coordinates action submission, authorization, worker dispatch, and signed result reporting. Your effect callback runs only after dispatch is permitted.
 
-Install the [supplied Python SDK](/sdks/python), then configure a [shared profile](/cli/profiles). The helper needs agent and enrolled worker credentials, signing material, and a matching runtime. A customer API bearer token alone is insufficient. Keep production role boundaries consistent with your deployment design.
+Install the [Python SDK](/sdks/python) and start the [local sandbox](/get-started/sandbox) in your project; `rail sandbox up` saves the profile this helper reads. For an operator environment, import its profile with [`rail login`](/cli/profiles). The helper needs agent and enrolled worker credentials, signing material, and a matching runtime. A customer API bearer token alone is insufficient. Keep production role boundaries consistent with your deployment design.
 
 ## Run a simulated action
 
-Use the action definition and resources from the [local development template](/cli/local-development). Set `RAIL_OPERATION_ID` to an operation identifier allocated and durably saved for this intent before calling Rail.
+Use the action and resources from the `rail init` payments template used in the [quickstart](/quickstart). Set `RAIL_OPERATION_ID` to an operation identifier allocated and durably saved for this intent before calling Rail.
 
 This callback simulates a result; it makes no supplier or payment-provider call.
 
@@ -28,7 +26,7 @@ def simulate_purchase_order(permit: Permit) -> Outcome:
         reference=f"sim_{permit.execution_id}",
     )
 
-rail = Rail.from_profile("dev")
+rail = Rail.from_profile()
 try:
     result = rail.govern(
         "procurement.purchase_order.create",
@@ -66,7 +64,7 @@ Returning `None` defaults to an executed outcome in this helper. Always return a
 After the required approval is satisfied, use the stored execution ID and the same callback. This example reuses `simulate_purchase_order` from above:
 
 ```python
-rail = Rail.from_profile("dev")
+rail = Rail.from_profile()
 try:
     resumed = rail.resume(
         os.environ["RAIL_EXECUTION_ID"],
