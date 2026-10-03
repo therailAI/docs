@@ -4,7 +4,7 @@ description: "POST /v1/dependency-invalidations \u2014 The Rail customer contrac
 openapi: "/api-reference/openapi.json POST /v1/dependency-invalidations"
 ---
 
-<Note>Contract 0.1.1. **Try it** against your [local sandbox](/get-started/sandbox): run `rail sandbox up` and `rail sandbox trust`, then paste `rail sandbox token` as the bearer token. For any other environment, confirm that this operation is enabled there; `.invalid` hosts are placeholders.</Note>
+<Note>Contract 0.1.1. The [local sandbox](/get-started/sandbox)'s default users don't hold `evidence:invalidate`, so the playground gets `403` here. For any other environment, confirm that this operation is enabled there; `.invalid` hosts are placeholders.</Note>
 
 **Required OAuth scope:** `evidence:invalidate`. Tenant, object, and domain authorization also apply.
 

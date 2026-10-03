@@ -3,7 +3,7 @@ title: "Local sandbox"
 description: "Run the whole Rail on your machine with one command, then call it from curl, the SDKs, the CLI, or this site's API playground."
 ---
 
-The sandbox is the complete Rail (all ten services, PostgreSQL, a development identity provider, and a gateway) in one Docker container on your machine. It is for development and evaluation: it uses development keys and simulated effects, and it is not a hosted environment.
+The sandbox is the complete Rail: all ten services, PostgreSQL, a development identity provider, and a gateway, in one Docker container on your machine. It is for development and evaluation: it uses development keys and simulated effects, and it is not a hosted environment.
 
 ## Requirements
 
@@ -29,7 +29,7 @@ rail sandbox up
   CA              ~/.config/rail/sandbox/rail-sandbox/ca.crt
 ```
 
-The first start pulls the image and takes about a minute; later starts reuse your data.
+The first start downloads the image (about 2 GB); after that, a start takes under a minute and reuses your data.
 
 The sandbox sees only `rail.yaml` and the files it references, copied in when you run `up`. Edit `rail.yaml` and run `rail sandbox up` again to re-enroll.
 
@@ -73,15 +73,17 @@ The API reference on this site can send requests to your sandbox from your brows
 rail sandbox trust
 ```
 
-The command shows the certificate and asks before adding it to your user account's trust store: the login keychain on macOS, your user's root store on Windows, or `~/.pki/nssdb` on Linux (used by Chrome and Chromium). Firefox keeps its own store; use another browser for the playground or import the certificate in Firefox's settings.
+The command shows the certificate and asks before adding it to your user account's trust store: the login keychain on macOS, your user's root store on Windows, or `~/.pki/nssdb` on Linux (used by Chrome and Chromium; install `libnss3-tools` first, or the command prints manual steps). On Linux, Firefox keeps its own store: use Chrome for the playground, or import the certificate in Firefox's settings.
 
-The sandbox's certificate authority can only vouch for `localhost` and `127.0.0.1`, and only for TLS. Even so, its key sits unencrypted in your Docker volume, so remove the trust when you're done:
+The sandbox's certificate authority can only vouch for `localhost` names and `127.0.0.1`, and only for TLS. Its key is unencrypted in the sandbox's Docker volume, so anyone who can read that volume (anyone with Docker access on your machine) could make certificates your browser accepts for any local HTTPS service. Remove the trust when you're done:
 
 ```bash
 rail sandbox untrust
 ```
 
-Then open any endpoint page, keep the server set to `https://localhost:8443`, and paste the output of `rail sandbox token` as the bearer token. Reads work with the governor's token. Executions and capability tokens need the agent's certificate, so the playground can't send them; use `rail govern` or an SDK.
+Then open any endpoint page, keep the server set to `https://localhost:8443`, and paste a token as the bearer token. Each endpoint page says which one: `rail sandbox token` (the governor) for reads and authority management, `rail sandbox token approver1` for approval votes, `rail sandbox token verifier` for verification. Executions and capability tokens need the agent's certificate, so the playground can't send them; use `rail govern` or an SDK.
+
+The first time, Chrome asks whether this site may access devices on your local network. Allow it; that is how the page reaches `localhost`. The sandbox accepts browser calls only from this documentation site's address.
 
 ## Manage it
 
@@ -96,7 +98,7 @@ Then open any endpoint page, keep the server set to `https://localhost:8443`, an
 | `rail sandbox ca` | Path to the sandbox CA certificate |
 | `rail sandbox trust` / `untrust` | Add or remove the CA in your user trust store |
 
-`-name` runs a second, separately named sandbox; `-image` selects another image tag. `-origins` lets another site's playground call your sandbox, for example `-origins http://localhost:3000` for a local preview of these docs.
+`-name` runs a second, separately named sandbox (pass the same `-name` to its `token`, `ca` and `trust` commands); `-image` selects another image reference. `-origins` lets another site's playground call your sandbox, for example `-origins http://localhost:3000` for a local preview of these docs.
 
 ## Limits
 

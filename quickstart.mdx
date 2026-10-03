@@ -1,9 +1,9 @@
 ---
 title: "Quickstart"
-description: "Run the Rail locally, make your first API call, and govern your first action, in about five minutes."
+description: "Run The Rail locally, make your first API call, and govern your first action, in about five minutes."
 ---
 
-You'll start a local sandbox, call the API, run a protected action through authorization and dispatch, and verify the evidence offline. You need Docker and the `rail` CLI. You don't need an account, a hosted endpoint, or payment credentials.
+You'll start The Rail on your machine, call the API, run a protected action through authorization and dispatch, and verify the evidence offline. You need Docker and the `rail` CLI. You don't need an account, a hosted endpoint, or payment credentials.
 
 ## 1. Install the CLI
 
@@ -24,7 +24,7 @@ rail version
 
 ## 2. Start the sandbox
 
-Create a project and start the Rail on your machine:
+Create a project and start The Rail on your machine:
 
 ```bash
 mkdir acme-pay && cd acme-pay
@@ -41,7 +41,7 @@ curl --cacert "$(rail sandbox ca)" https://localhost:8443/v1/context \
   --header "Authorization: Bearer $(rail sandbox token)"
 ```
 
-The response identifies who you are to the Rail: tenant, principal, OAuth subject, scopes, and projects. The Rail derives all of this from the token; there is no tenant header to set.
+The response identifies who you are to The Rail: tenant, principal, OAuth subject, scopes, and projects. The Rail derives all of this from the token; there is no tenant header to set.
 
 ```json
 {
@@ -58,7 +58,7 @@ Your IDs differ. This token belongs to the project's governor, which manages aut
 
 ## 4. Govern an action
 
-Your agent places a purchase order. The effect command runs only if the Rail authorizes and dispatches it:
+Your agent places a purchase order. The effect command runs only if The Rail authorizes and dispatches it:
 
 ```bash
 rail govern procurement.purchase_order.create \
@@ -67,6 +67,7 @@ rail govern procurement.purchase_order.create \
 ```
 
 ```text
+...
 execution   exe_a3aaf8f20e6c86f254fcabb94e2b81b7
 journey     grt_9d771fefd7ada391eb104ba596f8fe2b
 state       completed
@@ -76,7 +77,7 @@ result      rec_ca91775a1ba5ed58460bd838cf783f18
 verified    rec_3a72f023c60f0d509aba453518002882
 ```
 
-Each `rec_` line is a signed receipt: the authorization decision, the dispatch permit, the effect's signed result, and its verification. The example effect is simulated; nothing real happens.
+The output is abridged. Each `rec_` line is a signed receipt: the authorization decision, the dispatch permit, the effect's signed result, and its verification. The example effect is simulated; nothing real happens.
 
 Now ask for more than the policy allows without approval:
 
@@ -88,7 +89,7 @@ rail govern procurement.purchase_order.create --own-authority \
 
 The execution stops at `awaiting_approval` with `APPROVAL_REQUIRED`, and the effect does not run. [Approvals and inspection](/cli/approvals-and-inspection) shows how an approver votes and how the same execution resumes.
 
-<Note>A grant covers each resource and action once. `--own-authority` gives a call its own one-use grant so you can repeat actions while experimenting. See [governed commands](/cli/govern).</Note>
+<Note>A grant covers each resource and action once, and a plain `rail govern` uses the agent's newest active grant. After the approval call, that is the one-use grant `--own-authority` just issued for the held execution: a plain call now would spend it, and the held execution could no longer run once approved. While experimenting, pass `--own-authority` on every repeat. See [governed commands](/cli/govern).</Note>
 
 ## 5. Verify the evidence
 

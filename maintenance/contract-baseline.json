@@ -1,7 +1,7 @@
 {
   "contract_version": "0.1.1",
   "source_sha256": "d6f8455d729d68131d9093489ef5926735c891432b96a42128cb606ef6677cb4",
-  "published_sha256": "e65c4a75184e35f0b35cfb15a111f4432c40858f6583f586510ba71a41eb8fe8",
+  "published_sha256": "dd923910b46a37a14da3a76d8bda744ba56d976e8391c4adc0a5a243d81bb689",
   "customer_operations": 127,
   "runtime_operations": 0,
   "internal_operations": 0,

@@ -4,7 +4,7 @@ description: "GET /v1/webhook-subscriptions/{subscription_id}/deliveries \u2014 
 openapi: "/api-reference/openapi.json GET /v1/webhook-subscriptions/{subscription_id}/deliveries"
 ---
 
-<Note>Contract 0.1.1. **Try it** against your [local sandbox](/get-started/sandbox): run `rail sandbox up` and `rail sandbox trust`, then paste `rail sandbox token` as the bearer token. For any other environment, confirm that this operation is enabled there; `.invalid` hosts are placeholders.</Note>
+<Note>Contract 0.1.1. The [local sandbox](/get-started/sandbox)'s default users don't hold `events:read`, so the playground gets `403` here. For any other environment, confirm that this operation is enabled there; `.invalid` hosts are placeholders.</Note>
 
 **Required OAuth scope:** `events:read`. Tenant, object, and domain authorization also apply.
 

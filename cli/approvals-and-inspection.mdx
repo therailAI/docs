@@ -24,7 +24,7 @@ rail approvals list --execution "${RAIL_EXECUTION_ID:?Set the execution ID}" --j
 rail approvals get "${RAIL_APPROVAL_ID:?Set the approval ID}" --json
 ```
 
-Review the action, authority, scope, and reason before voting. The local development profile can provide the `approver1` identity used here:
+Review the action, authority, scope, and reason before voting. The sandbox profile provides the `approver1` identity used here:
 
 ```bash
 rail approvals vote "${RAIL_APPROVAL_ID:?Set the approval ID}" \
@@ -44,7 +44,7 @@ rail govern resume "${RAIL_EXECUTION_ID:?Set the execution ID}" \
   --no-complete --json -- ./examples/effect.sh
 ```
 
-Resume continues the existing execution and rechecks the applicable gates. A vote does not guarantee dispatch. Do not start a new governed action just because the first call returned pending.
+The vote is processed asynchronously: if resume still reports `awaiting_approval`, wait a few seconds and run it again, or pass `--wait-approval` to wait. Resume continues the existing execution and rechecks the applicable gates. A vote does not guarantee dispatch. Do not start a new governed action just because the first call returned pending.
 
 ## Inspect evidence
 
