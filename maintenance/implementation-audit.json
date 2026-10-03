@@ -12,7 +12,7 @@
       },
       "revisions": {
         "contract": "5cba50b6ef7a11322b21c94ba5a8710127b59e70",
-        "core": "f52501b96b2b1bfb88a44cdf103e46498e82a795",
+        "core": "0c75f2ced8f4cbe9d2584b3a2aac05975f9fcb8d",
         "rail-authority-api": "304a05a578680744278dcce4548531a0a23b80f3",
         "rail-edge-api": "1166ec4351678f892404a465ffca4af36db1f658",
         "rail-events-api": "d857f0ef8fa15824773dcae90cf81385d7bcf009",
@@ -36,7 +36,7 @@
       },
       "revisions": {
         "contract": "5cba50b6ef7a11322b21c94ba5a8710127b59e70",
-        "core": "f52501b96b2b1bfb88a44cdf103e46498e82a795",
+        "core": "0c75f2ced8f4cbe9d2584b3a2aac05975f9fcb8d",
         "rail-authority-api": "304a05a578680744278dcce4548531a0a23b80f3",
         "rail-edge-api": "1166ec4351678f892404a465ffca4af36db1f658",
         "rail-events-api": "d857f0ef8fa15824773dcae90cf81385d7bcf009",

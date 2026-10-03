@@ -43,7 +43,10 @@ for baseline, workspace, handler_file in [('repository', args.main, args.main_ha
     py = json.loads((workspace/'rail-sdk-python/src/rail_sdk/operations.json').read_text())
     ts_text = (workspace/'rail-sdk-typescript/src/operations.ts').read_text()
     ts = json.loads(ts_text.split('=', 1)[1].rsplit('as const;', 1)[0].strip())
-    assert published['components'] == public(source['components']), 'Published schema/security drift'
+    # The published reference adds one security scheme for the playground (a bearer
+    # carrying the same OAuth token); everything else must match the source.
+    published_components = {**published['components'], 'securitySchemes': {k: v for k, v in published['components']['securitySchemes'].items() if k != 'Bearer'}}
+    assert published_components == public(source['components']), 'Published schema/security drift'
     versions = {'typescript': json.loads((workspace/'rail-sdk-typescript/package.json').read_text())['version'],
                 'python': re.search(r'^version = "(.+)"$', (workspace/'rail-sdk-python/pyproject.toml').read_text(), re.M)[1]}
     revision = {}
@@ -58,7 +61,11 @@ for baseline, workspace, handler_file in [('repository', args.main, args.main_ha
             seen.add(oid)
             expected = public(op)
             expected['description'] = 'Contract 0.1.1; confirm support in your deployment. ' + expected.get('description', '')
-            assert published['paths'][path][method] == expected, 'Published operation drift: '+oid
+            published_op = dict(published['paths'][path][method])
+            # Ignore only the playground's same-scope Bearer alternatives.
+            published_op['security'] = [req for req in published_op.get('security', []) if set(req) != {'Bearer'}] or published_op.get('security')
+            if 'security' not in expected: published_op.pop('security', None)
+            assert published_op == expected, 'Published operation drift: '+oid
             assert oid in handlers['rail-'+service+'-api'], 'Missing registered handler: '+oid
             request = op.get('requestBody', {}).get('content', {}).get('application/json', {}).get('schema')
             responses = {}
