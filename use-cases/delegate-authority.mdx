@@ -1,0 +1,48 @@
+---
+title: "Use case: Delegate authority across agents"
+sidebarTitle: "Delegate across agents"
+description: "See how the Rail lets one agent hand a narrower slice of its authority to another, keeps the chain inspectable, and refuses effects once any link is revoked, with links to setup details."
+---
+
+Multi-agent workflows hand work from one agent to the next. Passing a bearer token along the chain gives every downstream agent the full reach of the first, with no record of who narrowed what. This page shows how the Rail treats each handoff as an explicit, attenuated delegation instead.
+
+<Note>
+  Each agent in the chain needs its own enrolled principal. See [authentication](/get-started/authentication).
+</Note>
+
+## Start from a bounded grant
+
+A root grant names the subject, action classes, resources, purpose, audience, validity window, and permitted delegation depth. The issuer is derived from the authenticated caller, and a workload cannot create arbitrary authority for itself. See [Grants and delegation](/guides/grants-and-delegation#provision-a-grant).
+
+## Hand off a narrower scope
+
+A delegation passes a subset of the parent's scope to a receiving principal. Rail checks the parent relationship, issuer control, and cumulative bounds at every hop. A delegation can only narrow authority; it cannot widen scope, extend validity, or exceed the depth the root allowed. See [Authority and delegation](/concepts/authority).
+
+## Bind use to one holder
+
+When a permitted use must be exclusive, a reservation binds it to a single holder and scope. Expiry or a crashed process does not automatically free it while an external effect may have occurred. See [Capabilities and reservations](/api-reference/endpoints/create-reservation).
+
+## Revoke and confirm refusal
+
+Revoking a grant or delegation stops later protected effects that depend on it. Earlier receipts remain available for inspection. Confirm the refusal with a follow-up attempt rather than assuming it. See [Revoke and verify refusal](/guides/grants-and-delegation#revoke-and-verify-refusal).
+
+<Note>
+  Grant and delegation issuance currently require a policy allow without unresolved obligations. They do not create an approval request the way execution does. See [implementation status](/get-started/implementation-status).
+</Note>
+
+## Related resources
+
+<CardGroup cols={2}>
+  <Card title="Authority and delegation" icon="sitemap" href="/concepts/authority">
+    How grants, delegations, and revocation behave.
+  </Card>
+  <Card title="Grants and delegation" icon="key" href="/guides/grants-and-delegation">
+    Issue, delegate, and revoke authority.
+  </Card>
+  <Card title="Multi-agent delegation recording" icon="play" href="https://the-rail-site.vercel.app/use-cases/multi-agent-delegation/">
+    A recorded reference journey.
+  </Card>
+  <Card title="Delegations API" icon="code" href="/api-reference/endpoints/create-delegation">
+    The `createDelegation` operation and its schemas.
+  </Card>
+</CardGroup>

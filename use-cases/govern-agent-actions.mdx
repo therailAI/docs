@@ -1,0 +1,52 @@
+---
+title: "Use case: Govern agent actions at the boundary"
+sidebarTitle: "Govern agent actions"
+description: "See how the Rail evaluates each consequential agent action against bounded authority, routes it for human approval when policy requires, and records the decision, with links to setup details."
+---
+
+An agent that can reach a system can usually do anything that system allows. Credentials and tool access answer whether the agent can connect, not whether this particular change, payment, or message should happen now. This page shows how the Rail puts a decision at the point where an action becomes consequential, and keeps that decision checkable afterward. For how this relates to identity and access controls you already run, see [where the Rail fits](/concepts/where-rail-fits).
+
+<Note>
+  This page assumes your operator has provisioned an enrolled principal, a project, a published action definition, and an eligible target. See [environment and release status](/get-started/environment).
+</Note>
+
+## Turn an intent into a canonical action
+
+The agent submits what it intends to do: the definition version, purpose, resource, and input. Rail normalizes it into a canonical action pinned to that definition. An action is a record of intent, not permission to invoke the target. See [Submit a governed action](/guides/governed-execution).
+
+## Evaluate against bounded authority
+
+Execution is requested under an [authority grant](/concepts/authority) that limits the actor, action classes, resources, purpose, and validity window. Authority and prerequisites are checked again at the consequential boundary, so a grant revoked after approval still stops the effect. Where policy requires it, a sender-bound capability ties the credential to this action and operation. See [Grants and delegation](/guides/grants-and-delegation).
+
+## Route high-consequence actions to a human
+
+When policy returns an approval obligation, the execution waits in `awaiting_approval`. Approvers vote on the exact action presented, through your identity provider's interactive login. Reaching quorum triggers fresh evaluation; approval never expands authority or overrides revocation. See [Human approvals](/guides/approvals).
+
+## Keep completion and release separate
+
+A runtime result is evidence to evaluate. Completion, result release, and any downstream settlement are separate gates, each with its own decision and receipt. See [Execution and uncertainty](/concepts/execution).
+
+## Govern from the terminal
+
+The preview CLI can wrap a shell command in a governed action, so local agent tooling goes through the same boundary. See [Govern a shell command](/cli/govern).
+
+<Note>
+  Rail decides whether a protected effect may proceed. Stopping an agent process and ending its authority are different operations; your target adapter must still refuse effects that arrive without a current decision.
+</Note>
+
+## Related resources
+
+<CardGroup cols={2}>
+  <Card title="The control model" icon="diagram-project" href="/concepts/overview">
+    How principals, grants, actions, executions, and receipts connect.
+  </Card>
+  <Card title="Submit a governed action" icon="shield-check" href="/guides/governed-execution">
+    Step-by-step requests for actions and executions.
+  </Card>
+  <Card title="Human approvals" icon="user-check" href="/guides/approvals">
+    Read, vote on, and observe approval requests.
+  </Card>
+  <Card title="Executions API" icon="code" href="/api-reference/endpoints/create-execution">
+    The `createExecution` operation and its schemas.
+  </Card>
+</CardGroup>

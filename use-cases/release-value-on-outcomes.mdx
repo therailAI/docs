@@ -1,0 +1,48 @@
+---
+title: "Use case: Release value on proven outcomes"
+sidebarTitle: "Release value on outcomes"
+description: "See how the Rail connects contribution, rights, and allocation evidence to a separately governed release of value, and keeps pending and confirmed amounts apart, with links to setup details."
+---
+
+When agents do work that someone pays for, "the job finished" and "the money should move" are different claims. This page shows how the Rail carries evidence from the work through rights and allocation into a release decision, and tracks what a provider actually confirmed.
+
+<Note>
+  Settlement requires a qualified custody adapter and provider. The recorded reference journeys use test or stub payment infrastructure. See [implementation status](/get-started/implementation-status).
+</Note>
+
+## Record who and what participated
+
+Contribution and outcome records capture the exact artifact versions that took part, not just the ones a plan selected. A provenance graph links them with explicit roles. See [Reuse, lineage, and rights](/guides/reuse-and-rights#record-participation).
+
+## Apply rights and compute allocation
+
+Rights records carry the governing terms, scope, and expiry. Allocation evaluates the selected method against the evidence; participation can validly yield a zero share. See [Evaluate rights](/guides/reuse-and-rights#evaluate-rights).
+
+## Account for value, then release it separately
+
+A realization accounts for available value under explicit terms. A settlement selects payable terms from it. Release is a separate request that re-evaluates current rights, evidence, policy, and authority; approval of the earlier execution does not stand in for it. See [Clear and settle value](/guides/clearing-and-settlement).
+
+## Show pending and confirmed amounts apart
+
+Settlements report `confirmed_amount` and `pending_amount` separately. Partial confirmation releases only the proven amount; returns and disputes create linked evidence rather than overwriting history. See [Track confirmed value](/guides/clearing-and-settlement#4-track-confirmed-value).
+
+<Note>
+  A customer request is not provider confirmation. Present a settlement as paid only when the provider reference confirms it.
+</Note>
+
+## Related resources
+
+<CardGroup cols={2}>
+  <Card title="Clearing and settlement" icon="scale-balanced" href="/concepts/clearing">
+    How release eligibility and settlement outcome differ.
+  </Card>
+  <Card title="Clear and settle value" icon="money-bill-transfer" href="/guides/clearing-and-settlement">
+    Realizations, settlements, release, and disputes.
+  </Card>
+  <Card title="Reuse, lineage, and rights" icon="code-fork" href="/guides/reuse-and-rights">
+    Participation, rights, and allocation.
+  </Card>
+  <Card title="Settlements API" icon="code" href="/api-reference/endpoints/create-settlement">
+    The `createSettlement` operation and its schemas.
+  </Card>
+</CardGroup>

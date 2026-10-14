@@ -1,0 +1,44 @@
+---
+title: "Use case: Tie evidence to the version that ran"
+sidebarTitle: "Version assurance"
+description: "See how the Rail pins actions to exact definition, policy, and model versions so evidence gathered for one configuration cannot quietly approve another, with links to setup details."
+---
+
+Evaluation results, approvals, and test evidence are gathered against a specific model, prompt, policy, or schema. If that configuration changes and nobody notices, old evidence ends up approving something it never tested. This page shows how the Rail keeps evidence bound to the exact version it describes.
+
+<Note>
+  Publishing assets and versions requires registry permissions. See [Assets and version eligibility](/guides/assets-and-versions).
+</Note>
+
+## Pin exact versions
+
+Actions reference a definition by `asset_id` and `version`, and policies and other versioned inputs are referenced the same way. A friendly name or a floating "latest" label is not enough to identify what was evaluated. Published version content is never edited in place. See [Publish and pin](/guides/assets-and-versions#publish-and-pin).
+
+## Invalidate evidence when the configuration changes
+
+Evaluation evidence applies to a particular configuration digest. If the digest changes, the earlier evidence may no longer satisfy the execution gate, and the action is refused with a recorded basis. That means the evidence no longer applies, not that the new version is unsafe. See [Keep evidence tied to the evaluated version](/guides/assets-and-versions#keep-evidence-tied-to-the-evaluated-version).
+
+## Promote under authority
+
+Promotion creates a new registry identity under applicable authority and evidence. A complete verification result does not independently authorize promotion. See [Promotion is governed](/guides/assets-and-versions#promotion-is-governed).
+
+<Note>
+  A conditional approval requirement on registry operations currently returns `503 registry_approval_profile_unavailable` rather than entering the execution approval workflow.
+</Note>
+
+## Related resources
+
+<CardGroup cols={2}>
+  <Card title="Assets and version eligibility" icon="layer-group" href="/guides/assets-and-versions">
+    Publish, pin, and promote versions.
+  </Card>
+  <Card title="Evidence and verification" icon="fingerprint" href="/concepts/evidence">
+    What each evidence layer establishes.
+  </Card>
+  <Card title="Model assurance recording" icon="play" href="https://the-rail-site.vercel.app/use-cases/model-assurance/">
+    Denial evidence for a changed configuration.
+  </Card>
+  <Card title="Asset versions API" icon="code" href="/api-reference/endpoints/create-asset-version">
+    The `createAssetVersion` operation and its schemas.
+  </Card>
+</CardGroup>

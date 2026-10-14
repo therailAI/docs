@@ -33,12 +33,48 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Developer guides",
+        "tab": "Use the Rail",
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": [
+              "introduction",
+              "concepts/where-rail-fits",
+              "glossary"
+            ]
+          },
+          {
+            "group": "Use cases",
+            "pages": [
+              "use-cases/govern-agent-actions",
+              "use-cases/delegate-authority",
+              "use-cases/recover-uncertain-executions",
+              "use-cases/prove-outcomes",
+              "use-cases/release-value-on-outcomes",
+              "use-cases/version-assurance"
+            ]
+          },
+          {
+            "group": "How-to guides",
+            "pages": [
+              "guides/governed-execution",
+              "guides/grants-and-delegation",
+              "guides/approvals",
+              "guides/recovery",
+              "guides/assets-and-versions",
+              "guides/reuse-and-rights",
+              "guides/clearing-and-settlement",
+              "guides/verify-evidence"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Developer",
         "groups": [
           {
             "group": "Start building",
             "pages": [
-              "introduction",
               "quickstart",
               "get-started/environment",
               "get-started/authentication",
@@ -49,24 +85,10 @@
             "group": "Core concepts",
             "pages": [
               "concepts/overview",
-              "concepts/where-rail-fits",
               "concepts/authority",
               "concepts/execution",
               "concepts/evidence",
               "concepts/clearing"
-            ]
-          },
-          {
-            "group": "Integration guides",
-            "pages": [
-              "guides/governed-execution",
-              "guides/grants-and-delegation",
-              "guides/approvals",
-              "guides/recovery",
-              "guides/assets-and-versions",
-              "guides/reuse-and-rights",
-              "guides/clearing-and-settlement",
-              "guides/verify-evidence"
             ]
           },
           {

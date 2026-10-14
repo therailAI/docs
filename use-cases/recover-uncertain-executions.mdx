@@ -1,0 +1,48 @@
+---
+title: "Use case: Recover from uncertain executions"
+sidebarTitle: "Recover uncertain executions"
+description: "See how the Rail keeps a timeout or crash from turning into a duplicate payment or change, and how evidence-based reconciliation resolves what happened, with links to setup details."
+---
+
+Agents retry. When a call times out, the obvious move is to send it again, and that is how one refund becomes two. This page shows how the Rail holds the line between "I didn't see a response" and "nothing happened", and what it takes to move past an uncertain effect safely.
+
+<Note>
+  Recovery depends on the identifiers you persist before the first attempt: the HTTP idempotency key, `operation_instance_id`, action ID, and execution ID. See [idempotency and retries](/api-reference/idempotency).
+</Note>
+
+## One business operation, one effect
+
+Every execution carries a stable `operation_instance_id` for the business effect it represents. Reusing the same idempotency key recovers the same request; generating a new operation ID to get around an unresolved effect is exactly what the model is built to prevent. See [Recover without repeating an uncertain effect](/guides/recovery#before-you-retry).
+
+## Read the state, not the symptom
+
+An execution reports `state`, `delivery_state`, and `external_effect` separately. A `failed` state can still carry a `possible_unresolved` external effect, and reservations and effect locks stay held while it does. See [Execution and uncertainty](/concepts/execution).
+
+## Reconcile with evidence
+
+An authorized recovery workflow submits evidence of what actually happened through `reconcileExecution`. Evidence review applies to executions in `reconciliation_required` or `quarantined`. Reconciliation cannot accept an unsupported claim of success or of no effect. See [Reconcile using evidence](/guides/recovery#reconcile-using-evidence).
+
+## Compensate as a new action
+
+Undoing an effect is a new, linked governed action with its own authority. Compensation review records permission for that action; it does not execute it or release the original lock. See [Cancellation and compensation](/guides/recovery#cancellation-and-compensation).
+
+<Note>
+  The `target_status_query` and `idempotency_state_check` reconciliation reasons currently return `503 reconciliation_profile_unavailable`. Obtain provider status through your qualified adapter and submit it as evidence. See [implementation status](/get-started/implementation-status).
+</Note>
+
+## Related resources
+
+<CardGroup cols={2}>
+  <Card title="Recovery guide" icon="rotate" href="/guides/recovery">
+    Timeouts, cancellation, denials, and reconciliation.
+  </Card>
+  <Card title="Errors and recovery" icon="triangle-exclamation" href="/api-reference/errors">
+    HTTP error codes and how to respond.
+  </Card>
+  <Card title="SDK recovery (preview)" icon="code-branch" href="/sdks/recovery">
+    Results, approvals, and recovery from the SDKs.
+  </Card>
+  <Card title="Reconcile execution API" icon="code" href="/api-reference/endpoints/reconcile-execution">
+    The `reconcileExecution` operation and its schemas.
+  </Card>
+</CardGroup>

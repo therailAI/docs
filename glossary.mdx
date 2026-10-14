@@ -1,0 +1,59 @@
+---
+title: "Glossary"
+description: "Quick reference for the terms used throughout the Rail documentation."
+---
+
+Terms are grouped by the part of the control model they belong to. Links point to the concept page that explains each area in context.
+
+## Identity and authority
+
+| Term | Meaning |
+| --- | --- |
+| Principal | An enrolled person, agent, or service identity. Workload principals cannot cast human approval votes. |
+| Project | An authorized grouping of resources and work. |
+| Authority grant | Bounded permission issued under governing authority, scoped by action classes, resources, purpose, audience, validity window, and delegation depth. See [authority](/concepts/authority). |
+| Delegation | A narrower subset of a grant passed to another principal. It can only attenuate scope. |
+| Capability | A sender-bound action credential minted under authority and bound to one action and operation. It does not replace OAuth. |
+| Reservation | A binding of a permitted use to a single holder and scope. |
+| Revocation | Ends future permission. It never rewrites earlier receipts. |
+
+## Actions and execution
+
+| Term | Meaning |
+| --- | --- |
+| Canonical action | A normalized intent pinned to its definition version. Not permission to invoke the target. |
+| Evaluation | An advisory simulation of eligibility. It cannot dispatch or issue reusable authority. |
+| Execution | A governed attempt to produce an effect, with a stable business-operation identity. See [execution](/concepts/execution). |
+| `operation_instance_id` | The stable identifier for one business effect, reused across recovery of the same request. |
+| Approval | Human review bound to the exact action and policy context. Quorum triggers fresh evaluation. |
+| External effect | What happened in the target system, reported separately from execution state. `possible_unresolved` means it is not yet known. |
+| Reconciliation | An authorized, evidence-based resolution of an uncertain effect. |
+| Compensation | A new linked governed action that counteracts an earlier effect. |
+| Basis code | A machine-readable reason attached to a decision, such as a denial. |
+
+## Evidence
+
+| Term | Meaning |
+| --- | --- |
+| Receipt | An immutable, signed record of an assertion, decision, or outcome. See [evidence](/concepts/evidence). |
+| Checkpoint | A signed commitment to the ledger's state at a point in its history. |
+| Inclusion proof | Proof that a receipt is included in the ledger history a checkpoint asserts. |
+| Evidence bundle | A portable package of connected receipts that can be verified offline with `rail verify`. |
+| Trust anchor | The key material a verifier relies on, obtained through an independent channel. |
+| Verification disposition | What is asserted for a subject, scope, and verification dimension. |
+| Projection | What the applicable evidence establishes for a fixed evaluation snapshot. |
+| Effect decision | Whether one named operative effect may proceed under current conditions. |
+
+## Assets, lineage, and value
+
+| Term | Meaning |
+| --- | --- |
+| Asset and version | A reusable definition or artifact and the exact version a workflow uses. Published versions are immutable. |
+| Promotion | Creating a new registry identity under authority and evidence. |
+| Contribution | A record of an artifact or party that actually participated in an outcome. |
+| Provenance graph | Explicit roles and relationships linking contributions and outcomes. |
+| Rights record | The terms and constraints governing reuse. |
+| Allocation | The result of applying a method to evidence to compute shares; zero is a valid result. |
+| Realization | Accounting for available value under explicit terms and evidence. See [clearing](/concepts/clearing). |
+| Settlement | Selection of payable terms from a realization. Release is a separate governed request. |
+| Confirmed and pending amount | Value a provider has confirmed versus value still awaiting confirmation. |
