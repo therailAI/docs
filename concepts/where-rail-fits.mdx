@@ -1,0 +1,38 @@
+---
+title: "Where the Rail fits"
+sidebarTitle: "Where the Rail fits"
+description: "How action governance relates to the identity and access controls you already run."
+---
+
+Most organizations already control which people, services, and agents can reach which systems. Rail does not replace those controls. It governs a different question: whether a specific action may produce a specific effect, and what evidence remains afterward.
+
+## Two layers, two questions
+
+| Layer | Question it answers | Typical controls |
+| --- | --- | --- |
+| Access | May this identity reach this system, tool, or model? | Identity provider, provisioning, entitlements, access reviews, just-in-time access, tool and model gateways |
+| Action and outcome | May this action produce this effect now, and what happened when it did? | Rail authority grants, canonical actions, governed executions, receipts, effect decisions, clearing |
+
+Access is usually a standing condition: an entitlement holds until it expires or is revoked. A Rail grant is bounded to an actor, purpose, scope, and time, and a reservation can bind a permitted use to a single holder. Reaching a resource is a precondition. It is not authorization for every effect the resource can produce.
+
+## What each layer records
+
+An access layer typically records that a request or tool call was allowed or denied. Rail records the normalized intent, the authority and policy it was evaluated against, the execution attempt, and the evidence for each consequence that followed. Those records are signed, included in a checkpointed ledger, and exportable as bundles that a party outside your organization can [verify offline](/guides/verify-evidence) against a trust anchor it established independently.
+
+Completion, result release, and settlement are separate decisions in Rail. An allowed call is not, by itself, a completed or settled action.
+
+## Across organizational boundaries
+
+Access controls are scoped to the organization that operates them. When an action affects a counterparty, such as a supplier, customer, or partner, that party cannot inspect your access system. Rail evidence is designed to travel: the counterparty can check what was authorized and what was recorded without trusting your internal logs.
+
+## Using both
+
+- **Identity stays where it is.** Rail principals authenticate through your configured OIDC identity provider. Issuer, audience, subject mapping, and step-up flows are operator-managed. See [implementation status](/get-started/implementation-status).
+- **Access is a precondition.** Keep provisioning, reviews, and tool-level gateways in your access layer. Put Rail at the protected boundary where an action becomes consequential.
+- **Revocation is independent.** Removing access stops future reach. Revoking a Rail grant stops future protected effects. Neither rewrites earlier receipts.
+
+<Note>
+Rail does not currently import entitlements or grants from an external access-governance system as authority input. Authority is issued through Rail [grants and delegations](/guides/grants-and-delegation).
+</Note>
+
+Next: [the control model](/concepts/overview) and [authority and delegation](/concepts/authority).

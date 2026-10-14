@@ -49,6 +49,7 @@
             "group": "Core concepts",
             "pages": [
               "concepts/overview",
+              "concepts/where-rail-fits",
               "concepts/authority",
               "concepts/execution",
               "concepts/evidence",
