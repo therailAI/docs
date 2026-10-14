@@ -29,14 +29,26 @@ RESOURCE_GROUPS = {
     'energy-comparisons': 'Resource and energy evidence',
     'edge-nodes': 'Edge nodes and allocations', 'edge-allocations': 'Edge nodes and allocations',
     'coverage-evaluations': 'Coverage and campaigns', 'campaign-evaluations': 'Coverage and campaigns',
+    'journeys': 'Journeys and safety',
+    'suspensions': 'Suspensions', 'agent-profile-versions': 'Principals',
+    'execution-shares': 'Execution shares', 'shares': 'Execution shares',
+    'baseline-policy-proposals': 'Baseline policies', 'baseline-policies': 'Baseline policies',
+    'contacts': 'Edge nodes and allocations', 'report': 'Receipts and proofs',
 }
+# A sub-resource under another resource's path (/v1/<resource>/{id}/<sub>)
+# groups by <sub> when it has its own group, so 0.2.0 operations such as
+# /v1/principals/{id}/suspensions and /v1/projects/{id}/baseline-policies sit
+# with their resource rather than their parent.
+SUB_RESOURCES = {('principals', 'suspensions'), ('principals', 'agent-profile-versions'), ('executions', 'shares'), ('projects', 'baseline-policy-proposals'), ('projects', 'baseline-policies'), ('edge-nodes', 'contacts'), ('receipts', 'report')}
 
 
 def product_group(title, entries):
     """entries is an ordered iterable of (public route, HTTP path)."""
     resources = {}
     for route, path in entries:
-        label = RESOURCE_GROUPS[path.split('/')[2]]
+        parts = path.split('/')
+        key = parts[4] if len(parts) > 4 and (parts[2], parts[4]) in SUB_RESOURCES else parts[2]
+        label = RESOURCE_GROUPS[key]
         resources.setdefault(label, []).append(route)
     return {'group': title, 'expanded': False, 'pages': [
         {'group': label, 'expanded': False, 'pages': pages}

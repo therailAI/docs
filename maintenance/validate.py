@@ -64,7 +64,7 @@ for file in ROOT.rglob('*.mdx'):
         if note:check(note in content,'Missing implementation restriction: '+relative)
 ops={(method,path) for path,item in spec['paths'].items() for method in item if method in ['get','post','patch','put','delete']}
 check(endpoints==ops,'Endpoint pages do not cover the exact customer operation set')
-check(len(ops)==127,'Customer operation count changed')
+check(len(ops)==145,'Customer operation count changed')
 operation_ids={spec['paths'][path][method]['operationId'] for method,path in ops}
 check(set(implementation_notes)<=operation_ids,'Implementation note names an unknown operation')
 check({x['operation_id'] for x in implementation['operations']}==operation_ids,'Implementation audit coverage drift')

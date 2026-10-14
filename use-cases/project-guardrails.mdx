@@ -1,0 +1,44 @@
+---
+title: "Use case: Set guardrails for every action in a project"
+sidebarTitle: "Set project guardrails"
+description: "Make one policy a project's baseline under a quorum, so its denials apply to every action definition without copying the rule into each one."
+---
+
+A rule such as "no agent spends over 10,000.00 without a human vote" should not have to be copied into every action definition. Contract 0.2.0 adds **project baseline policies**: one promoted policy version that composes as a parent of every action definition's policies in the project.
+
+<Note>
+  These operations are in customer contract 0.2.0. Confirm they are enabled in your deployment. See [environment and release status](/get-started/environment).
+</Note>
+
+## Propose a baseline
+
+`POST /v1/projects/{project_id}/baseline-policy-proposals` names a published policy version, when it takes effect, the eligible approvers, and the minimum number of approvals. The proposal never uploads a program; authoring stays in the registry, where admission checks that policies run deterministically and within bounds.
+
+## Approve it
+
+Eligible approvers vote with `POST /v1/baseline-policy-proposals/{proposal_id}/votes`. The proposer cannot vote, and any rejection rejects the proposal. Once the quorum is met, the baseline takes effect at `effective_at` and supersedes the previous one. Read the effective baseline and its history with `GET /v1/projects/{project_id}/baseline-policies`.
+
+## How the gate applies it
+
+The baseline's denials are final and its non-overridable controls cannot be weakened by an action definition's own policies. Each authorization records the baseline version it was decided under, so a later change never reinterprets an earlier decision. If the registry cannot answer, the gate waits rather than deciding without the baseline.
+
+## Try it before the vote
+
+`POST /v1/evaluations` accepts `baseline_override` to dry-run a proposed baseline against an action. A dry run produces no authority and no decision receipt.
+
+## Related resources
+
+<CardGroup cols={2}>
+  <Card title="Propose a baseline policy" icon="gavel" href="/api-reference/endpoints/propose-baseline-policy">
+    The `proposeBaselinePolicy` operation and its schemas.
+  </Card>
+  <Card title="Assets and versions" icon="layer-group" href="/guides/assets-and-versions">
+    Publish the policy version first.
+  </Card>
+  <Card title="Human approvals" icon="user-check" href="/guides/approvals">
+    How quorum voting works.
+  </Card>
+  <Card title="Govern agent actions" icon="shield-check" href="/use-cases/govern-agent-actions">
+    The boundary decision the baseline feeds.
+  </Card>
+</CardGroup>

@@ -1,0 +1,46 @@
+---
+title: "Use case: Govern which MCP tools an agent may call"
+sidebarTitle: "Govern MCP tools"
+description: "Register each MCP tool as a versioned, promoted definition that maps calls to governed actions, passes read-only calls through, and refuses everything else."
+---
+
+An agent connected to an MCP server can call every tool the server lists. Contract 0.2.0 adds a **tool** definition to the registry so the mapping from "server X, tool `refund_order`" to a governed action is versioned, approved, and evidenced instead of living in local configuration.
+
+<Note>
+  Tool definitions are in customer contract 0.2.0, and the preview MCP proxy enforces them when its profile names a registry. Confirm both in your deployment. See [environment and release status](/get-started/environment).
+</Note>
+
+## Define the tool
+
+Create an asset version whose definition has `kind: tool`, the `server_name` and `tool_name`, and a `governance` mode:
+
+- `governed`: the call becomes an action under the pinned `action_definition`, with the resource read from the tool's arguments by an RFC 6901 `id_pointer` in `resource_mapping`. Side-effect class and policies come from the action definition, never from the tool.
+- `read_only`: the call passes without an action and is recorded.
+- `blocked`: the call is refused.
+
+`input_schema_digest` is the SHA-256 of the RFC 8785 canonical JSON of the tool's input schema as the server lists it. The preview CLI prints it with `rail-mcp --tool-digests`.
+
+## Promote it
+
+A tool version takes effect only when it is published through the registry lifecycle, like every registry asset. Two published definitions in one project cannot claim the same server and tool.
+
+## What the proxy enforces
+
+Calls to tools with no published definition, blocked tools, and tools whose input schema has changed since approval are refused with basis `UNMEDIATED_INTERFACE`, before anything reaches the server. A changed schema cannot ride on an existing approval.
+
+## Related resources
+
+<CardGroup cols={2}>
+  <Card title="Assets and versions" icon="layer-group" href="/guides/assets-and-versions">
+    Publish and promote registry definitions.
+  </Card>
+  <Card title="Govern agent actions" icon="shield-check" href="/use-cases/govern-agent-actions">
+    What happens once a call becomes an action.
+  </Card>
+  <Card title="List assets" icon="code" href="/api-reference/endpoints/list-assets">
+    Filter assets by definition `kind`.
+  </Card>
+  <Card title="Version assurance" icon="code-branch" href="/use-cases/version-assurance">
+    Why pinned versions matter.
+  </Card>
+</CardGroup>

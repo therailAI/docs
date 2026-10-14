@@ -57,7 +57,7 @@ for baseline, workspace, handler_file in [('repository', args.main, args.main_ha
             oid, service = op['operationId'], op['x-service']
             seen.add(oid)
             expected = public(op)
-            expected['description'] = 'Contract 0.1.1; confirm support in your deployment. ' + expected.get('description', '')
+            expected['description'] = f"Contract {source['info']['version']}; confirm support in your deployment. " + expected.get('description', '')
             assert published['paths'][path][method] == expected, 'Published operation drift: '+oid
             assert oid in handlers['rail-'+service+'-api'], 'Missing registered handler: '+oid
             request = op.get('requestBody', {}).get('content', {}).get('application/json', {}).get('schema')

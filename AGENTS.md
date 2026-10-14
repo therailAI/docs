@@ -13,7 +13,7 @@ This is the public Mintlify documentation for The Rail: the authorization and cl
 
 ## Sources and boundaries
 
-- The bundled reference is customer contract 0.1.1. Generate endpoint pages with `maintenance/build_reference.py`; do not hand-edit generated files.
+- The bundled reference is customer contract 0.2.0. Generate endpoint pages with `maintenance/build_reference.py`; do not hand-edit generated files.
 - Never publish internal/runtime ingress specifications, secrets, patent source maps, private source URLs, or customer information.
 - Keep the six recorded workflow links and limitations aligned with the public website.
 - Use official Mintlify documentation for configuration and MDX behavior. Prefer Mintlify MCP when available; otherwise edit locally and validate with the installed CLI.

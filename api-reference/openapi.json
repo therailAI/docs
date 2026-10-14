@@ -2,9 +2,9 @@
   "openapi": "3.1.1",
   "info": {
     "title": "The Rail customer API",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "summary": "Authorization and clearing for autonomous agents.",
-    "description": "Customer contract reference 0.1.1. Deployment support must be confirmed for your environment; this reference is not a public sandbox or a production availability guarantee. Use the endpoint and identity configuration supplied by your operator. All .invalid URLs are non-routable placeholders. Customer calls require OAuth and tenant/object authorization. Capabilities have additional sender-binding requirements. Every protected effect needs current authority. HTTP success does not establish execution, verification, or release of value. Runtime and internal-service APIs are excluded."
+    "description": "Customer contract reference 0.2.0. Deployment support must be confirmed for your environment; this reference is not a public sandbox or a production availability guarantee. Use the endpoint and identity configuration supplied by your operator. All .invalid URLs are non-routable placeholders. Customer calls require OAuth and tenant/object authorization. Capabilities have additional sender-binding requirements. Every protected effect needs current authority. HTTP success does not establish execution, verification, or release of value. Runtime and internal-service APIs are excluded."
   },
   "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
   "servers": [
@@ -68,7 +68,7 @@
         ],
         "operationId": "getContext",
         "summary": "Get authenticated tenant and principal context",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get authenticated tenant and principal context. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get authenticated tenant and principal context. Tenant and object authorization checked on every reference.",
         "x-service": "platform",
         "x-audience": "customer",
         "security": [
@@ -142,7 +142,7 @@
         ],
         "operationId": "listProjects",
         "summary": "List project resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List project resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List project resources. Tenant and object authorization checked on every reference.",
         "x-service": "platform",
         "x-audience": "customer",
         "security": [
@@ -220,7 +220,7 @@
         ],
         "operationId": "createProject",
         "summary": "Create project",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create project. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create project. Tenant and object authorization checked on every reference.",
         "x-service": "platform",
         "x-audience": "customer",
         "security": [
@@ -313,7 +313,7 @@
         ],
         "operationId": "getProject",
         "summary": "Get project",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get project. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get project. Tenant and object authorization checked on every reference.",
         "x-service": "platform",
         "x-audience": "customer",
         "security": [
@@ -395,7 +395,7 @@
         ],
         "operationId": "listPrincipals",
         "summary": "List principal resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List principal resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List principal resources. Tenant and object authorization checked on every reference.",
         "x-service": "platform",
         "x-audience": "customer",
         "security": [
@@ -473,7 +473,7 @@
         ],
         "operationId": "createPrincipal",
         "summary": "Create principal",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create principal. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create principal. Tenant and object authorization checked on every reference.",
         "x-service": "platform",
         "x-audience": "customer",
         "security": [
@@ -567,7 +567,7 @@
         ],
         "operationId": "getPrincipal",
         "summary": "Get principal",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get principal. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get principal. Tenant and object authorization checked on every reference.",
         "x-service": "platform",
         "x-audience": "customer",
         "security": [
@@ -649,7 +649,7 @@
         ],
         "operationId": "createObjectUpload",
         "summary": "Create protected object upload session",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create protected object upload session. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create protected object upload session. Tenant and object authorization checked on every reference.",
         "x-service": "platform",
         "x-audience": "customer",
         "security": [
@@ -742,7 +742,7 @@
         ],
         "operationId": "completeObjectUpload",
         "summary": "Verify uploaded bytes and register object",
-        "description": "Contract 0.1.1; confirm support in your deployment. Verify uploaded bytes and register object. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Verify uploaded bytes and register object. Tenant and object authorization checked on every reference.",
         "x-service": "platform",
         "x-audience": "customer",
         "security": [
@@ -843,7 +843,7 @@
         ],
         "operationId": "getStoredObject",
         "summary": "Get storedobject",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get storedobject. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get storedobject. Tenant and object authorization checked on every reference.",
         "x-service": "platform",
         "x-audience": "customer",
         "security": [
@@ -925,7 +925,7 @@
         ],
         "operationId": "getOperation",
         "summary": "Get operation",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get operation. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get operation. Tenant and object authorization checked on every reference.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -1007,7 +1007,7 @@
         ],
         "operationId": "listAssets",
         "summary": "List asset resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List asset resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List asset resources. Tenant and object authorization checked on every reference.",
         "x-service": "registry",
         "x-audience": "customer",
         "security": [
@@ -1026,6 +1026,17 @@
           },
           {
             "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Assets with at least one version of this definition kind.",
+              "minLength": 1,
+              "maxLength": 64
+            }
           }
         ],
         "responses": {
@@ -1085,7 +1096,7 @@
         ],
         "operationId": "createAsset",
         "summary": "Create asset",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create asset. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create asset. Tenant and object authorization checked on every reference.",
         "x-service": "registry",
         "x-audience": "customer",
         "security": [
@@ -1178,7 +1189,7 @@
         ],
         "operationId": "getAsset",
         "summary": "Get asset",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get asset. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get asset. Tenant and object authorization checked on every reference.",
         "x-service": "registry",
         "x-audience": "customer",
         "security": [
@@ -1260,7 +1271,7 @@
         ],
         "operationId": "listAssetVersions",
         "summary": "List assetversion resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List assetversion resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List assetversion resources. Tenant and object authorization checked on every reference.",
         "x-service": "registry",
         "x-audience": "customer",
         "security": [
@@ -1346,7 +1357,7 @@
         ],
         "operationId": "createAssetVersion",
         "summary": "Create assetversion",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create assetversion. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create assetversion. Tenant and object authorization checked on every reference.",
         "x-service": "registry",
         "x-audience": "customer",
         "security": [
@@ -1447,7 +1458,7 @@
         ],
         "operationId": "getAssetVersion",
         "summary": "Get assetversion",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get assetversion. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get assetversion. Tenant and object authorization checked on every reference.",
         "x-service": "registry",
         "x-audience": "customer",
         "security": [
@@ -1537,7 +1548,7 @@
         ],
         "operationId": "transitionAssetVersion",
         "summary": "Request governed lifecycle transition",
-        "description": "Contract 0.1.1; confirm support in your deployment. Request governed lifecycle transition. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Request governed lifecycle transition. Tenant and object authorization checked on every reference.",
         "x-service": "registry",
         "x-audience": "customer",
         "security": [
@@ -1658,7 +1669,7 @@
         ],
         "operationId": "promoteRecord",
         "summary": "Promote evidence to a new registry identity",
-        "description": "Contract 0.1.1; confirm support in your deployment. Promote evidence to a new registry identity. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Promote evidence to a new registry identity. Tenant and object authorization checked on every reference.",
         "x-service": "registry",
         "x-audience": "customer",
         "security": [
@@ -1754,7 +1765,7 @@
         ],
         "operationId": "listProcessCases",
         "summary": "List processcase resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List processcase resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List processcase resources. Tenant and object authorization checked on every reference.",
         "x-service": "registry",
         "x-audience": "customer",
         "security": [
@@ -1832,7 +1843,7 @@
         ],
         "operationId": "createProcessCase",
         "summary": "Create processcase",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create processcase. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create processcase. Tenant and object authorization checked on every reference.",
         "x-service": "registry",
         "x-audience": "customer",
         "security": [
@@ -1925,7 +1936,7 @@
         ],
         "operationId": "getProcessCase",
         "summary": "Get processcase",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get processcase. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get processcase. Tenant and object authorization checked on every reference.",
         "x-service": "registry",
         "x-audience": "customer",
         "security": [
@@ -2007,7 +2018,7 @@
         ],
         "operationId": "closeProcessCase",
         "summary": "Request governed case closure",
-        "description": "Contract 0.1.1; confirm support in your deployment. Request governed case closure. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Request governed case closure. Tenant and object authorization checked on every reference.",
         "x-service": "registry",
         "x-audience": "customer",
         "security": [
@@ -2120,7 +2131,7 @@
         ],
         "operationId": "listAuthorityGrants",
         "summary": "List authoritygrant resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List authoritygrant resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List authoritygrant resources. Tenant and object authorization checked on every reference.",
         "x-service": "authority",
         "x-audience": "customer",
         "security": [
@@ -2198,7 +2209,7 @@
         ],
         "operationId": "createAuthorityGrant",
         "summary": "Create authoritygrant",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create authoritygrant. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create authoritygrant. Tenant and object authorization checked on every reference.",
         "x-service": "authority",
         "x-audience": "customer",
         "security": [
@@ -2292,7 +2303,7 @@
         ],
         "operationId": "getAuthorityGrant",
         "summary": "Get authoritygrant",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get authoritygrant. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get authoritygrant. Tenant and object authorization checked on every reference.",
         "x-service": "authority",
         "x-audience": "customer",
         "security": [
@@ -2374,7 +2385,7 @@
         ],
         "operationId": "revokeAuthorityGrant",
         "summary": "Revoke authority prospectively",
-        "description": "Contract 0.1.1; confirm support in your deployment. Appends revocation, invalidates future dispatch eligibility across descendants and creates reconciliation obligations for possible/completed side effects. Completed effects are not erased.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Appends revocation, invalidates future dispatch eligibility across descendants and creates reconciliation obligations for possible/completed side effects. Completed effects are not erased.",
         "x-service": "authority",
         "x-audience": "customer",
         "security": [
@@ -2476,7 +2487,7 @@
         ],
         "operationId": "listDelegations",
         "summary": "List delegation resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List delegation resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List delegation resources. Tenant and object authorization checked on every reference.",
         "x-service": "authority",
         "x-audience": "customer",
         "security": [
@@ -2554,7 +2565,7 @@
         ],
         "operationId": "createDelegation",
         "summary": "Create delegation",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create delegation. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create delegation. Tenant and object authorization checked on every reference.",
         "x-service": "authority",
         "x-audience": "customer",
         "security": [
@@ -2648,7 +2659,7 @@
         ],
         "operationId": "getDelegation",
         "summary": "Get delegation",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get delegation. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get delegation. Tenant and object authorization checked on every reference.",
         "x-service": "authority",
         "x-audience": "customer",
         "security": [
@@ -2730,7 +2741,7 @@
         ],
         "operationId": "revokeDelegation",
         "summary": "Revoke delegation and descendant eligibility",
-        "description": "Contract 0.1.1; confirm support in your deployment. Revoke delegation and descendant eligibility. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Revoke delegation and descendant eligibility. Tenant and object authorization checked on every reference.",
         "x-service": "authority",
         "x-audience": "customer",
         "security": [
@@ -2832,7 +2843,7 @@
         ],
         "operationId": "createCapabilityToken",
         "summary": "Mint one sender-bound action capability",
-        "description": "Contract 0.1.1; confirm support in your deployment. Mint one sender-bound action capability. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Mint one sender-bound action capability. Tenant and object authorization checked on every reference.",
         "x-service": "authority",
         "x-audience": "customer",
         "security": [
@@ -2926,7 +2937,7 @@
         ],
         "operationId": "listReservations",
         "summary": "List reservation resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List reservation resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List reservation resources. Tenant and object authorization checked on every reference.",
         "x-service": "authority",
         "x-audience": "customer",
         "security": [
@@ -3004,7 +3015,7 @@
         ],
         "operationId": "createReservation",
         "summary": "Create reservation",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create reservation. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create reservation. Tenant and object authorization checked on every reference.",
         "x-service": "authority",
         "x-audience": "customer",
         "security": [
@@ -3098,7 +3109,7 @@
         ],
         "operationId": "getReservation",
         "summary": "Get reservation",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get reservation. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get reservation. Tenant and object authorization checked on every reference.",
         "x-service": "authority",
         "x-audience": "customer",
         "security": [
@@ -3180,7 +3191,7 @@
         ],
         "operationId": "requestReservationRelease",
         "summary": "Request evidence-backed release of unused reservation",
-        "description": "Contract 0.1.1; confirm support in your deployment. Request evidence-backed release of unused reservation. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Request evidence-backed release of unused reservation. Tenant and object authorization checked on every reference.",
         "x-service": "authority",
         "x-audience": "customer",
         "security": [
@@ -3285,7 +3296,7 @@
         ],
         "operationId": "createAction",
         "summary": "Normalize an intent into a canonical action",
-        "description": "Contract 0.1.1; confirm support in your deployment. Normalize an intent into a canonical action. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Normalize an intent into a canonical action. Tenant and object authorization checked on every reference.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -3369,6 +3380,156 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Governed execution"
+        ],
+        "operationId": "listActions",
+        "summary": "List actions",
+        "description": "Contract 0.2.0; confirm support in your deployment. Owner-scoped like getAction; principal_id narrows, never widens. Newest first. Carries no execution state.",
+        "x-service": "execution",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "execution:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "name": "project_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "principal_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "action_class",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "resource_namespace",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "resource_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "resource_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "created_after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Timestamp"
+            }
+          },
+          {
+            "name": "created_before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Timestamp"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful representation or command result.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
       }
     },
     "/v1/actions/{action_id}": {
@@ -3378,7 +3539,7 @@
         ],
         "operationId": "getAction",
         "summary": "Get action",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get action. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get action. Tenant and object authorization checked on every reference.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -3460,7 +3621,7 @@
         ],
         "operationId": "evaluateAction",
         "summary": "Simulate eligibility without dispatch authority",
-        "description": "Contract 0.1.1; confirm support in your deployment. Simulate eligibility without dispatch authority. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Simulate eligibility without dispatch authority. Tenant and object authorization checked on every reference.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -3553,7 +3714,7 @@
         ],
         "operationId": "getEvaluation",
         "summary": "Get evaluation",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get evaluation. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get evaluation. Tenant and object authorization checked on every reference.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -3635,7 +3796,7 @@
         ],
         "operationId": "listExecutions",
         "summary": "List executions",
-        "description": "Contract 0.1.1; confirm support in your deployment. List executions. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List executions. Tenant and object authorization checked on every reference.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -3673,6 +3834,14 @@
           },
           {
             "name": "operation_instance_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "action_id",
             "in": "query",
             "required": false,
             "schema": {
@@ -3737,7 +3906,7 @@
         ],
         "operationId": "createExecution",
         "summary": "Submit an action for governed execution",
-        "description": "Contract 0.1.1; confirm support in your deployment. Durably records submission and operation identity, then evaluates current authority and policy. Approval, path selection, dispatch, result verification and operative gates run server-side. Returns accepted even when later denied; getExecution/event feed exposes the durable denial. Duplicate operation is never an independent retry path.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Durably records submission and operation identity, then evaluates current authority and policy. Approval, path selection, dispatch, result verification and operative gates run server-side. Returns accepted even when later denied; getExecution/event feed exposes the durable denial. Duplicate operation is never an independent retry path.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -3837,7 +4006,7 @@
         ],
         "operationId": "getExecution",
         "summary": "Get execution",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get execution. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get execution. Tenant and object authorization checked on every reference.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -3919,7 +4088,7 @@
         ],
         "operationId": "listExecutionAuthorizations",
         "summary": "List authorization history",
-        "description": "Contract 0.1.1; confirm support in your deployment. List authorization history. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List authorization history. Tenant and object authorization checked on every reference.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -4007,7 +4176,7 @@
         ],
         "operationId": "getExecutionResult",
         "summary": "Release result only after current scoped gate permits",
-        "description": "Contract 0.1.1; confirm support in your deployment. Evaluates result_release at request time. Returns 409 for incomplete/conflicted/unresolved evidence and 403 for a policy prohibition. Only a permitted result is returned as authoritative output; forensic receipt access is a separate read permission.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Evaluates result_release at request time. Returns 409 for incomplete/conflicted/unresolved evidence and 403 for a policy prohibition. Only a permitted result is returned as authoritative output; forensic receipt access is a separate read permission.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -4090,7 +4259,7 @@
         ],
         "operationId": "requestExecutionCancellation",
         "summary": "Request separately governed cancellation",
-        "description": "Contract 0.1.1; confirm support in your deployment. Queued work can be cancelled before dispatch. After dispatch, target cancellation requires its own governed action and confirmed evidence. Cancellation request acceptance never proves the external effect did not occur.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Queued work can be cancelled before dispatch. After dispatch, target cancellation requires its own governed action and confirmed evidence. Cancellation request acceptance never proves the external effect did not occur.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -4195,7 +4364,7 @@
         ],
         "operationId": "reconcileExecution",
         "summary": "Reconcile an uncertain external effect",
-        "description": "Contract 0.1.1; confirm support in your deployment. Reconcile an uncertain external effect. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Reconcile an uncertain external effect. Tenant and object authorization checked on every reference.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -4300,7 +4469,7 @@
         ],
         "operationId": "listApprovals",
         "summary": "List assigned approval requests",
-        "description": "Contract 0.1.1; confirm support in your deployment. List assigned approval requests. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List assigned approval requests. Tenant and object authorization checked on every reference.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -4402,7 +4571,7 @@
         ],
         "operationId": "getApproval",
         "summary": "Get approval",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get approval. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get approval. Tenant and object authorization checked on every reference.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -4484,7 +4653,7 @@
         ],
         "operationId": "voteOnApproval",
         "summary": "Record an authenticated approver vote",
-        "description": "Contract 0.1.1; confirm support in your deployment. Requires interactive human authentication and assurance under policy; client-credentials tokens cannot cast a human vote. Bind to action/policy and deduplicate principal votes. Fresh gate evaluation follows quorum; no automatic dispatch bypass.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Requires interactive human authentication and assurance under policy; client-credentials tokens cannot cast a human vote. Bind to action/policy and deduplicate principal votes. Fresh gate evaluation follows quorum; no automatic dispatch bypass.",
         "x-service": "execution",
         "x-audience": "customer",
         "security": [
@@ -4594,7 +4763,7 @@
         ],
         "operationId": "listReceipts",
         "summary": "List immutable receipts",
-        "description": "Contract 0.1.1; confirm support in your deployment. List immutable receipts. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List immutable receipts. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -4649,7 +4818,8 @@
                 "rights",
                 "allocation",
                 "realization",
-                "settlement_transfer"
+                "settlement_transfer",
+                "escrow_funding"
               ]
             }
           }
@@ -4713,7 +4883,7 @@
         ],
         "operationId": "getReceipt",
         "summary": "Get receipt",
-        "description": "Contract 0.1.1; confirm support in your deployment. Returns immutable assertion evidence under forensic/read entitlement. Non-authoritative character retained; access does not permit result release, downstream use or payment.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Returns immutable assertion evidence under forensic/read entitlement. Non-authoritative character retained; access does not permit result release, downstream use or payment.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -4734,6 +4904,15 @@
             "schema": {
               "$ref": "#/components/schemas/RecordId"
             }
+          },
+          {
+            "name": "share_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            },
+            "description": "Read as the recipient of an execution share that covers this record (0.2.0)."
           }
         ],
         "responses": {
@@ -4795,7 +4974,7 @@
         ],
         "operationId": "getReceiptInclusionProof",
         "summary": "Get checkpoint inclusion proof",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get checkpoint inclusion proof. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get checkpoint inclusion proof. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -4877,7 +5056,7 @@
         ],
         "operationId": "getVerificationKeys",
         "summary": "Get permitted public receipt verification keys",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get permitted public receipt verification keys. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get permitted public receipt verification keys. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -4951,7 +5130,7 @@
         ],
         "operationId": "verifyReceipt",
         "summary": "Verify a receipt and distinguish proof dimensions",
-        "description": "Contract 0.1.1; confirm support in your deployment. Verify a receipt and distinguish proof dimensions. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Verify a receipt and distinguish proof dimensions. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -5044,7 +5223,7 @@
         ],
         "operationId": "getVerification",
         "summary": "Get verification",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get verification. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get verification. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -5126,7 +5305,7 @@
         ],
         "operationId": "createVerificationDisposition",
         "summary": "Append scoped verifier assertions",
-        "description": "Contract 0.1.1; confirm support in your deployment. Append scoped verifier assertions. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Append scoped verifier assertions. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -5220,7 +5399,7 @@
         ],
         "operationId": "createProjection",
         "summary": "Compute a deterministic scoped verification snapshot",
-        "description": "Contract 0.1.1; confirm support in your deployment. Compute a deterministic scoped verification snapshot. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Compute a deterministic scoped verification snapshot. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -5313,7 +5492,7 @@
         ],
         "operationId": "getProjection",
         "summary": "Get projection",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get projection. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get projection. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -5395,7 +5574,7 @@
         ],
         "operationId": "decideOperativeEffect",
         "summary": "Evaluate one operative effect under current authority",
-        "description": "Contract 0.1.1; confirm support in your deployment. Evaluate one operative effect under current authority. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Evaluate one operative effect under current authority. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -5488,7 +5667,7 @@
         ],
         "operationId": "getEffectDecision",
         "summary": "Get effectdecision",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get effectdecision. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get effectdecision. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -5570,7 +5749,7 @@
         ],
         "operationId": "invalidateDependencies",
         "summary": "Compute dependency-scoped exclusion without deleting evidence",
-        "description": "Contract 0.1.1; confirm support in your deployment. Compute dependency-scoped exclusion without deleting evidence. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Compute dependency-scoped exclusion without deleting evidence. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -5664,7 +5843,7 @@
         ],
         "operationId": "getInvalidation",
         "summary": "Get invalidation",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get invalidation. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get invalidation. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -5746,7 +5925,7 @@
         ],
         "operationId": "getCheckpoint",
         "summary": "Get signed evidence checkpoint",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get signed evidence checkpoint. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get signed evidence checkpoint. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -5828,7 +6007,7 @@
         ],
         "operationId": "requestTwinRetentionChange",
         "summary": "Request governed evidence-payload retention change",
-        "description": "Contract 0.1.1; confirm support in your deployment. Request governed evidence-payload retention change. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Request governed evidence-payload retention change. Tenant and object authorization checked on every reference.",
         "x-service": "evidence",
         "x-audience": "customer",
         "security": [
@@ -5924,7 +6103,7 @@
         ],
         "operationId": "listTargets",
         "summary": "List target resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List target resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List target resources. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -6002,7 +6181,7 @@
         ],
         "operationId": "createTarget",
         "summary": "Create target",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create target. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create target. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -6096,7 +6275,7 @@
         ],
         "operationId": "getTarget",
         "summary": "Get target",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get target. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get target. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -6178,7 +6357,7 @@
         ],
         "operationId": "suspendTarget",
         "summary": "Suspend target eligibility prospectively",
-        "description": "Contract 0.1.1; confirm support in your deployment. Suspend target eligibility prospectively. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Suspend target eligibility prospectively. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -6280,7 +6459,7 @@
         ],
         "operationId": "listAdapters",
         "summary": "List adapter resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List adapter resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List adapter resources. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -6358,7 +6537,7 @@
         ],
         "operationId": "createAdapter",
         "summary": "Create adapter",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create adapter. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create adapter. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -6452,7 +6631,7 @@
         ],
         "operationId": "getAdapter",
         "summary": "Get adapter",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get adapter. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get adapter. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -6534,7 +6713,7 @@
         ],
         "operationId": "createChallenge",
         "summary": "Create fresh attestation or enrollment challenge",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create fresh attestation or enrollment challenge. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create fresh attestation or enrollment challenge. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -6628,7 +6807,7 @@
         ],
         "operationId": "submitAttestation",
         "summary": "Submit target-bound attestation for verification",
-        "description": "Contract 0.1.1; confirm support in your deployment. Submit target-bound attestation for verification. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Submit target-bound attestation for verification. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -6722,7 +6901,7 @@
         ],
         "operationId": "getAttestation",
         "summary": "Get attestation",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get attestation. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get attestation. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -6804,7 +6983,7 @@
         ],
         "operationId": "submitResourceMeasurement",
         "summary": "Record device-local resource evidence",
-        "description": "Contract 0.1.1; confirm support in your deployment. Record device-local resource evidence. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Record device-local resource evidence. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -6898,7 +7077,7 @@
         ],
         "operationId": "getMeasurement",
         "summary": "Get measurement",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get measurement. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get measurement. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -6980,7 +7159,7 @@
         ],
         "operationId": "createResourceEstimate",
         "summary": "Generate and commit independent controller estimate",
-        "description": "Contract 0.1.1; confirm support in your deployment. Generate and commit independent controller estimate. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Generate and commit independent controller estimate. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -7074,7 +7253,7 @@
         ],
         "operationId": "getEstimate",
         "summary": "Get estimate",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get estimate. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get estimate. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -7156,7 +7335,7 @@
         ],
         "operationId": "compareResourceEvidence",
         "summary": "Validate same-candidate evidence before selection",
-        "description": "Contract 0.1.1; confirm support in your deployment. Validate same-candidate evidence before selection. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Validate same-candidate evidence before selection. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -7249,7 +7428,7 @@
         ],
         "operationId": "getEnergyComparison",
         "summary": "Get energycomparison",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get energycomparison. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get energycomparison. Tenant and object authorization checked on every reference.",
         "x-service": "routing",
         "x-audience": "customer",
         "security": [
@@ -7331,7 +7510,7 @@
         ],
         "operationId": "createContribution",
         "summary": "Record participation evidence",
-        "description": "Contract 0.1.1; confirm support in your deployment. Record participation evidence. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Record participation evidence. Tenant and object authorization checked on every reference.",
         "x-service": "provenance",
         "x-audience": "customer",
         "security": [
@@ -7424,7 +7603,7 @@
         ],
         "operationId": "createOutcome",
         "summary": "Record observed outcome evidence",
-        "description": "Contract 0.1.1; confirm support in your deployment. Record observed outcome evidence. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Record observed outcome evidence. Tenant and object authorization checked on every reference.",
         "x-service": "provenance",
         "x-audience": "customer",
         "security": [
@@ -7517,7 +7696,7 @@
         ],
         "operationId": "createProvenanceGraph",
         "summary": "Record immutable derivation graph",
-        "description": "Contract 0.1.1; confirm support in your deployment. Record immutable derivation graph. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Record immutable derivation graph. Tenant and object authorization checked on every reference.",
         "x-service": "provenance",
         "x-audience": "customer",
         "security": [
@@ -7610,7 +7789,7 @@
         ],
         "operationId": "createRightsRecord",
         "summary": "Record provenance-linked license or consent",
-        "description": "Contract 0.1.1; confirm support in your deployment. Record provenance-linked license or consent. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Record provenance-linked license or consent. Tenant and object authorization checked on every reference.",
         "x-service": "provenance",
         "x-audience": "customer",
         "security": [
@@ -7704,7 +7883,7 @@
         ],
         "operationId": "computeAllocation",
         "summary": "Compute method-qualified conserved allocation",
-        "description": "Contract 0.1.1; confirm support in your deployment. Compute method-qualified conserved allocation. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Compute method-qualified conserved allocation. Tenant and object authorization checked on every reference.",
         "x-service": "provenance",
         "x-audience": "customer",
         "security": [
@@ -7797,7 +7976,7 @@
         ],
         "operationId": "updateBeneficiary",
         "summary": "Record governed successor rights holder",
-        "description": "Contract 0.1.1; confirm support in your deployment. Record governed successor rights holder. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Record governed successor rights holder. Tenant and object authorization checked on every reference.",
         "x-service": "provenance",
         "x-audience": "customer",
         "security": [
@@ -7891,7 +8070,7 @@
         ],
         "operationId": "revokeRights",
         "summary": "Append prospective rights revocation",
-        "description": "Contract 0.1.1; confirm support in your deployment. Append prospective rights revocation. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Append prospective rights revocation. Tenant and object authorization checked on every reference.",
         "x-service": "provenance",
         "x-audience": "customer",
         "security": [
@@ -7993,7 +8172,7 @@
         ],
         "operationId": "requestSelectiveDisclosure",
         "summary": "Request controlled attribution disclosure",
-        "description": "Contract 0.1.1; confirm support in your deployment. Request controlled attribution disclosure. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Request controlled attribution disclosure. Tenant and object authorization checked on every reference.",
         "x-service": "provenance",
         "x-audience": "customer",
         "security": [
@@ -8089,7 +8268,7 @@
         ],
         "operationId": "listLots",
         "summary": "List lot resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List lot resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List lot resources. Tenant and object authorization checked on every reference.",
         "x-service": "provenance",
         "x-audience": "customer",
         "security": [
@@ -8167,7 +8346,7 @@
         ],
         "operationId": "createLot",
         "summary": "Create lot",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create lot. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create lot. Tenant and object authorization checked on every reference.",
         "x-service": "provenance",
         "x-audience": "customer",
         "security": [
@@ -8260,7 +8439,7 @@
         ],
         "operationId": "getLot",
         "summary": "Get lot",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get lot. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get lot. Tenant and object authorization checked on every reference.",
         "x-service": "provenance",
         "x-audience": "customer",
         "security": [
@@ -8342,7 +8521,7 @@
         ],
         "operationId": "transformLots",
         "summary": "Validate conserved lot split merge or consumption",
-        "description": "Contract 0.1.1; confirm support in your deployment. Validate conserved lot split merge or consumption. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Validate conserved lot split merge or consumption. Tenant and object authorization checked on every reference.",
         "x-service": "provenance",
         "x-audience": "customer",
         "security": [
@@ -8435,7 +8614,7 @@
         ],
         "operationId": "listRealizations",
         "summary": "List realization resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List realization resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List realization resources. Tenant and object authorization checked on every reference.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -8513,7 +8692,7 @@
         ],
         "operationId": "createRealization",
         "summary": "Create realization",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create realization. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create realization. Tenant and object authorization checked on every reference.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -8607,7 +8786,7 @@
         ],
         "operationId": "getRealization",
         "summary": "Get realization",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get realization. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get realization. Tenant and object authorization checked on every reference.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -8689,7 +8868,7 @@
         ],
         "operationId": "getRealizationWitness",
         "summary": "Get immutable signed realization witness",
-        "description": "Contract 0.1.1; confirm support in your deployment. Returns the witness and commitment once created; 409 while evidence/terms remain pending. Signature is available in the referenced receipt or realization representation.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Returns the witness and commitment once created; 409 while evidence/terms remain pending. Signature is available in the referenced receipt or realization representation.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -8771,7 +8950,7 @@
         ],
         "operationId": "listEscrowAccounts",
         "summary": "List authorized custody-backed escrow accounts",
-        "description": "Contract 0.1.1; confirm support in your deployment. List authorized custody-backed escrow accounts. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List authorized custody-backed escrow accounts. Tenant and object authorization checked on every reference.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -8851,7 +9030,7 @@
         ],
         "operationId": "getEscrowAccount",
         "summary": "Get escrowaccount",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get escrowaccount. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get escrowaccount. Tenant and object authorization checked on every reference.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -8933,7 +9112,7 @@
         ],
         "operationId": "listSettlements",
         "summary": "List settlement resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List settlement resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List settlement resources. Tenant and object authorization checked on every reference.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -9011,7 +9190,7 @@
         ],
         "operationId": "createSettlement",
         "summary": "Create settlement",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create settlement. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create settlement. Tenant and object authorization checked on every reference.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -9105,7 +9284,7 @@
         ],
         "operationId": "getSettlement",
         "summary": "Get settlement",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get settlement. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get settlement. Tenant and object authorization checked on every reference.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -9187,7 +9366,7 @@
         ],
         "operationId": "releaseSettlement",
         "summary": "Request governed release of validated terms",
-        "description": "Contract 0.1.1; confirm support in your deployment. Locks unreleased terms under exclusive reservation, rechecks evidence and policy, then dispatches transfer. Payout status remains pending/unknown until confirmed by an enrolled custody adapter; no retry on uncertain external effect.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Locks unreleased terms under exclusive reservation, rechecks evidence and policy, then dispatches transfer. Payout status remains pending/unknown until confirmed by an enrolled custody adapter; no retry on uncertain external effect.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -9301,7 +9480,7 @@
         ],
         "operationId": "returnHeldValue",
         "summary": "Request governed return of unreleased value",
-        "description": "Contract 0.1.1; confirm support in your deployment. Return only unspent, unencumbered held value to the proven depositor. Atomic remaining-balance reservation excludes simultaneous release. Unknown pending transfer locks affected terms.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Return only unspent, unencumbered held value to the proven depositor. Atomic remaining-balance reservation excludes simultaneous release. Unknown pending transfer locks affected terms.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -9415,7 +9594,7 @@
         ],
         "operationId": "remediateRealization",
         "summary": "Create linked remediation without rewriting the witness",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create linked remediation without rewriting the witness. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create linked remediation without rewriting the witness. Tenant and object authorization checked on every reference.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -9520,7 +9699,7 @@
         ],
         "operationId": "listDisputes",
         "summary": "List dispute resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List dispute resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List dispute resources. Tenant and object authorization checked on every reference.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -9598,7 +9777,7 @@
         ],
         "operationId": "createDispute",
         "summary": "Create dispute",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create dispute. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create dispute. Tenant and object authorization checked on every reference.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -9691,7 +9870,7 @@
         ],
         "operationId": "getDispute",
         "summary": "Get dispute",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get dispute. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get dispute. Tenant and object authorization checked on every reference.",
         "x-service": "settlement",
         "x-audience": "customer",
         "security": [
@@ -9773,7 +9952,7 @@
         ],
         "operationId": "listEdgeNodes",
         "summary": "List edgenode resources",
-        "description": "Contract 0.1.1; confirm support in your deployment. List edgenode resources. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List edgenode resources. Tenant and object authorization checked on every reference.",
         "x-service": "edge",
         "x-audience": "customer",
         "security": [
@@ -9851,7 +10030,7 @@
         ],
         "operationId": "createEdgeNode",
         "summary": "Create edgenode",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create edgenode. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create edgenode. Tenant and object authorization checked on every reference.",
         "x-service": "edge",
         "x-audience": "customer",
         "security": [
@@ -9945,7 +10124,7 @@
         ],
         "operationId": "getEdgeNode",
         "summary": "Get edgenode",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get edgenode. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get edgenode. Tenant and object authorization checked on every reference.",
         "x-service": "edge",
         "x-audience": "customer",
         "security": [
@@ -10027,7 +10206,7 @@
         ],
         "operationId": "createEdgeAllocation",
         "summary": "Allocate exclusive bounded offline authority",
-        "description": "Contract 0.1.1; confirm support in your deployment. Allocate exclusive bounded offline authority. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Allocate exclusive bounded offline authority. Tenant and object authorization checked on every reference.",
         "x-service": "edge",
         "x-audience": "customer",
         "security": [
@@ -10121,7 +10300,7 @@
         ],
         "operationId": "getEdgeAllocation",
         "summary": "Get edgeallocation",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get edgeallocation. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get edgeallocation. Tenant and object authorization checked on every reference.",
         "x-service": "edge",
         "x-audience": "customer",
         "security": [
@@ -10203,7 +10382,7 @@
         ],
         "operationId": "synchronizeEdge",
         "summary": "Ingest offline signed receipts and checkpoint",
-        "description": "Contract 0.1.1; confirm support in your deployment. Durably receives the bounded batch and returns per-record ingestion dispositions. Node certificate must own node_id/allocation. Accepted records still require scoped verification/gating. Large histories use multiple batches.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Durably receives the bounded batch and returns per-record ingestion dispositions. Node certificate must own node_id/allocation. Accepted records still require scoped verification/gating. Large histories use multiple batches.",
         "x-service": "edge",
         "x-audience": "customer",
         "security": [
@@ -10305,7 +10484,7 @@
         ],
         "operationId": "getEdgeSync",
         "summary": "Get offline batch reconciliation result",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get offline batch reconciliation result. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get offline batch reconciliation result. Tenant and object authorization checked on every reference.",
         "x-service": "edge",
         "x-audience": "customer",
         "security": [
@@ -10395,7 +10574,7 @@
         ],
         "operationId": "evaluateCoverage",
         "summary": "Evaluate consequential-interface enforcement coverage",
-        "description": "Contract 0.1.1; confirm support in your deployment. Evaluate consequential-interface enforcement coverage. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Evaluate consequential-interface enforcement coverage. Tenant and object authorization checked on every reference.",
         "x-service": "edge",
         "x-audience": "customer",
         "security": [
@@ -10489,7 +10668,7 @@
         ],
         "operationId": "getCoverage",
         "summary": "Get coverage",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get coverage. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get coverage. Tenant and object authorization checked on every reference.",
         "x-service": "edge",
         "x-audience": "customer",
         "security": [
@@ -10571,7 +10750,7 @@
         ],
         "operationId": "evaluateCampaign",
         "summary": "Evaluate cumulative authority-expansion behavior",
-        "description": "Contract 0.1.1; confirm support in your deployment. Evaluate cumulative authority-expansion behavior. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Evaluate cumulative authority-expansion behavior. Tenant and object authorization checked on every reference.",
         "x-service": "edge",
         "x-audience": "customer",
         "security": [
@@ -10665,7 +10844,7 @@
         ],
         "operationId": "getCampaign",
         "summary": "Get campaign",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get campaign. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get campaign. Tenant and object authorization checked on every reference.",
         "x-service": "edge",
         "x-audience": "customer",
         "security": [
@@ -10747,7 +10926,7 @@
         ],
         "operationId": "listEvents",
         "summary": "Read replayable event feed",
-        "description": "Contract 0.1.1; confirm support in your deployment. Read replayable event feed. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Read replayable event feed. Tenant and object authorization checked on every reference.",
         "x-service": "events",
         "x-audience": "customer",
         "security": [
@@ -10852,7 +11031,7 @@
         ],
         "operationId": "listWebhooks",
         "summary": "List webhook subscriptions",
-        "description": "Contract 0.1.1; confirm support in your deployment. List webhook subscriptions. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List webhook subscriptions. Tenant and object authorization checked on every reference.",
         "x-service": "events",
         "x-audience": "customer",
         "security": [
@@ -10930,7 +11109,7 @@
         ],
         "operationId": "createWebhook",
         "summary": "Create subscription and return signing key once",
-        "description": "Contract 0.1.1; confirm support in your deployment. Create subscription and return signing key once. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Create subscription and return signing key once. Tenant and object authorization checked on every reference.",
         "x-service": "events",
         "x-audience": "customer",
         "security": [
@@ -11023,7 +11202,7 @@
         ],
         "operationId": "getWebhook",
         "summary": "Get webhook",
-        "description": "Contract 0.1.1; confirm support in your deployment. Get webhook. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get webhook. Tenant and object authorization checked on every reference.",
         "x-service": "events",
         "x-audience": "customer",
         "security": [
@@ -11103,7 +11282,7 @@
         ],
         "operationId": "updateWebhook",
         "summary": "Pause resume or disable a webhook subscription",
-        "description": "Contract 0.1.1; confirm support in your deployment. Pause resume or disable a webhook subscription. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Pause resume or disable a webhook subscription. Tenant and object authorization checked on every reference.",
         "x-service": "events",
         "x-audience": "customer",
         "security": [
@@ -11210,7 +11389,7 @@
         ],
         "operationId": "rotateWebhookSecret",
         "summary": "Rotate webhook secret with overlap period",
-        "description": "Contract 0.1.1; confirm support in your deployment. New 32-byte secret returned once. Old secret accepted for 24 hours; each delivery carries secret version. Replayed creation/rotation secret response available only to the same authenticated principal under the idempotency window.",
+        "description": "Contract 0.2.0; confirm support in your deployment. New 32-byte secret returned once. Old secret accepted for 24 hours; each delivery carries secret version. Replayed creation/rotation secret response available only to the same authenticated principal under the idempotency window.",
         "x-service": "events",
         "x-audience": "customer",
         "security": [
@@ -11311,7 +11490,7 @@
         ],
         "operationId": "listWebhookDeliveries",
         "summary": "List webhook delivery attempts",
-        "description": "Contract 0.1.1; confirm support in your deployment. List webhook delivery attempts. Tenant and object authorization checked on every reference.",
+        "description": "Contract 0.2.0; confirm support in your deployment. List webhook delivery attempts. Tenant and object authorization checked on every reference.",
         "x-service": "events",
         "x-audience": "customer",
         "security": [
@@ -11399,7 +11578,7 @@
         ],
         "operationId": "replayWebhookDelivery",
         "summary": "Redeliver an existing event without re-executing work",
-        "description": "Contract 0.1.1; confirm support in your deployment. Preserves event ID; creates a new delivery attempt. Only repeats notification. Business effect APIs remain independently gated.",
+        "description": "Contract 0.2.0; confirm support in your deployment. Preserves event ID; creates a new delivery attempt. Only repeats notification. Business effect APIs remain independently gated.",
         "x-service": "events",
         "x-audience": "customer",
         "security": [
@@ -11495,6 +11674,1653 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/Reason"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/principals/{principal_id}/suspensions": {
+      "post": {
+        "tags": [
+          "Platform and objects"
+        ],
+        "operationId": "suspendPrincipal",
+        "summary": "Suspend a principal everywhere or within a project",
+        "description": "Contract 0.2.0; confirm support in your deployment. A hold, not a withdrawal: new executions, capability tokens, delegations and unclaimed dispatch refuse with PRINCIPAL_SUSPENDED; dispatched work is listed, not interrupted.",
+        "x-service": "platform",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "authority:revoke"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "principal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Durably created. See resource state; creation is not authorization to produce an external effect.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "Idempotency-Replayed": {
+                "$ref": "#/components/headers/Idempotency-Replayed"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Suspension"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "x-consequential": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuspensionCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/suspensions/{suspension_id}/lifts": {
+      "post": {
+        "tags": [
+          "Platform and objects"
+        ],
+        "operationId": "liftSuspension",
+        "summary": "Lift a suspension under an approval",
+        "description": "Contract 0.2.0; confirm support in your deployment. Requires an approved approval whose eligible principals exclude the suspended principal and its delegators.",
+        "x-service": "platform",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "authority:revoke"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "suspension_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Durably created. See resource state; creation is not authorization to produce an external effect.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "Idempotency-Replayed": {
+                "$ref": "#/components/headers/Idempotency-Replayed"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Suspension"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "x-consequential": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuspensionLiftCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/suspensions/{suspension_id}": {
+      "get": {
+        "tags": [
+          "Platform and objects"
+        ],
+        "operationId": "getSuspension",
+        "summary": "Get suspension",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get suspension. Tenant and object authorization checked on every reference.",
+        "x-service": "platform",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "platform:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "suspension_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful representation or command result.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Suspension"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/v1/suspensions": {
+      "get": {
+        "tags": [
+          "Platform and objects"
+        ],
+        "operationId": "listSuspensions",
+        "summary": "List suspensions",
+        "description": "Contract 0.2.0; confirm support in your deployment. List suspensions. Tenant and object authorization checked on every reference.",
+        "x-service": "platform",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "platform:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "name": "principal_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "lifted",
+                "expired"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful representation or command result.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuspensionPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/v1/principals/{principal_id}/agent-profile-versions": {
+      "post": {
+        "tags": [
+          "Platform and objects"
+        ],
+        "operationId": "updateAgentProfile",
+        "summary": "Record a new agent profile version",
+        "description": "Contract 0.2.0; confirm support in your deployment. Profiles are versioned, never edited. Nothing in a profile is authority.",
+        "x-service": "platform",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "platform:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "principal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Durably created. See resource state; creation is not authorization to produce an external effect.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "Idempotency-Replayed": {
+                "$ref": "#/components/headers/Idempotency-Replayed"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Principal"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "x-consequential": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentProfile"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/journeys/{journey_id}/safety-signals": {
+      "post": {
+        "tags": [
+          "Governed execution"
+        ],
+        "operationId": "submitSafetySignal",
+        "summary": "Submit a signed safety signal about a journey",
+        "description": "Contract 0.2.0; confirm support in your deployment. Caller is an enrolled evaluator whose key signed the canonical signal. The signal carries no disposition; the derived execution.safety_evaluated receipt follows through the ledger.",
+        "x-service": "execution",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "execution:safety"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "journey_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Durably created. See resource state; creation is not authorization to produce an external effect.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "Idempotency-Replayed": {
+                "$ref": "#/components/headers/Idempotency-Replayed"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Receipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "x-consequential": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetySignalSubmission"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/journeys/{journey_id}/terminations": {
+      "post": {
+        "tags": [
+          "Governed execution"
+        ],
+        "operationId": "terminateJourney",
+        "summary": "Terminate executable authority over a journey",
+        "description": "Contract 0.2.0; confirm support in your deployment. Absorbing. Pre-dispatch executions are cancelled; in-flight effects are listed as unresolved; restart requires a new root grant.",
+        "x-service": "execution",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "execution:terminate"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "journey_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Durably created. See resource state; creation is not authorization to produce an external effect.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "Idempotency-Replayed": {
+                "$ref": "#/components/headers/Idempotency-Replayed"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Receipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "x-consequential": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerminationSubmission"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/journeys/{journey_id}": {
+      "get": {
+        "tags": [
+          "Governed execution"
+        ],
+        "operationId": "getJourney",
+        "summary": "Get a journey and its runtime disposition",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get a journey and its runtime disposition. Tenant and object authorization checked on every reference.",
+        "x-service": "execution",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "execution:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "journey_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful representation or command result.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JourneyState"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/v1/receipts/{receipt_id}/report": {
+      "get": {
+        "tags": [
+          "Evidence and verification"
+        ],
+        "operationId": "getRecordReport",
+        "summary": "Report a record's assurance freshness and coverage",
+        "description": "Contract 0.2.0; confirm support in your deployment. Report a record's assurance freshness and coverage. Tenant and object authorization checked on every reference.",
+        "x-service": "evidence",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "evidence:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "receipt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/RecordId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful representation or command result.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordReport"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/v1/projects/{project_id}/baseline-policy-proposals": {
+      "post": {
+        "tags": [
+          "Registry and process"
+        ],
+        "operationId": "proposeBaselinePolicy",
+        "summary": "Propose a project baseline policy",
+        "description": "Contract 0.2.0; confirm support in your deployment. Names a promoted policy version only. Effective at effective_at once the quorum is met; the proposer cannot vote.",
+        "x-service": "registry",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "registry:promote"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Durably created. See resource state; creation is not authorization to produce an external effect.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "Idempotency-Replayed": {
+                "$ref": "#/components/headers/Idempotency-Replayed"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaselinePolicyProposal"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "x-consequential": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BaselinePolicyProposalCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/baseline-policy-proposals/{proposal_id}/votes": {
+      "post": {
+        "tags": [
+          "Registry and process"
+        ],
+        "operationId": "voteOnBaselinePolicy",
+        "summary": "Vote on a baseline policy proposal",
+        "description": "Contract 0.2.0; confirm support in your deployment. Vote on a baseline policy proposal. Tenant and object authorization checked on every reference.",
+        "x-service": "registry",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "execution:approve"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "proposal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Durably created. See resource state; creation is not authorization to produce an external effect.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "Idempotency-Replayed": {
+                "$ref": "#/components/headers/Idempotency-Replayed"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Receipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "412": {
+            "$ref": "#/components/responses/PreconditionFailed"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "428": {
+            "$ref": "#/components/responses/PreconditionRequired"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApprovalVoteCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/projects/{project_id}/baseline-policies": {
+      "get": {
+        "tags": [
+          "Registry and process"
+        ],
+        "operationId": "getBaselinePolicies",
+        "summary": "Get the effective project baseline policy and its history",
+        "description": "Contract 0.2.0; confirm support in your deployment. Get the effective project baseline policy and its history. Tenant and object authorization checked on every reference.",
+        "x-service": "registry",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "registry:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful representation or command result.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaselinePolicies"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/v1/executions/{execution_id}/shares": {
+      "post": {
+        "tags": [
+          "Governed execution"
+        ],
+        "operationId": "createExecutionShare",
+        "summary": "Share one execution with a named counterparty",
+        "description": "Contract 0.2.0; confirm support in your deployment. Reading only: the recipient gains no authority. Creation, first read per day and revocation are receipted on the execution stream.",
+        "x-service": "execution",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "provenance:disclose"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "execution_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Durably created. See resource state; creation is not authorization to produce an external effect.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "Idempotency-Replayed": {
+                "$ref": "#/components/headers/Idempotency-Replayed"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionShare"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "x-consequential": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecutionShareCreate"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/execution-shares/{share_id}/revocations": {
+      "post": {
+        "tags": [
+          "Governed execution"
+        ],
+        "operationId": "revokeExecutionShare",
+        "summary": "Revoke an execution share",
+        "description": "Contract 0.2.0; confirm support in your deployment. Revoke an execution share. Tenant and object authorization checked on every reference.",
+        "x-service": "execution",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "provenance:disclose"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "share_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Durably created. See resource state; creation is not authorization to produce an external effect.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "Idempotency-Replayed": {
+                "$ref": "#/components/headers/Idempotency-Replayed"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionShare"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Reason"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/execution-shares/{share_id}/view": {
+      "get": {
+        "tags": [
+          "Governed execution"
+        ],
+        "operationId": "getSharedExecution",
+        "summary": "Read a shared execution as its recipient",
+        "description": "Contract 0.2.0; confirm support in your deployment. Read a shared execution as its recipient. Tenant and object authorization checked on every reference.",
+        "x-service": "execution",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "execution:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "share_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful representation or command result.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SharedExecutionView"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/v1/execution-shares": {
+      "get": {
+        "tags": [
+          "Governed execution"
+        ],
+        "operationId": "listExecutionShares",
+        "summary": "List execution shares created by or addressed to the caller",
+        "description": "Contract 0.2.0; confirm support in your deployment. List execution shares created by or addressed to the caller. Tenant and object authorization checked on every reference.",
+        "x-service": "execution",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "execution:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "name": "execution_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "recipient_principal_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "revoked",
+                "expired"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful representation or command result.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionSharePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/v1/edge-nodes/{node_id}/contacts": {
+      "post": {
+        "tags": [
+          "Edge and assurance"
+        ],
+        "operationId": "contactEdge",
+        "summary": "Re-establish revocation freshness without a batch",
+        "description": "Contract 0.2.0; confirm support in your deployment. Rechecks attestation and grants exactly as a synchronization does before admitting records, then sets last contact. Appends nothing and never extends expiry or disconnection budget.",
+        "x-service": "edge",
+        "x-audience": "customer",
+        "security": [
+          {
+            "OAuth2": [
+              "edge:sync"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Traceparent"
+          },
+          {
+            "name": "node_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Durably created. See resource state; creation is not authorization to produce an external effect.",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/X-Request-Id"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/Cache-Control"
+              },
+              "Location": {
+                "$ref": "#/components/headers/Location"
+              },
+              "Idempotency-Replayed": {
+                "$ref": "#/components/headers/Idempotency-Replayed"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EdgeContact"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "x-consequential": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EdgeContactCreate"
               }
             }
           }
@@ -11910,6 +13736,10 @@
           "DURABLE_COMMIT_UNAVAILABLE",
           "POLICY_UNAVAILABLE",
           "RATE_LIMITED",
+          "SAFETY_QUARANTINED",
+          "TERMINATED",
+          "CONSEQUENCE_HELD",
+          "PRINCIPAL_SUSPENDED",
           "PRECONDITION_FAILED",
           "VALIDATION_FAILED",
           "RESOURCE_NOT_FOUND",
@@ -13012,6 +14842,124 @@
         ],
         "description": "Thresholds ascending; estimate strictly positive; threshold equality enters the more restrictive band. Resource mode is a generic extension; energy uses joules."
       },
+      "UnitConversionDefinition": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "unit_conversion"
+          },
+          "from_unit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "to_unit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "ratio": {
+            "$ref": "#/components/schemas/Decimal"
+          },
+          "basis": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceRef"
+            },
+            "minItems": 1,
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "kind",
+          "from_unit",
+          "to_unit",
+          "ratio",
+          "basis"
+        ],
+        "description": "One unit of from_unit equals ratio units of to_unit under the cited basis. Exact decimal; no rounding at conversion; never composed transitively."
+      },
+      "ToolResourceMapping": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "id_pointer": {
+            "type": "string",
+            "description": "RFC 6901 pointer into the tool arguments.",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "namespace",
+          "type",
+          "id_pointer"
+        ]
+      },
+      "ToolDefinition": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "tool"
+          },
+          "protocol": {
+            "type": "string",
+            "enum": [
+              "mcp"
+            ]
+          },
+          "server_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "tool_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "input_schema_digest": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "governance": {
+            "type": "string",
+            "enum": [
+              "governed",
+              "read_only",
+              "blocked"
+            ]
+          },
+          "action_definition": {
+            "$ref": "#/components/schemas/PinnedRef"
+          },
+          "resource_mapping": {
+            "$ref": "#/components/schemas/ToolResourceMapping"
+          }
+        },
+        "required": [
+          "kind",
+          "protocol",
+          "server_name",
+          "tool_name",
+          "input_schema_digest",
+          "governance"
+        ],
+        "description": "action_definition and resource_mapping are required when governance is governed and forbidden otherwise. Side-effect class and policies come from the action definition, never from the tool. input_schema_digest is the lowercase hex SHA-256 of the RFC 8785 (JCS) canonical JSON of the tool's declared input schema exactly as the server lists it; fractional numbers are permitted."
+      },
       "AssetDefinition": {
         "oneOf": [
           {
@@ -13046,6 +14994,12 @@
           },
           {
             "$ref": "#/components/schemas/EnergyProfileDefinition"
+          },
+          {
+            "$ref": "#/components/schemas/UnitConversionDefinition"
+          },
+          {
+            "$ref": "#/components/schemas/ToolDefinition"
           }
         ],
         "discriminator": {
@@ -13061,7 +15015,9 @@
             "economic_terms": "#/components/schemas/TermsDefinition",
             "component": "#/components/schemas/ArtifactDefinition",
             "processing_graph": "#/components/schemas/ProcessingGraphDefinition",
-            "energy_profile": "#/components/schemas/EnergyProfileDefinition"
+            "energy_profile": "#/components/schemas/EnergyProfileDefinition",
+            "unit_conversion": "#/components/schemas/UnitConversionDefinition",
+            "tool": "#/components/schemas/ToolDefinition"
           }
         }
       },
@@ -13519,6 +15475,9 @@
           "display_name": {
             "type": "string",
             "maxLength": 120
+          },
+          "agent_profile": {
+            "$ref": "#/components/schemas/AgentProfile"
           }
         },
         "required": [
@@ -13565,6 +15524,13 @@
               "active",
               "suspended"
             ]
+          },
+          "agent_profile": {
+            "$ref": "#/components/schemas/AgentProfile"
+          },
+          "agent_profile_version": {
+            "type": "integer",
+            "minimum": 1
           }
         },
         "required": [
@@ -13575,6 +15541,156 @@
           "issuer",
           "kind",
           "status"
+        ]
+      },
+      "AgentProfile": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "owner_principal_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "runtime": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "model_ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "agent_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "attestation": {
+            "$ref": "#/components/schemas/RecordRef"
+          }
+        },
+        "required": [
+          "owner_principal_id"
+        ],
+        "description": "Declared fields are informational. Only fields covered by an admitted attestation record may be read by policy."
+      },
+      "SuspensionCreate": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "all",
+              "project"
+            ]
+          },
+          "project_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "expires_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        },
+        "required": [
+          "reason",
+          "scope"
+        ],
+        "description": "project_id is required when scope is project and forbidden otherwise."
+      },
+      "SuspensionLiftCreate": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "approval_id": {
+            "$ref": "#/components/schemas/Id"
+          }
+        },
+        "required": [
+          "reason",
+          "approval_id"
+        ],
+        "description": "approval_id must be the suspension's lift_approval_id, opened when the suspension was created, and approved; its eligible principals exclude the suspended principal and its delegators."
+      },
+      "Suspension": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "tenant_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "created_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "principal_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "all",
+              "project"
+            ]
+          },
+          "project_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "expires_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "active",
+              "lifted",
+              "expired"
+            ]
+          },
+          "receipt": {
+            "$ref": "#/components/schemas/RecordRef"
+          },
+          "lift_approval_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "lift_receipt": {
+            "$ref": "#/components/schemas/RecordRef"
+          },
+          "in_flight_executions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Id"
+            },
+            "minItems": 0,
+            "maxItems": 500
+          }
+        },
+        "required": [
+          "id",
+          "tenant_id",
+          "created_at",
+          "principal_id",
+          "scope",
+          "reason",
+          "state",
+          "receipt",
+          "lift_approval_id",
+          "in_flight_executions"
         ]
       },
       "AuthorityGrantCreate": {
@@ -14092,6 +16208,9 @@
             },
             "minItems": 0,
             "maxItems": 100
+          },
+          "baseline_override": {
+            "$ref": "#/components/schemas/PinnedRef"
           }
         },
         "required": [
@@ -14313,6 +16432,9 @@
             },
             "minItems": 0,
             "maxItems": 100
+          },
+          "journey_id": {
+            "$ref": "#/components/schemas/Id"
           }
         },
         "required": [
@@ -16509,6 +18631,14 @@
             },
             "minItems": 1,
             "maxItems": 100
+          },
+          "conversions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PinnedRef"
+            },
+            "minItems": 1,
+            "maxItems": 100
           }
         },
         "required": [
@@ -17194,6 +19324,55 @@
           "evidence"
         ]
       },
+      "FundingEvidence": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "escrow_funding"
+          },
+          "account_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "provider_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "provider_transfer_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "disposition": {
+            "type": "string",
+            "enum": [
+              "confirmed_deposit",
+              "failed",
+              "unknown"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceRef"
+            },
+            "minItems": 1,
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "type",
+          "account_id",
+          "provider_id",
+          "provider_transfer_ref",
+          "amount",
+          "disposition",
+          "evidence"
+        ],
+        "description": "Only confirmed_deposit increases available_amount, once, by the observed amount."
+      },
       "RecordPayload": {
         "oneOf": [
           {
@@ -17234,6 +19413,9 @@
           },
           {
             "$ref": "#/components/schemas/TransferEvidence"
+          },
+          {
+            "$ref": "#/components/schemas/FundingEvidence"
           }
         ],
         "discriminator": {
@@ -17251,7 +19433,8 @@
             "rights": "#/components/schemas/RightsEvidence",
             "allocation": "#/components/schemas/AllocationEvidence",
             "realization": "#/components/schemas/RealizationEvidence",
-            "settlement_transfer": "#/components/schemas/TransferEvidence"
+            "settlement_transfer": "#/components/schemas/TransferEvidence",
+            "escrow_funding": "#/components/schemas/FundingEvidence"
           }
         }
       },
@@ -17508,6 +19691,23 @@
           },
           "record": {
             "$ref": "#/components/schemas/RecordRef"
+          },
+          "freshness": {
+            "type": "string",
+            "enum": [
+              "CURRENT",
+              "STALE",
+              "UNKNOWN"
+            ]
+          },
+          "coverage": {
+            "type": "string",
+            "enum": [
+              "COVERED",
+              "PARTIAL",
+              "UNCOVERED",
+              "UNKNOWN"
+            ]
           }
         },
         "required": [
@@ -17521,6 +19721,60 @@
           "record"
         ],
         "description": "Signature validity only establishes signer assertion. An unavailable HMAC key yields unavailable content verification, never a synthetic pass."
+      },
+      "RecordReport": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "record": {
+            "$ref": "#/components/schemas/RecordRef"
+          },
+          "assurance": {
+            "$ref": "#/components/schemas/EvidenceGrade"
+          },
+          "freshness": {
+            "enum": [
+              "CURRENT",
+              "STALE",
+              "UNKNOWN"
+            ]
+          },
+          "coverage": {
+            "enum": [
+              "COVERED",
+              "PARTIAL",
+              "UNCOVERED",
+              "UNKNOWN"
+            ]
+          },
+          "as_of": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "bounds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Timestamp"
+            },
+            "maxItems": 20
+          },
+          "missing_parents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecordRef"
+            },
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "record",
+          "assurance",
+          "freshness",
+          "coverage",
+          "as_of",
+          "bounds",
+          "missing_parents"
+        ],
+        "description": "Three orthogonal dimensions derived by the verifier, never stored on the receipt: what grade the verifier can establish, whether every declared bound is still ahead of now, and whether every required causal parent is admitted and standing."
       },
       "ProjectionCreate": {
         "type": "object",
@@ -19105,6 +21359,547 @@
           "attempt_count"
         ]
       },
+      "RuntimeDisposition": {
+        "enum": [
+          "ALLOW",
+          "REQUIRE_EVIDENCE",
+          "ESCALATE",
+          "HOLD_EFFECT",
+          "QUARANTINE",
+          "BLOCK",
+          "TERMINATE"
+        ],
+        "description": "What may happen at the journey's next protected boundary. Distinct from ClosureDisposition on purpose."
+      },
+      "SourceSignature": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "format": {
+            "const": "JWS-detached"
+          },
+          "jws": {
+            "type": "string",
+            "minLength": 1
+          },
+          "key_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "required": [
+          "format",
+          "jws",
+          "key_id"
+        ],
+        "description": "A detached signature over the submission's commitment under an enrolled key."
+      },
+      "SafetySignalSubmission": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "producer_event_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "signal": {
+            "type": "object",
+            "description": "A rail.safety_signal/1 document (proposals/schemas/safety_signal.v1.json); validated against the schema the safety profile pins."
+          },
+          "source_commitment": {
+            "$ref": "#/components/schemas/Commitment"
+          },
+          "source_signature": {
+            "$ref": "#/components/schemas/SourceSignature"
+          }
+        },
+        "required": [
+          "producer_event_id",
+          "signal",
+          "source_commitment",
+          "source_signature"
+        ]
+      },
+      "TerminationSubmission": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "termination": {
+            "type": "object",
+            "description": "A rail.termination_request/1 document (proposals/schemas/termination_request.v1.json)."
+          },
+          "source_commitment": {
+            "$ref": "#/components/schemas/Commitment"
+          },
+          "source_signature": {
+            "$ref": "#/components/schemas/SourceSignature"
+          }
+        },
+        "required": [
+          "termination",
+          "source_commitment",
+          "source_signature"
+        ]
+      },
+      "JourneyState": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "journey_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "tenant_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "project_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "root_grant_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "root_record": {
+            "$ref": "#/components/schemas/RecordRef"
+          },
+          "disposition": {
+            "$ref": "#/components/schemas/RuntimeDisposition"
+          },
+          "evaluation_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "evaluation_record": {
+            "$ref": "#/components/schemas/RecordRef"
+          },
+          "terminated": {
+            "type": "boolean"
+          },
+          "termination_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "termination_record": {
+            "$ref": "#/components/schemas/RecordRef"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "updated_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        },
+        "required": [
+          "journey_id",
+          "tenant_id",
+          "project_id",
+          "root_grant_id",
+          "root_record",
+          "disposition",
+          "terminated",
+          "version",
+          "updated_at"
+        ]
+      },
+      "ExecutionShareCreate": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "recipient_principal_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "views": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "state",
+                "result",
+                "receipts",
+                "settlement"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "expires_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        },
+        "required": [
+          "recipient_principal_id",
+          "purpose",
+          "views",
+          "expires_at"
+        ]
+      },
+      "ExecutionShare": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "tenant_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "created_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "execution_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "recipient_principal_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "views": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "state",
+                "result",
+                "receipts",
+                "settlement"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 4
+          },
+          "expires_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "active",
+              "revoked",
+              "expired"
+            ]
+          },
+          "receipt": {
+            "$ref": "#/components/schemas/RecordRef"
+          },
+          "revocation_receipt": {
+            "$ref": "#/components/schemas/RecordRef"
+          }
+        },
+        "required": [
+          "id",
+          "tenant_id",
+          "created_at",
+          "execution_id",
+          "recipient_principal_id",
+          "purpose",
+          "views",
+          "expires_at",
+          "state",
+          "receipt"
+        ]
+      },
+      "SharedExecutionView": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "share_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "execution_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "as_of": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ExecutionState"
+          },
+          "external_effect": {
+            "type": "string",
+            "enum": [
+              "not_possible",
+              "possible_unresolved",
+              "confirmed_occurred",
+              "confirmed_not_occurred"
+            ]
+          },
+          "result": {
+            "$ref": "#/components/schemas/RecordRef"
+          },
+          "receipts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecordRef"
+            },
+            "minItems": 0,
+            "maxItems": 500
+          },
+          "settlement": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/Id"
+              },
+              "state": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "state"
+            ]
+          }
+        },
+        "required": [
+          "share_id",
+          "execution_id",
+          "as_of"
+        ],
+        "description": "Each member is present only when its view was granted. Record references, not bodies; bodies are read through getReceipt under the share."
+      },
+      "BaselinePolicyProposalCreate": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "policy": {
+            "$ref": "#/components/schemas/PinnedRef"
+          },
+          "effective_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "eligible_principal_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Id"
+            },
+            "minItems": 1,
+            "maxItems": 100
+          },
+          "minimum_total": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "policy",
+          "effective_at",
+          "reason",
+          "eligible_principal_ids",
+          "minimum_total"
+        ]
+      },
+      "BaselinePolicyProposal": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "tenant_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "created_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "project_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/PinnedRef"
+          },
+          "effective_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "proposer_principal_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "eligible_principal_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Id"
+            },
+            "minItems": 1,
+            "maxItems": 100
+          },
+          "minimum_total": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "expired",
+              "effective",
+              "superseded"
+            ]
+          },
+          "votes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecordRef"
+            },
+            "minItems": 0,
+            "maxItems": 100
+          },
+          "receipt": {
+            "$ref": "#/components/schemas/RecordRef"
+          }
+        },
+        "required": [
+          "id",
+          "tenant_id",
+          "created_at",
+          "project_id",
+          "policy",
+          "effective_at",
+          "proposer_principal_id",
+          "eligible_principal_ids",
+          "minimum_total",
+          "state",
+          "votes",
+          "receipt"
+        ]
+      },
+      "BaselinePolicies": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "project_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "effective": {
+            "$ref": "#/components/schemas/PinnedRef"
+          },
+          "effective_since": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "proposal_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "policy": {
+                  "$ref": "#/components/schemas/PinnedRef"
+                },
+                "effective_at": {
+                  "$ref": "#/components/schemas/Timestamp"
+                },
+                "superseded_at": {
+                  "$ref": "#/components/schemas/Timestamp"
+                },
+                "proposal_id": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              },
+              "required": [
+                "policy",
+                "effective_at",
+                "proposal_id"
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 200
+          }
+        },
+        "required": [
+          "project_id",
+          "history"
+        ]
+      },
+      "EdgeContactCreate": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "allocation_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Id"
+            },
+            "minItems": 1,
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "allocation_ids"
+        ]
+      },
+      "EdgeContact": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "tenant_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "created_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "node_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "allocations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "allocation_id": {
+                  "$ref": "#/components/schemas/Id"
+                },
+                "state": {
+                  "type": "string",
+                  "enum": [
+                    "active",
+                    "reconciled",
+                    "revoked",
+                    "expired"
+                  ]
+                },
+                "revocation_fresh_until": {
+                  "$ref": "#/components/schemas/Timestamp"
+                }
+              },
+              "required": [
+                "allocation_id",
+                "state",
+                "revocation_fresh_until"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 100
+          },
+          "record": {
+            "$ref": "#/components/schemas/RecordRef"
+          }
+        },
+        "required": [
+          "id",
+          "tenant_id",
+          "created_at",
+          "node_id",
+          "allocations",
+          "record"
+        ]
+      },
       "ProjectPage": {
         "type": "object",
         "additionalProperties": false,
@@ -19725,6 +22520,87 @@
           "data",
           "snapshot_at"
         ]
+      },
+      "ActionPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            },
+            "minItems": 0,
+            "maxItems": 200
+          },
+          "next_cursor": {
+            "type": "string",
+            "description": "Absent on the final page. Opaque, scoped to tenant, filters and frozen snapshot.",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "snapshot_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        },
+        "required": [
+          "data",
+          "snapshot_at"
+        ]
+      },
+      "SuspensionPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Suspension"
+            },
+            "minItems": 0,
+            "maxItems": 200
+          },
+          "next_cursor": {
+            "type": "string",
+            "description": "Absent on the final page. Opaque, scoped to tenant, filters and frozen snapshot.",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "snapshot_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        },
+        "required": [
+          "data",
+          "snapshot_at"
+        ]
+      },
+      "ExecutionSharePage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExecutionShare"
+            },
+            "minItems": 0,
+            "maxItems": 200
+          },
+          "next_cursor": {
+            "type": "string",
+            "description": "Absent on the final page. Opaque, scoped to tenant, filters and frozen snapshot.",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "snapshot_at": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        },
+        "required": [
+          "data",
+          "snapshot_at"
+        ]
       }
     },
     "parameters": {
@@ -20107,6 +22983,8 @@
               "events:read": "events:read permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
               "events:write": "events:write permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
               "events:manage": "events:manage permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
+              "execution:safety": "execution:safety permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
+              "execution:terminate": "execution:terminate permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
               "runtime:dispatch": "runtime:dispatch permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
               "runtime:report": "runtime:report permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
               "runtime:payments": "runtime:payments permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced."
@@ -20154,6 +23032,8 @@
               "events:read": "events:read permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
               "events:write": "events:write permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
               "events:manage": "events:manage permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
+              "execution:safety": "execution:safety permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
+              "execution:terminate": "execution:terminate permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
               "runtime:dispatch": "runtime:dispatch permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
               "runtime:report": "runtime:report permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced.",
               "runtime:payments": "runtime:payments permission; OAuth scope is necessary but tenant/object/domain authorization is independently enforced."

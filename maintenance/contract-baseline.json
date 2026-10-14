@@ -1,8 +1,8 @@
 {
-  "contract_version": "0.1.1",
-  "source_sha256": "d6f8455d729d68131d9093489ef5926735c891432b96a42128cb606ef6677cb4",
-  "published_sha256": "512b1a70250d015677c94f9378c52dcc2de16d0adb71054bd6a9aa826b194105",
-  "customer_operations": 127,
+  "contract_version": "0.2.0",
+  "source_sha256": "49f82a348cde6f06db2a311cfb5686f90b17916cfeb050a8f00896491de25c76",
+  "published_sha256": "8616af1dba953c02c879c7dc8f6738bc735463827043ce70407f33117793d4f7",
+  "customer_operations": 145,
   "runtime_operations": 0,
   "internal_operations": 0,
   "transformations": [

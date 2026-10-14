@@ -1,0 +1,13 @@
+---
+title: "Vote on a baseline policy proposal"
+description: "POST /v1/baseline-policy-proposals/{proposal_id}/votes \u2014 The Rail customer contract 0.2.0."
+openapi: "/api-reference/openapi.json POST /v1/baseline-policy-proposals/{proposal_id}/votes"
+---
+
+<Note>Contract 0.2.0. Confirm that this operation is enabled in your deployment. Example hosts are placeholders; this page does not send API requests.</Note>
+
+**Required OAuth scope:** `execution:approve`. Tenant, object, and domain authorization also apply.
+
+Supply an explicit `Idempotency-Key`. See [idempotency and retries](/api-reference/idempotency).
+
+**Service:** `registry`. Use its operator-provided base URL, or a gateway explicitly configured to route this operation. See [implementation and release status](/get-started/implementation-status).

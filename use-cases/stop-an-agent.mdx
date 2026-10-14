@@ -1,0 +1,50 @@
+---
+title: "Use case: Stop an agent everywhere, or end one journey"
+sidebarTitle: "Stop an agent"
+description: "Suspend an agent across every project or one project, terminate a single journey, and lift a suspension only under an approval the agent cannot vote on."
+---
+
+Revoking grants one at a time is slow and permanent, and it loses the record of why. Contract 0.2.0 adds two stops with different reach: a **suspension** holds one principal everywhere (or in one project) and can be lifted, and a **termination** ends executable authority over one journey for good.
+
+<Note>
+  These operations are in customer contract 0.2.0. Confirm they are enabled in your deployment. See [environment and release status](/get-started/environment).
+</Note>
+
+## Suspend a principal
+
+`POST /v1/principals/{principal_id}/suspensions` with `scope: all`, or `scope: project` and a `project_id`, and an optional `expires_at`. While the suspension is active:
+
+- new executions where it is the acting principal are refused at the gate,
+- capability tokens are not issued to it, and it cannot delegate or receive delegations,
+- unclaimed dispatches it initiated are refused at the claim.
+
+Each refusal is a signed denial with basis `PRINCIPAL_SUSPENDED`. Work that was already dispatched is not interrupted, and its results are still admitted. Grants are neither revoked nor consumed: a suspension is a hold, not a withdrawal. Every change of state is a receipt on the principal's stream.
+
+## Lift a suspension under an approval
+
+Creating a suspension opens a lift approval and returns its id as `lift_approval_id`. Approvers vote through the existing [approval flow](/guides/approvals); the suspended principal is excluded from the quorum. `POST /v1/suspensions/{suspension_id}/lifts` succeeds only with that approval approved. If the approval expires before anyone acts, a replacement opens and `lift_approval_id` reports the current one. A suspension with `expires_at` ends on its own, with its own receipt.
+
+## Terminate one journey
+
+A journey is the work that descends from one root grant. `POST /v1/journeys/{journey_id}/terminations` is absorbing: pre-dispatch executions are cancelled, in-flight effects are listed as unresolved, results already produced are still admitted, and restarting needs a new root grant. Enrolled evaluators can also submit signed safety signals (`POST /v1/journeys/{journey_id}/safety-signals`); the Rail's safety profile, not the evaluator, derives the disposition. Read the current disposition with `GET /v1/journeys/{journey_id}`.
+
+<Note>
+  Stopping an agent process and ending its authority are different operations. Your target adapters must still refuse effects that arrive without a current decision.
+</Note>
+
+## Related resources
+
+<CardGroup cols={2}>
+  <Card title="Suspend a principal" icon="hand" href="/api-reference/endpoints/suspend-principal">
+    The `suspendPrincipal` operation and its schemas.
+  </Card>
+  <Card title="Terminate a journey" icon="octagon-xmark" href="/api-reference/endpoints/terminate-journey">
+    The `terminateJourney` operation and its schemas.
+  </Card>
+  <Card title="Human approvals" icon="user-check" href="/guides/approvals">
+    Read and vote on approval requests.
+  </Card>
+  <Card title="Govern agent actions" icon="shield-check" href="/use-cases/govern-agent-actions">
+    How the boundary decision works.
+  </Card>
+</CardGroup>

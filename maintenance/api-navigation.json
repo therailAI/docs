@@ -17,7 +17,8 @@
           "api-reference/endpoints/create-action",
           "api-reference/endpoints/get-action",
           "api-reference/endpoints/evaluate-action",
-          "api-reference/endpoints/get-evaluation"
+          "api-reference/endpoints/get-evaluation",
+          "api-reference/endpoints/list-actions"
         ]
       },
       {
@@ -41,6 +42,25 @@
           "api-reference/endpoints/get-approval",
           "api-reference/endpoints/vote-on-approval"
         ]
+      },
+      {
+        "group": "Journeys and safety",
+        "expanded": false,
+        "pages": [
+          "api-reference/endpoints/submit-safety-signal",
+          "api-reference/endpoints/terminate-journey",
+          "api-reference/endpoints/get-journey"
+        ]
+      },
+      {
+        "group": "Execution shares",
+        "expanded": false,
+        "pages": [
+          "api-reference/endpoints/create-execution-share",
+          "api-reference/endpoints/revoke-execution-share",
+          "api-reference/endpoints/get-shared-execution",
+          "api-reference/endpoints/list-execution-shares"
+        ]
       }
     ]
   },
@@ -54,7 +74,8 @@
         "pages": [
           "api-reference/endpoints/list-principals",
           "api-reference/endpoints/create-principal",
-          "api-reference/endpoints/get-principal"
+          "api-reference/endpoints/get-principal",
+          "api-reference/endpoints/update-agent-profile"
         ]
       },
       {
@@ -87,6 +108,16 @@
           "api-reference/endpoints/get-reservation",
           "api-reference/endpoints/request-reservation-release"
         ]
+      },
+      {
+        "group": "Suspensions",
+        "expanded": false,
+        "pages": [
+          "api-reference/endpoints/suspend-principal",
+          "api-reference/endpoints/lift-suspension",
+          "api-reference/endpoints/get-suspension",
+          "api-reference/endpoints/list-suspensions"
+        ]
       }
     ]
   },
@@ -101,7 +132,8 @@
           "api-reference/endpoints/list-receipts",
           "api-reference/endpoints/get-receipt",
           "api-reference/endpoints/get-receipt-inclusion-proof",
-          "api-reference/endpoints/get-verification-keys"
+          "api-reference/endpoints/get-verification-keys",
+          "api-reference/endpoints/get-record-report"
         ]
       },
       {
@@ -175,6 +207,15 @@
           "api-reference/endpoints/create-process-case",
           "api-reference/endpoints/get-process-case",
           "api-reference/endpoints/close-process-case"
+        ]
+      },
+      {
+        "group": "Baseline policies",
+        "expanded": false,
+        "pages": [
+          "api-reference/endpoints/propose-baseline-policy",
+          "api-reference/endpoints/vote-on-baseline-policy",
+          "api-reference/endpoints/get-baseline-policies"
         ]
       }
     ]
@@ -339,7 +380,8 @@
           "api-reference/endpoints/create-edge-allocation",
           "api-reference/endpoints/get-edge-allocation",
           "api-reference/endpoints/synchronize-edge",
-          "api-reference/endpoints/get-edge-sync"
+          "api-reference/endpoints/get-edge-sync",
+          "api-reference/endpoints/contact-edge"
         ]
       },
       {

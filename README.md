@@ -2,7 +2,7 @@
 
 Public Mintlify documentation for **the authorization and clearing layer for autonomous agents**.
 
-The site covers the 0.1.1 customer HTTP contract, integration patterns, the development CLI and SDKs, and recorded reference workflows. The CLI & SDKs tab includes local setup, profiles, governed effect callbacks, approvals, recovery, and evidence export. Contract coverage does not imply that every operation is deployed or publicly hosted.
+The site covers the 0.2.0 customer HTTP contract, integration patterns, the development CLI and SDKs, and recorded reference workflows. The CLI & SDKs tab includes local setup, profiles, governed effect callbacks, approvals, recovery, and evidence export. Contract coverage does not imply that every operation is deployed or publicly hosted.
 
 ## Preview and validate
 

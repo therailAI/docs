@@ -1,0 +1,44 @@
+---
+title: "Use case: Show a counterparty what happened, live"
+sidebarTitle: "Share with a counterparty"
+description: "Share one execution's state, result, receipts, or settlement with a named counterparty, read-only and revocable, with every share and read on the record."
+---
+
+Receipts can already be verified by anyone who holds them. A counterparty in a cross-company action often needs more: the execution's current state, whether its effect is still unresolved, and whether value has settled. Contract 0.2.0 adds **execution shares** for that.
+
+<Note>
+  These operations are in customer contract 0.2.0. Confirm they are enabled in your deployment. See [environment and release status](/get-started/environment).
+</Note>
+
+## Enroll the counterparty
+
+The counterparty is a principal in your tenant, typically `kind: organization`, signing in through its own enrolled identity provider. Reads stay inside your tenant; there is no cross-tenant query.
+
+## Share one execution
+
+`POST /v1/executions/{execution_id}/shares` names the recipient, a purpose, an expiry, and the views it may see: `state`, `result`, `receipts`, `settlement`. A share is read-only. It gives the recipient no authority over the execution, so it cannot create actions or vote because of it.
+
+## What the counterparty reads
+
+`GET /v1/execution-shares/{share_id}/view` returns only the granted members, as record references computed when it is read. The recipient fetches receipt bodies with `GET /v1/receipts/{receipt_id}?share_id=…`, which succeeds only for records that share covers, and can verify them independently. Expired or revoked shares stop answering.
+
+## Keep the disclosure on the record
+
+Creating a share, the recipient's first read each day, and revoking it are receipts on the execution's stream, so you can prove what the counterparty was shown and when. Revoke with `POST /v1/execution-shares/{share_id}/revocations`.
+
+## Related resources
+
+<CardGroup cols={2}>
+  <Card title="Create an execution share" icon="share-nodes" href="/api-reference/endpoints/create-execution-share">
+    The `createExecutionShare` operation and its schemas.
+  </Card>
+  <Card title="Prove outcomes" icon="badge-check" href="/use-cases/prove-outcomes">
+    Receipts that verify outside the Rail.
+  </Card>
+  <Card title="Verify evidence" icon="magnifying-glass" href="/guides/verify-evidence">
+    Check signatures, ancestry, and inclusion.
+  </Card>
+  <Card title="Release value on outcomes" icon="scale-balanced" href="/use-cases/release-value-on-outcomes">
+    Settlement that follows verified outcomes.
+  </Card>
+</CardGroup>
